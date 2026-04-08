@@ -1,0 +1,18 @@
+export const AMENITIES = [
+  'WiFi',
+  'Parking',
+  'A/C',
+  'Washer/Dryer',
+  'Dishwasher',
+  'Utilities Included',
+  'Gym',
+  'Pool',
+  'Pet Friendly',
+  'Furnished',
+  'Balcony',
+  'Study Room',
+  'Bike Storage',
+  'EV Charging',
+  'Security',
+  'Rooftop',
+]

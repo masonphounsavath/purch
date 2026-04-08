@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Navbar } from '../components/layout/Navbar'
 import { SignInModal } from '../components/auth/SignInModal'
 import { useAuth } from '../hooks/useAuth'
-import { ArrowRight, MapPin, MessageCircle, Shield, Bed, Wifi } from 'lucide-react'
+import { ArrowRight, MapPin, MessageCircle, Shield, Bed } from 'lucide-react'
 
 function ListingCard({
   title,

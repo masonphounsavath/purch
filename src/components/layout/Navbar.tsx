@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, LogOut } from 'lucide-react'
+import { LogOut, MessageCircle } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
+import { useUnreadCount } from '../../hooks/useUnreadCount'
 import { supabase } from '../../lib/supabase'
 import { SignInModal } from '../auth/SignInModal'
 
 export function Navbar() {
   const { isAuthed, user } = useAuth()
+  const unreadCount = useUnreadCount()
   const [showSignIn, setShowSignIn] = useState(false)
 
   async function handleSignOut() {
@@ -25,9 +27,19 @@ export function Navbar() {
               Browse
             </Link>
             {isAuthed && (
-              <Link to="/post" className="text-sm text-slate-500 hover:text-unc-navy transition-colors font-medium">
-                Post a listing
-              </Link>
+              <>
+                <Link to="/post" className="text-sm text-slate-500 hover:text-unc-navy transition-colors font-medium">
+                  Post a listing
+                </Link>
+                <Link to="/messages" className="text-sm text-slate-500 hover:text-unc-navy transition-colors font-medium flex items-center gap-1.5 relative">
+                  <MessageCircle className="w-4 h-4" /> Messages
+                  {unreadCount > 0 && (
+                    <span className="min-w-[18px] h-[18px] bg-unc-blue text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
+                </Link>
+              </>
             )}
           </div>
           <div className="flex items-center gap-3">
@@ -46,7 +58,7 @@ export function Navbar() {
                 onClick={() => setShowSignIn(true)}
                 className="inline-flex items-center gap-1.5 text-sm font-semibold bg-unc-navy text-white px-4 py-2 rounded-lg hover:bg-[#1c3a6b] transition-colors"
               >
-                Get started <ArrowRight className="w-3.5 h-3.5" />
+                Sign in
               </button>
             )}
           </div>
