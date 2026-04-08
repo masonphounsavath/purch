@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(sudo chown:*)",
+      "Bash(npx tailwindcss:*)",
+      "Bash(npm run:*)",
+      "Bash(command -v nvm)",
+      "Bash(nvm --version)",
+      "Bash(curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh)",
+      "Bash(bash)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(npm audit:*)",
+      "Bash(node -e \"const pkg = require\\(''/Users/masonphounsavath/Documents/projects/subly/node_modules/react-router-dom/package.json''\\); console.log\\(pkg.version\\)\")",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git rm:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}
