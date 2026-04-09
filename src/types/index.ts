@@ -3,6 +3,14 @@ export interface Profile {
   onyen: string
   display_name: string
   avatar_url: string | null
+  phone: string | null
+  created_at: string
+}
+
+export interface SavedListing {
+  id: string
+  user_id: string
+  listing_id: string
   created_at: string
 }
 

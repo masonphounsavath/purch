@@ -5,6 +5,7 @@ import { Navbar } from '../components/layout/Navbar'
 import { ListingCard } from '../components/listings/ListingCard'
 import { useListings, type Filters } from '../hooks/useListings'
 import { useAuth } from '../hooks/useAuth'
+import { useSavedListings } from '../hooks/useSavedListings'
 
 function FilterSidebar({
   filters,
@@ -116,6 +117,7 @@ export default function Browse() {
   const { isAuthed } = useAuth()
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS)
   const { listings, loading } = useListings(filters)
+  const { savedIds, toggleSave } = useSavedListings()
 
   return (
     <div className="min-h-screen bg-white">
@@ -173,7 +175,14 @@ export default function Browse() {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
-                {listings.map(l => <ListingCard key={l.id} listing={l} />)}
+                {listings.map(l => (
+                  <ListingCard
+                    key={l.id}
+                    listing={l}
+                    isSaved={savedIds.has(l.id)}
+                    onToggleSave={isAuthed ? toggleSave : undefined}
+                  />
+                ))}
               </div>
             )}
           </div>

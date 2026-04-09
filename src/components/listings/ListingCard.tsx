@@ -1,12 +1,20 @@
 import { Link } from 'react-router-dom'
-import { MapPin, Bed, Bath, Calendar } from 'lucide-react'
+import { MapPin, Bed, Bath, Calendar, Heart } from 'lucide-react'
 import type { Listing } from '../../types'
 
 function formatDate(d: string) {
   return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-export function ListingCard({ listing }: { listing: Listing }) {
+export function ListingCard({
+  listing,
+  isSaved,
+  onToggleSave,
+}: {
+  listing: Listing
+  isSaved?: boolean
+  onToggleSave?: (listingId: string) => void
+}) {
   const hasPhoto = listing.photos && listing.photos.length > 0
 
   return (
@@ -15,7 +23,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
       className="group block bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:border-gray-200 transition-all"
     >
       {/* Photo */}
-      <div className="aspect-[4/3] bg-gradient-to-br from-slate-100 to-blue-50 overflow-hidden">
+      <div className="relative aspect-[4/3] bg-gradient-to-br from-slate-100 to-blue-50 overflow-hidden">
         {hasPhoto ? (
           <img
             src={listing.photos[0]}
@@ -26,6 +34,14 @@ export function ListingCard({ listing }: { listing: Listing }) {
           <div className="w-full h-full flex items-center justify-center">
             <MapPin className="w-8 h-8 text-slate-300" />
           </div>
+        )}
+        {onToggleSave && (
+          <button
+            onClick={e => { e.preventDefault(); e.stopPropagation(); onToggleSave(listing.id) }}
+            className="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm hover:bg-white transition-colors"
+          >
+            <Heart className={`w-4 h-4 transition-colors ${isSaved ? 'fill-red-500 text-red-500' : 'text-gray-400 hover:text-red-400'}`} />
+          </button>
         )}
       </div>
 

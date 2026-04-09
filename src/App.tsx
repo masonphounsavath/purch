@@ -6,6 +6,7 @@ import PostListing from './pages/PostListing'
 import Messages from './pages/Messages'
 import AuthCallback from './pages/AuthCallback'
 import Profile from './pages/Profile'
+import EditListing from './pages/EditListing'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 
 export default function App() {
@@ -16,6 +17,14 @@ export default function App() {
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/browse" element={<Browse />} />
         <Route path="/listings/:id" element={<ListingDetail />} />
+        <Route
+          path="/listings/:id/edit"
+          element={
+            <ProtectedRoute>
+              <EditListing />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/post"
           element={
