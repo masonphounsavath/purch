@@ -19,7 +19,7 @@ export function SignInModal({ onClose }: Props) {
     setError('')
 
     if (!email.endsWith('@unc.edu')) {
-      setError('You need a @unc.edu email to use Subly.')
+      setError('You need a @unc.edu email to use Purch.')
       return
     }
 
@@ -59,7 +59,7 @@ export function SignInModal({ onClose }: Props) {
         {step === 'email' ? (
           <>
             <div className="mb-6">
-              <h2 className="text-2xl font-bold text-unc-navy mb-2">Sign in to Subly</h2>
+              <h2 className="text-2xl font-bold text-unc-navy mb-2">Sign in to Purch</h2>
               <p className="text-slate-body text-sm">
                 Enter your UNC email and we'll send you a magic link — no password needed.
               </p>

@@ -62,7 +62,7 @@ export default function Landing() {
               <span className="text-unc-blue">Without the hassle.</span>
             </h1>
             <p className="text-lg text-slate-body leading-relaxed mb-10 max-w-md">
-              Subly is the sublease marketplace built exclusively for UNC students. Browse verified listings, message renters directly, and move in faster.
+              Purch is the sublease marketplace built exclusively for UNC students. Browse verified listings, message renters directly, and move in faster.
             </p>
             <div className="flex flex-wrap items-center gap-4">
               <Link
@@ -200,7 +200,7 @@ export default function Landing() {
               Message renters<br />without sharing<br />your number.
             </h2>
             <p className="text-lg text-slate-body leading-relaxed">
-              Every conversation lives inside Subly. No group chats, no DMs, no giving out your contact info to strangers. Just direct, real-time messages between verified UNC students.
+              Every conversation lives inside Purch. No group chats, no DMs, no giving out your contact info to strangers. Just direct, real-time messages between verified UNC students.
             </p>
           </div>
         </div>
@@ -217,7 +217,7 @@ export default function Landing() {
               Every user is a<br />real Tar Heel.
             </h2>
             <p className="text-lg text-slate-body leading-relaxed mb-8">
-              Sign in with your UNC SSO — the same credentials you use for everything else on campus. No fake accounts, no anonymous listings. Everyone on Subly is a verified @unc.edu student.
+              Sign in with your UNC SSO — the same credentials you use for everything else on campus. No fake accounts, no anonymous listings. Everyone on Purch is a verified @unc.edu student.
             </p>
             <div className="flex flex-col gap-3">
               {[
@@ -297,7 +297,7 @@ export default function Landing() {
       <section className="py-28 px-6">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-4xl md:text-[52px] font-bold tracking-tight leading-tight mb-6">
-            Your next place is<br />already on Subly.
+            Your next place is<br />already on Purch.
           </h2>
           <p className="text-lg text-slate-body mb-10">
             Browse Chapel Hill subleases posted by students just like you.
@@ -323,7 +323,7 @@ export default function Landing() {
       {/* ── Footer ───────────────────────────────────────── */}
       <footer className="border-t border-gray-100 py-10 px-6">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="font-bold text-unc-navy">Subly</span>
+          <span className="font-bold text-unc-navy">Purch</span>
           <span className="text-sm text-slate-400">The Chapel Hill Sublease Marketplace</span>
           <span className="text-sm text-slate-400">Made for Tar Heels, by Tar Heels</span>
         </div>

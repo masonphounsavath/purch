@@ -30,24 +30,24 @@ Deno.serve(async (req) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'Subly <onboarding@resend.dev>',
+      from: 'Purch <onboarding@resend.dev>',
       to: recipient.email,
-      subject: `${senderName} sent you a message on Subly`,
+      subject: `${senderName} sent you a message on Purch`,
       html: `
         <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 32px 24px;">
-          <p style="font-size: 20px; font-weight: 700; color: #13294B; margin-bottom: 4px;">New message on Subly</p>
+          <p style="font-size: 20px; font-weight: 700; color: #13294B; margin-bottom: 4px;">New message on Purch</p>
           <p style="color: #64748b; font-size: 14px; margin-bottom: 24px;">
             <strong style="color: #13294B;">${senderName}</strong> sent you a message:
           </p>
           <div style="background: #f8fafc; border-left: 3px solid #13294B; padding: 16px 20px; border-radius: 0 8px 8px 0; color: #1e293b; font-size: 15px; line-height: 1.6;">
             ${message.body}
           </div>
-          <a href="https://subly-sand.vercel.app/messages"
+          <a href="https://purch.it/messages"
              style="display: inline-block; margin-top: 24px; background: #13294B; color: white; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px;">
-            Reply on Subly →
+            Reply on Purch →
           </a>
           <p style="margin-top: 32px; color: #94a3b8; font-size: 12px;">
-            You're receiving this because you have an account on Subly.
+            You're receiving this because you have an account on Purch.
           </p>
         </div>
       `,
