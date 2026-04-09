@@ -5,6 +5,7 @@ import ListingDetail from './pages/ListingDetail'
 import PostListing from './pages/PostListing'
 import Messages from './pages/Messages'
 import AuthCallback from './pages/AuthCallback'
+import Profile from './pages/Profile'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 
 export default function App() {
@@ -28,6 +29,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Messages />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
             </ProtectedRoute>
           }
         />

@@ -45,7 +45,13 @@ export function Navbar() {
           <div className="flex items-center gap-3">
             {isAuthed ? (
               <>
-                <span className="text-xs text-slate-400 hidden sm:block">{user?.email}</span>
+                <Link
+                  to="/profile"
+                  className="w-8 h-8 rounded-full bg-unc-blue flex items-center justify-center text-white text-xs font-semibold hover:bg-unc-navy transition-colors"
+                  title={user?.email}
+                >
+                  {user?.email?.slice(0, 2).toUpperCase()}
+                </Link>
                 <button
                   onClick={handleSignOut}
                   className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-unc-navy transition-colors"
