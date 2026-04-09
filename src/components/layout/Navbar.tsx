@@ -19,8 +19,8 @@ export function Navbar() {
     <>
       <nav className="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link to="/" className="text-lg font-bold text-unc-navy tracking-tight">
-            Purch
+          <Link to="/" className="flex items-center">
+            <img src="/logo.svg" alt="Purch" className="h-7" />
           </Link>
           <div className="hidden md:flex items-center gap-8">
             <Link to="/browse" className="text-sm text-slate-500 hover:text-unc-navy transition-colors font-medium">
