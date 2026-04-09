@@ -30,7 +30,7 @@ Deno.serve(async (req) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'Subly <notifications@subly.app>',
+      from: 'Subly <onboarding@resend.dev>',
       to: recipient.email,
       subject: `${senderName} sent you a message on Subly`,
       html: `
@@ -42,7 +42,7 @@ Deno.serve(async (req) => {
           <div style="background: #f8fafc; border-left: 3px solid #13294B; padding: 16px 20px; border-radius: 0 8px 8px 0; color: #1e293b; font-size: 15px; line-height: 1.6;">
             ${message.body}
           </div>
-          <a href="https://subly.app/messages"
+          <a href="https://subly-sand.vercel.app/messages"
              style="display: inline-block; margin-top: 24px; background: #13294B; color: white; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px;">
             Reply on Subly →
           </a>
