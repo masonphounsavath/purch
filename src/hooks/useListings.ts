@@ -27,7 +27,9 @@ export function useListings(filters: Filters = {}) {
       if (filters.minRent)      query = query.gte('rent', filters.minRent)
       if (filters.maxRent)      query = query.lte('rent', filters.maxRent)
       if (filters.bedrooms !== undefined && filters.bedrooms >= 0)
-                                query = query.eq('bedrooms', filters.bedrooms)
+        query = filters.bedrooms >= 3
+          ? query.gte('bedrooms', filters.bedrooms)
+          : query.eq('bedrooms', filters.bedrooms)
       if (filters.furnished)    query = query.eq('is_furnished', true)
       if (filters.availableFrom) query = query.lte('available_from', filters.availableFrom)
 
