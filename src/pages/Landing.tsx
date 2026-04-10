@@ -129,7 +129,7 @@ export default function Landing() {
             { label: 'Listing fees', value: '$0' },
             { label: 'Access', value: '@unc.edu only' },
             { label: 'Messages', value: 'Real-time' },
-            { label: 'Sign-in', value: 'UNC SSO' },
+            { label: 'Sign-in', value: 'Verified' },
           ].map(({ label, value }) => (
             <div key={label}>
               <div className="text-2xl font-bold text-unc-navy">{value}</div>
@@ -217,12 +217,12 @@ export default function Landing() {
               Every user is a<br />real Tar Heel.
             </h2>
             <p className="text-lg text-slate-body leading-relaxed mb-8">
-              Sign in with your UNC SSO — the same credentials you use for everything else on campus. No fake accounts, no anonymous listings. Everyone on Purch is a verified @unc.edu student.
+              Sign in with your <span className="font-semibold text-unc-navy">@unc.edu email</span> and we'll send you a magic link — no password needed. Only real UNC students can access Purch. No fake accounts, no anonymous listings.
             </p>
             <div className="flex flex-col gap-3">
               {[
-                'No new password to remember',
-                'Every listing tied to a real student',
+                'Just your @unc.edu email — no new password',
+                'Every listing tied to a verified student',
                 'Blocks non-UNC users entirely',
               ].map(item => (
                 <div key={item} className="flex items-center gap-3 text-slate-body text-[15px]">
@@ -236,12 +236,12 @@ export default function Landing() {
           </div>
           <div className="bg-unc-navy rounded-3xl p-10 text-white">
             <Shield className="w-10 h-10 text-unc-blue mb-6 opacity-80" />
-            <p className="text-2xl font-bold mb-3 leading-snug">Sign in once.<br />You're in.</p>
+            <p className="text-2xl font-bold mb-3 leading-snug">Enter your email.<br />Check your inbox.<br />You're in.</p>
             <p className="text-slate-400 text-sm leading-relaxed">
-              UNC's Shibboleth SSO handles authentication. We never store your password and we only access your @unc.edu email to verify you're a student.
+              We send a secure magic link to your @unc.edu address. Click it and you're signed in — no password stored, no account to create.
             </p>
             <div className="mt-6 pt-6 border-t border-white/10">
-              <p className="text-xs text-slate-500 tracking-wide uppercase font-semibold">Powered by</p>
+              <p className="text-xs text-slate-500 tracking-wide uppercase font-semibold">Coming soon</p>
               <p className="text-white font-semibold mt-1">UNC Shibboleth SSO</p>
             </div>
           </div>
@@ -323,8 +323,8 @@ export default function Landing() {
       {/* ── Footer ───────────────────────────────────────── */}
       <footer className="border-t border-gray-100 py-10 px-6">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="font-bold text-unc-navy">Purch</span>
           <span className="text-sm text-slate-400">The Chapel Hill Sublease Marketplace</span>
+          <span className="font-bold text-unc-navy">Purch</span>
           <span className="text-sm text-slate-400">Made for Tar Heels, by Tar Heels</span>
         </div>
       </footer>
