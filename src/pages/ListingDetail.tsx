@@ -5,6 +5,7 @@ import {
   ChevronRight, MessageCircle, ArrowLeft, Pencil, Loader
 } from 'lucide-react'
 import { Navbar } from '../components/layout/Navbar'
+import { DetailMap } from '../components/map/DetailMap'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import type { Listing } from '../types'
@@ -219,6 +220,17 @@ export default function ListingDetail() {
                     </span>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* Location map */}
+            {listing.lat != null && listing.lng != null && (
+              <div>
+                <h2 className="text-xs font-bold text-slate-400 tracking-widest uppercase mb-3">Location</h2>
+                <DetailMap lat={listing.lat} lng={listing.lng} />
+                <p className="text-xs text-slate-400 mt-2 flex items-center gap-1">
+                  <MapPin className="w-3 h-3" /> {listing.address}
+                </p>
               </div>
             )}
           </div>

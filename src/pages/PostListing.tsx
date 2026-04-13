@@ -8,6 +8,7 @@ import { Navbar } from '../components/layout/Navbar'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { AMENITIES } from '../lib/constants'
+import { geocodeAddress } from '../lib/geocode'
 
 const schema = z.object({
   title:          z.string().min(5, 'Title must be at least 5 characters'),
@@ -77,7 +78,10 @@ export default function PostListing() {
     setError('')
 
     try {
-      // 1. Create listing row first to get an ID
+      // 1. Geocode address
+      const coords = await geocodeAddress(data.address)
+
+      // 2. Create listing row first to get an ID
       const { data: listing, error: listingError } = await supabase
         .from('listings')
         .insert({
@@ -85,6 +89,8 @@ export default function PostListing() {
           title:          data.title,
           description:    data.description,
           address:        data.address,
+          lat:            coords?.lat ?? null,
+          lng:            coords?.lng ?? null,
           rent:           data.rent,
           available_from: data.available_from,
           available_to:   data.available_to,
