@@ -75,12 +75,24 @@ export default function EditListing() {
     setAmenities(prev => prev.includes(tag) ? prev.filter(a => a !== tag) : [...prev, tag])
   }
 
+  const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+  const MAX_MB = 10
+
   function handleNewPhotos(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? [])
+    const invalid = files.find(
+      f => !ALLOWED_TYPES.includes(f.type) || f.size > MAX_MB * 1024 * 1024
+    )
+    if (invalid) {
+      setError(`Photos must be JPG, PNG, or WEBP and under ${MAX_MB}MB each.`)
+      e.target.value = ''
+      return
+    }
     const remaining = 8 - (existingPhotos.length - removedPhotos.size) - newPhotos.length
     const added = files.slice(0, Math.max(0, remaining))
     setNewPhotos(prev => [...prev, ...added])
     setNewPreviews(prev => [...prev, ...added.map(f => URL.createObjectURL(f))])
+    setError('')
   }
 
   function removeExisting(url: string) {
@@ -98,6 +110,15 @@ export default function EditListing() {
     setError('')
 
     try {
+      // Delete removed photos from Storage
+      if (removedPhotos.size > 0) {
+        const paths = Array.from(removedPhotos).map(url => {
+          const marker = '/listing-photos/'
+          return url.slice(url.indexOf(marker) + marker.length)
+        })
+        await supabase.storage.from('listing-photos').remove(paths)
+      }
+
       const keptPhotos = existingPhotos.filter(url => !removedPhotos.has(url))
 
       const newUrls: string[] = []

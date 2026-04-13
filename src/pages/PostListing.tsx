@@ -47,10 +47,23 @@ export default function PostListing() {
     )
   }
 
+  const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+  const MAX_MB = 10
+
   function handlePhotos(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files ?? []).slice(0, 8)
-    setPhotos(files)
-    setPreviews(files.map(f => URL.createObjectURL(f)))
+    const files = Array.from(e.target.files ?? [])
+    const invalid = files.find(
+      f => !ALLOWED_TYPES.includes(f.type) || f.size > MAX_MB * 1024 * 1024
+    )
+    if (invalid) {
+      setError(`Photos must be JPG, PNG, or WEBP and under ${MAX_MB}MB each.`)
+      e.target.value = ''
+      return
+    }
+    const allowed = files.slice(0, 8)
+    setPhotos(allowed)
+    setPreviews(allowed.map(f => URL.createObjectURL(f)))
+    setError('')
   }
 
   function removePhoto(i: number) {
