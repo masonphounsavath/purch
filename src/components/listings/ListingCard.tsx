@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { MapPin, Bed, Bath, Calendar, Heart } from 'lucide-react'
 import type { Listing } from '../../types'
 
@@ -36,12 +37,14 @@ export function ListingCard({
           </div>
         )}
         {onToggleSave && (
-          <button
+          <motion.button
             onClick={e => { e.preventDefault(); e.stopPropagation(); onToggleSave(listing.id) }}
             className="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm hover:bg-white transition-colors"
+            whileTap={{ scale: 1.4 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 10 }}
           >
             <Heart className={`w-4 h-4 transition-colors ${isSaved ? 'fill-red-500 text-red-500' : 'text-gray-400 hover:text-red-400'}`} />
-          </button>
+          </motion.button>
         )}
       </div>
 
