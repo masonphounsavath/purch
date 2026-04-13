@@ -66,10 +66,11 @@ export default function Landing() {
       </AnimatePresence>
 
       {/* ── Hero ─────────────────────────────────────────── */}
-      <section className="relative pt-36 pb-24 px-6 overflow-hidden">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_60%_-10%,rgba(75,156,211,0.12),transparent)]" />
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[radial-gradient(ellipse_at_top_right,rgba(75,156,211,0.08),transparent_70%)]" />
+      <section className="relative pt-36 pb-24 px-6 overflow-hidden bg-[radial-gradient(ellipse_80%_60%_at_50%_-20%,rgba(75,156,211,0.18),transparent)]">
+        {/* Background gradients */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_70%_10%,rgba(75,156,211,0.13),transparent)]" />
+        <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-[radial-gradient(ellipse_at_top_right,rgba(75,156,211,0.10),transparent_65%)]" />
+        <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-b from-transparent to-white" />
 
         <div className="relative max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left: copy */}
@@ -159,7 +160,7 @@ export default function Landing() {
       </section>
 
       {/* ── Divider stat row ─────────────────────────────── */}
-      <section className="border-y border-gray-100 py-8 px-6">
+      <section className="border-y border-blue-50 py-8 px-6 bg-[#F4F8FC]">
         <motion.div
           className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 text-center"
           variants={stagger}
@@ -182,7 +183,7 @@ export default function Landing() {
       </section>
 
       {/* ── Feature: Browse ──────────────────────────────── */}
-      <section className="py-28 px-6">
+      <section className="py-28 px-6 bg-white">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <motion.div variants={inView} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }}>
             <div className="inline-flex items-center gap-2 text-unc-blue text-sm font-semibold mb-5">
@@ -206,7 +207,7 @@ export default function Landing() {
       </section>
 
       {/* ── Feature: Messaging ───────────────────────────── */}
-      <section className="py-28 px-6 bg-gray-50/60">
+      <section className="py-28 px-6 bg-[#F4F8FC]">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           {/* Message thread mockup */}
           <motion.div variants={inView} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }} className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 order-2 lg:order-1">
@@ -246,7 +247,7 @@ export default function Landing() {
       </section>
 
       {/* ── Feature: Trust ───────────────────────────────── */}
-      <section className="py-28 px-6">
+      <section className="py-28 px-6 bg-white">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <motion.div variants={inView} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }}>
             <div className="inline-flex items-center gap-2 text-unc-blue text-sm font-semibold mb-5">
@@ -288,7 +289,7 @@ export default function Landing() {
       </section>
 
       {/* ── How it works ─────────────────────────────────── */}
-      <section className="py-28 px-6 bg-gray-50/60">
+      <section className="py-28 px-6 bg-[#F4F8FC]">
         <div className="max-w-4xl mx-auto">
           <motion.div variants={inView} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }}>
             <h2 className="text-4xl md:text-[44px] font-bold tracking-tight mb-4">Up and running in minutes.</h2>
@@ -342,7 +343,7 @@ export default function Landing() {
       </section>
 
       {/* ── CTA ──────────────────────────────────────────── */}
-      <section className="py-28 px-6">
+      <section className="py-28 px-6 bg-white">
         <motion.div
           className="max-w-3xl mx-auto text-center"
           variants={inView}
