@@ -20,7 +20,7 @@ function FilterSidebar({
   const hasFilters = Object.values(filters).some(v => v !== undefined && v !== -1)
 
   return (
-    <aside className="w-64 flex-shrink-0">
+    <aside className="w-full md:w-64 md:flex-shrink-0">
       <div className="sticky top-24">
         <div className="flex items-center justify-between mb-5">
           <h2 className="font-semibold text-unc-navy flex items-center gap-2">
@@ -143,7 +143,7 @@ export default function Browse() {
           )}
         </div>
 
-        <div className="flex gap-10">
+        <div className="flex flex-col gap-6 md:flex-row md:gap-10">
           <FilterSidebar
             filters={filters}
             onChange={setFilters}
