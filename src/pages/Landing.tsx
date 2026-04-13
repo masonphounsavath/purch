@@ -5,6 +5,7 @@ import { Navbar } from '../components/layout/Navbar'
 import { SignInModal } from '../components/auth/SignInModal'
 import { useAuth } from '../hooks/useAuth'
 import { ArrowRight, MapPin, MessageCircle, Shield, Bed } from 'lucide-react'
+import { LandingMap } from '../components/map/LandingMap'
 
 const ease = [0.16, 1, 0.3, 1] as [number, number, number, number]
 
@@ -197,12 +198,9 @@ export default function Landing() {
               Start browsing <ArrowRight className="w-4 h-4" />
             </Link>
           </motion.div>
-          {/* Map placeholder */}
-          <motion.div variants={inView} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }} className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-3xl h-80 flex items-center justify-center border border-gray-100 shadow-sm">
-            <div className="text-center">
-              <MapPin className="w-10 h-10 text-unc-blue mx-auto mb-3 opacity-60" />
-              <p className="text-sm text-slate-400 font-medium">Map view coming soon</p>
-            </div>
+          {/* Live map preview */}
+          <motion.div variants={inView} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }} className="h-80">
+            <LandingMap />
           </motion.div>
         </div>
       </section>

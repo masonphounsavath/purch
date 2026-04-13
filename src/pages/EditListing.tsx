@@ -8,6 +8,7 @@ import { Navbar } from '../components/layout/Navbar'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { AMENITIES } from '../lib/constants'
+import { geocodeAddress } from '../lib/geocode'
 
 const schema = z.object({
   title:          z.string().min(5, 'Title must be at least 5 characters'),
@@ -133,10 +134,15 @@ export default function EditListing() {
         newUrls.push(urlData.publicUrl)
       }
 
+      // Re-geocode in case address changed
+      const coords = await geocodeAddress(data.address)
+
       const { error: updateError } = await supabase.from('listings').update({
         title:          data.title,
         description:    data.description,
         address:        data.address,
+        lat:            coords?.lat ?? null,
+        lng:            coords?.lng ?? null,
         rent:           data.rent,
         available_from: data.available_from,
         available_to:   data.available_to,
