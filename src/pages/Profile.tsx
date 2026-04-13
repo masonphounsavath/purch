@@ -224,7 +224,7 @@ export default function Profile() {
 
               <button
                 onClick={handleSignOut}
-                className="flex items-center gap-2 text-sm text-slate-body hover:text-red-500 transition-colors border border-gray-200 hover:border-red-200 rounded-lg px-4 py-2 mt-1 flex-shrink-0"
+                className="hidden sm:flex items-center gap-2 text-sm text-slate-body hover:text-red-500 transition-colors border border-gray-200 hover:border-red-200 rounded-lg px-4 py-2 mt-1 flex-shrink-0"
               >
                 <LogOut className="w-4 h-4" />
                 Sign out
@@ -232,23 +232,25 @@ export default function Profile() {
             </div>
 
             {/* Stats row */}
-            <div className="flex items-center gap-8 mt-5 pt-5 border-t border-gray-100">
-              <div>
-                <p className="text-xl font-bold text-unc-navy leading-none">{listings.length}</p>
-                <p className="text-xs text-slate-body mt-0.5">Listings</p>
+            <div className="mt-5 pt-5 border-t border-gray-100 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-8">
+              <div className="flex items-center gap-8">
+                <div>
+                  <p className="text-xl font-bold text-unc-navy leading-none">{listings.length}</p>
+                  <p className="text-xs text-slate-body mt-0.5">Listings</p>
+                </div>
+                <div>
+                  <p className="text-xl font-bold text-unc-navy leading-none">{activeCount}</p>
+                  <p className="text-xs text-slate-body mt-0.5">Active</p>
+                </div>
+                <div>
+                  <p className="text-xl font-bold text-unc-navy leading-none">{savedIds.length}</p>
+                  <p className="text-xs text-slate-body mt-0.5">Saved</p>
+                </div>
               </div>
-              <div>
-                <p className="text-xl font-bold text-unc-navy leading-none">{activeCount}</p>
-                <p className="text-xs text-slate-body mt-0.5">Active</p>
-              </div>
-              <div>
-                <p className="text-xl font-bold text-unc-navy leading-none">{savedIds.length}</p>
-                <p className="text-xs text-slate-body mt-0.5">Saved</p>
-              </div>
-              <div className="ml-auto">
+              <div className="sm:ml-auto">
                 <Link
                   to="/messages"
-                  className="flex items-center gap-2 text-sm font-medium text-unc-blue border border-unc-blue/30 hover:bg-unc-blue/5 rounded-lg px-4 py-2 transition-colors"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-unc-blue border border-unc-blue/30 hover:bg-unc-blue/5 rounded-lg px-4 py-2 transition-colors"
                 >
                   <MessageSquare className="w-4 h-4" />
                   Messages
