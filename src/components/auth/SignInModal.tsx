@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { X, ArrowRight, Mail } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '../../lib/supabase'
 
 interface Props {
@@ -42,13 +43,23 @@ export function SignInModal({ onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div
+      <motion.div
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
       />
 
       {/* Modal */}
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+      <motion.div
+        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-8"
+        initial={{ opacity: 0, scale: 0.95, y: 12 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 12 }}
+        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+      >
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
@@ -116,7 +127,7 @@ export function SignInModal({ onClose }: Props) {
             </p>
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { SlidersHorizontal, X, Plus } from 'lucide-react'
 import { Navbar } from '../components/layout/Navbar'
 import { ListingCard } from '../components/listings/ListingCard'
@@ -174,16 +175,25 @@ export default function Browse() {
                 )}
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+              <motion.div
+                className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5"
+                initial="hidden"
+                animate="visible"
+                variants={{ visible: { transition: { staggerChildren: 0.07 } } }}
+              >
                 {listings.map(l => (
-                  <ListingCard
+                  <motion.div
                     key={l.id}
-                    listing={l}
-                    isSaved={savedIds.has(l.id)}
-                    onToggleSave={isAuthed ? toggleSave : undefined}
-                  />
+                    variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] } } }}
+                  >
+                    <ListingCard
+                      listing={l}
+                      isSaved={savedIds.has(l.id)}
+                      onToggleSave={isAuthed ? toggleSave : undefined}
+                    />
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             )}
           </div>
         </div>

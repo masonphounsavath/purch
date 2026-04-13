@@ -1,9 +1,27 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Navbar } from '../components/layout/Navbar'
 import { SignInModal } from '../components/auth/SignInModal'
 import { useAuth } from '../hooks/useAuth'
 import { ArrowRight, MapPin, MessageCircle, Shield, Bed } from 'lucide-react'
+
+const ease = [0.16, 1, 0.3, 1] as [number, number, number, number]
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease } },
+}
+
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.11 } },
+}
+
+const inView = {
+  hidden: { opacity: 0, y: 32 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease } },
+}
 
 function ListingCard({
   title,
@@ -42,7 +60,9 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-white text-unc-navy">
       <Navbar />
-      {showSignIn && <SignInModal onClose={() => setShowSignIn(false)} />}
+      <AnimatePresence>
+        {showSignIn && <SignInModal onClose={() => setShowSignIn(false)} />}
+      </AnimatePresence>
 
       {/* ── Hero ─────────────────────────────────────────── */}
       <section className="relative pt-36 pb-24 px-6 overflow-hidden">
@@ -52,19 +72,19 @@ export default function Landing() {
 
         <div className="relative max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left: copy */}
-          <div>
-            <p className="text-sm font-semibold text-unc-blue tracking-widest uppercase mb-6">
+          <motion.div variants={stagger} initial="hidden" animate="visible">
+            <motion.p variants={fadeUp} className="text-sm font-semibold text-unc-blue tracking-widest uppercase mb-6">
               Chapel Hill · @unc.edu only
-            </p>
-            <h1 className="text-5xl md:text-[62px] font-bold leading-[1.08] tracking-tight mb-6">
+            </motion.p>
+            <motion.h1 variants={fadeUp} className="text-5xl md:text-[62px] font-bold leading-[1.08] tracking-tight mb-6">
               Find your next<br />
               sublease.<br />
               <span className="text-unc-blue">Without the hassle.</span>
-            </h1>
-            <p className="text-lg text-slate-body leading-relaxed mb-10 max-w-md">
+            </motion.h1>
+            <motion.p variants={fadeUp} className="text-lg text-slate-body leading-relaxed mb-10 max-w-md">
               Purch is the sublease marketplace built exclusively for UNC students. Browse verified listings, message renters directly, and move in faster.
-            </p>
-            <div className="flex flex-wrap items-center gap-4">
+            </motion.p>
+            <motion.div variants={fadeUp} className="flex flex-wrap items-center gap-4">
               <Link
                 to="/browse"
                 className="inline-flex items-center gap-2 bg-unc-navy text-white font-semibold px-6 py-3.5 rounded-xl hover:bg-[#1c3a6b] transition-all hover:shadow-lg hover:shadow-unc-navy/20 text-[15px]"
@@ -83,15 +103,20 @@ export default function Landing() {
                   Post a sublease — free →
                 </button>
               )}
-            </div>
-            <p className="text-xs text-slate-400 mt-5">
+            </motion.div>
+            <motion.p variants={fadeUp} className="text-xs text-slate-400 mt-5">
               Sign in with your UNC credentials. No new account needed.
-            </p>
-          </div>
+            </motion.p>
+          </motion.div>
 
           {/* Right: floating listing cards */}
           <div className="relative hidden lg:block h-[420px]">
-            <div className="absolute top-0 left-8">
+            <motion.div
+              className="absolute top-0 left-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: [0, -10, 0] }}
+              transition={{ opacity: { duration: 0.5, delay: 0.3 }, y: { duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0 } }}
+            >
               <ListingCard
                 title="1BR on Franklin St near campus"
                 price="$850"
@@ -99,8 +124,13 @@ export default function Landing() {
                 tags={['Furnished', 'Utilities incl.']}
                 rotate="rotate-[-2deg]"
               />
-            </div>
-            <div className="absolute top-24 right-0">
+            </motion.div>
+            <motion.div
+              className="absolute top-24 right-0"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: [0, -8, 0] }}
+              transition={{ opacity: { duration: 0.5, delay: 0.5 }, y: { duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0.8 } }}
+            >
               <ListingCard
                 title="2BR/2BA at The Warehouse Apts"
                 price="$1,100"
@@ -108,8 +138,13 @@ export default function Landing() {
                 tags={['2 bed', 'Gym', 'Pool']}
                 rotate="rotate-[1.5deg]"
               />
-            </div>
-            <div className="absolute bottom-0 left-20">
+            </motion.div>
+            <motion.div
+              className="absolute bottom-0 left-20"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: [0, -12, 0] }}
+              transition={{ opacity: { duration: 0.5, delay: 0.7 }, y: { duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 1.6 } }}
+            >
               <ListingCard
                 title="Studio near Carrboro, fully furnished"
                 price="$720"
@@ -117,32 +152,38 @@ export default function Landing() {
                 tags={['Studio', 'A/C', 'Parking']}
                 rotate="rotate-[-1deg]"
               />
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* ── Divider stat row ─────────────────────────────── */}
       <section className="border-y border-gray-100 py-8 px-6">
-        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 text-center">
+        <motion.div
+          className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 text-center"
+          variants={stagger}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+        >
           {[
             { label: 'Listing fees', value: '$0' },
             { label: 'Access', value: '@unc.edu only' },
             { label: 'Messages', value: 'Real-time' },
             { label: 'Sign-in', value: 'Verified' },
           ].map(({ label, value }) => (
-            <div key={label}>
+            <motion.div key={label} variants={fadeUp}>
               <div className="text-2xl font-bold text-unc-navy">{value}</div>
               <div className="text-sm text-slate-400 mt-0.5">{label}</div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       {/* ── Feature: Browse ──────────────────────────────── */}
       <section className="py-28 px-6">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-          <div>
+          <motion.div variants={inView} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }}>
             <div className="inline-flex items-center gap-2 text-unc-blue text-sm font-semibold mb-5">
               <MapPin className="w-4 h-4" /> Browse &amp; filter
             </div>
@@ -155,14 +196,14 @@ export default function Landing() {
             <Link to="/browse" className="inline-flex items-center gap-1.5 text-unc-blue font-semibold hover:gap-3 transition-all">
               Start browsing <ArrowRight className="w-4 h-4" />
             </Link>
-          </div>
+          </motion.div>
           {/* Map placeholder */}
-          <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-3xl h-80 flex items-center justify-center border border-gray-100 shadow-sm">
+          <motion.div variants={inView} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }} className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-3xl h-80 flex items-center justify-center border border-gray-100 shadow-sm">
             <div className="text-center">
               <MapPin className="w-10 h-10 text-unc-blue mx-auto mb-3 opacity-60" />
               <p className="text-sm text-slate-400 font-medium">Map view coming soon</p>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -170,7 +211,7 @@ export default function Landing() {
       <section className="py-28 px-6 bg-gray-50/60">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           {/* Message thread mockup */}
-          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 order-2 lg:order-1">
+          <motion.div variants={inView} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }} className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 order-2 lg:order-1">
             <div className="flex items-center gap-3 mb-5 pb-4 border-b border-gray-100">
               <div className="w-9 h-9 rounded-full bg-unc-blue/20 flex items-center justify-center text-xs font-bold text-unc-blue">JL</div>
               <div>
@@ -190,9 +231,9 @@ export default function Landing() {
                 </div>
               </div>
             ))}
-          </div>
+          </motion.div>
 
-          <div className="order-1 lg:order-2">
+          <motion.div variants={inView} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }} className="order-1 lg:order-2">
             <div className="inline-flex items-center gap-2 text-unc-blue text-sm font-semibold mb-5">
               <MessageCircle className="w-4 h-4" /> In-app messaging
             </div>
@@ -202,14 +243,14 @@ export default function Landing() {
             <p className="text-lg text-slate-body leading-relaxed">
               Every conversation lives inside Purch. No group chats, no DMs, no giving out your contact info to strangers. Just direct, real-time messages between verified UNC students.
             </p>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* ── Feature: Trust ───────────────────────────────── */}
       <section className="py-28 px-6">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-          <div>
+          <motion.div variants={inView} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }}>
             <div className="inline-flex items-center gap-2 text-unc-blue text-sm font-semibold mb-5">
               <Shield className="w-4 h-4" /> UNC verified
             </div>
@@ -233,8 +274,8 @@ export default function Landing() {
                 </div>
               ))}
             </div>
-          </div>
-          <div className="bg-unc-navy rounded-3xl p-10 text-white">
+          </motion.div>
+          <motion.div variants={inView} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }} className="bg-unc-navy rounded-3xl p-10 text-white">
             <Shield className="w-10 h-10 text-unc-blue mb-6 opacity-80" />
             <p className="text-2xl font-bold mb-3 leading-snug">Enter your email.<br />Check your inbox.<br />You're in.</p>
             <p className="text-slate-400 text-sm leading-relaxed">
@@ -244,15 +285,17 @@ export default function Landing() {
               <p className="text-xs text-slate-500 tracking-wide uppercase font-semibold">Coming soon</p>
               <p className="text-white font-semibold mt-1">UNC Shibboleth SSO</p>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* ── How it works ─────────────────────────────────── */}
       <section className="py-28 px-6 bg-gray-50/60">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl md:text-[44px] font-bold tracking-tight mb-4">Up and running in minutes.</h2>
-          <p className="text-lg text-slate-body mb-16">Three steps. No friction.</p>
+          <motion.div variants={inView} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }}>
+            <h2 className="text-4xl md:text-[44px] font-bold tracking-tight mb-4">Up and running in minutes.</h2>
+            <p className="text-lg text-slate-body mb-16">Three steps. No friction.</p>
+          </motion.div>
           <div className="space-y-0">
             {[
               {
@@ -274,7 +317,14 @@ export default function Landing() {
                 icon: <MessageCircle className="w-5 h-5 text-unc-blue" />,
               },
             ].map((step, i, arr) => (
-              <div key={step.n} className="relative flex gap-8">
+              <motion.div
+                key={step.n}
+                className="relative flex gap-8"
+                variants={inView}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: '-60px' }}
+              >
                 {/* Line connector */}
                 {i < arr.length - 1 && (
                   <div className="absolute left-[19px] top-14 bottom-0 w-px bg-gray-200" />
@@ -287,7 +337,7 @@ export default function Landing() {
                   <h3 className="text-xl font-bold text-unc-navy mb-2">{step.title}</h3>
                   <p className="text-slate-body leading-relaxed max-w-lg">{step.desc}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -295,7 +345,13 @@ export default function Landing() {
 
       {/* ── CTA ──────────────────────────────────────────── */}
       <section className="py-28 px-6">
-        <div className="max-w-3xl mx-auto text-center">
+        <motion.div
+          className="max-w-3xl mx-auto text-center"
+          variants={inView}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-80px' }}
+        >
           <h2 className="text-4xl md:text-[52px] font-bold tracking-tight leading-tight mb-6">
             Your next place is<br />already on Purch.
           </h2>
@@ -317,7 +373,7 @@ export default function Landing() {
               Get started — it's free <ArrowRight className="w-4 h-4" />
             </button>
           )}
-        </div>
+        </motion.div>
       </section>
 
       {/* ── Footer ───────────────────────────────────────── */}
