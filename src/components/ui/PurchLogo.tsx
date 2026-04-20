@@ -5,19 +5,11 @@ interface PurchLogoProps {
 }
 
 export function PurchLogo({ size = 28, variant = 'full', className = '' }: PurchLogoProps) {
-  // height is 1.3× width to match the hero birdhouse proportions
-  const w = size * 1.05
-  const h = w * 1.3
+  const w = size
+  const h = size * 1.3
   return (
     <span className={`inline-flex items-center gap-2.5 ${className}`} aria-label="Purch">
-      <svg
-        width={w}
-        height={h}
-        viewBox="0 0 40 52"
-        fill="none"
-        aria-hidden
-        style={{ color: 'var(--ink)' }}
-      >
+      <svg width={w} height={h} viewBox="0 0 40 52" fill="none" aria-hidden style={{ color: 'var(--ink)' }}>
         {/* Shadow */}
         <ellipse cx="20" cy="50.4" rx="8" ry="1" fill="currentColor" opacity="0.08" />
         {/* Post */}
@@ -39,14 +31,13 @@ export function PurchLogo({ size = 28, variant = 'full', className = '' }: Purch
         <path d="M16.8 35 L23.2 35" stroke="currentColor" strokeWidth="0.6" strokeLinecap="round" />
         <circle cx="16.8" cy="35" r="0.4" fill="currentColor" />
         <circle cx="23.2" cy="35" r="0.4" fill="currentColor" />
-        {/* Bird (at entrance hole) */}
+        {/* Bird */}
         <g transform="translate(18.8 30.8)">
           <path d="M0 3 C 0 1.2, 1.4 0, 2.8 0 C 4.4 0, 5.6 1.2, 5.6 2.8 C 5.6 3.4, 5.4 3.8, 5 4.2 L 5.6 5 C 5.8 5.2, 5.6 5.6, 5.2 5.6 L 0.8 5.6 C 0.4 5.6, 0 5.2, 0 5 Z"
             fill="var(--paper)" stroke="currentColor" strokeWidth="0.4" strokeLinejoin="round" />
           <path d="M2 2.4 C 2.8 1.6, 4 1.6, 4.6 2.4 C 4.2 3.6, 3 4, 2.2 3.4 Z" fill="currentColor" opacity="0.85" />
           <path d="M0 2.8 L -1 3.2 L 0 3.8 Z" fill="var(--accent)" stroke="currentColor" strokeWidth="0.28" strokeLinejoin="round" />
           <circle cx="1.2" cy="2" r="0.32" fill="currentColor" />
-          <circle cx="1.28" cy="1.88" r="0.1" fill="var(--paper)" />
           <path d="M5.6 4 L 7.2 3.4 L 6.8 4.8 Z" fill="var(--paper)" stroke="currentColor" strokeWidth="0.36" strokeLinejoin="round" />
         </g>
       </svg>
