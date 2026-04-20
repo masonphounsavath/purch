@@ -278,12 +278,8 @@ export default function Landing() {
             <Shield className="w-10 h-10 text-unc-blue mb-6 opacity-80" />
             <p className="text-2xl font-bold mb-3 leading-snug">Enter your email.<br />Check your inbox.<br />You're in.</p>
             <p className="text-slate-400 text-sm leading-relaxed">
-              We send a secure magic link to your @unc.edu address. Click it and you're signed in — no password stored, no account to create.
+              We send a verification code to your @unc.edu address. Enter it and you're in — no password stored, no account to create.
             </p>
-            <div className="mt-6 pt-6 border-t border-white/10">
-              <p className="text-xs text-slate-500 tracking-wide uppercase font-semibold">Coming soon</p>
-              <p className="text-white font-semibold mt-1">UNC Shibboleth SSO</p>
-            </div>
           </motion.div>
         </div>
       </section>
