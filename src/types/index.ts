@@ -1,6 +1,7 @@
 export interface Profile {
   id: string
   onyen: string
+  email: string
   display_name: string
   avatar_url: string | null
   phone: string | null
@@ -31,6 +32,7 @@ export interface Listing {
   photos: string[]
   amenities: string[]
   is_active: boolean
+  view_count: number
   created_at: string
   profile?: Profile
 }

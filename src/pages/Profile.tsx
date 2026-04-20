@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   LogOut, Plus, MapPin, Calendar, Pencil, Trash2,
-  Camera, MessageSquare, Heart, Settings, Home, Phone, Star,
+  Camera, MessageSquare, Heart, Settings, Home, Phone, Star, Eye,
 } from 'lucide-react'
 import { Navbar } from '../components/layout/Navbar'
 import { useAuth } from '../hooks/useAuth'
@@ -333,6 +333,10 @@ export default function Profile() {
                             {new Date(listing.available_from).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                             {' – '}
                             {new Date(listing.available_to).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          </span>
+                          <span className="flex items-center gap-1 text-slate-400">
+                            <Eye className="w-3 h-3" />
+                            {listing.view_count ?? 0} {(listing.view_count ?? 0) === 1 ? 'view' : 'views'}
                           </span>
                           {(inquiryCounts[listing.id] ?? 0) > 0 && (
                             <span className="flex items-center gap-1 text-unc-blue font-medium">
