@@ -7,15 +7,16 @@ interface Props {
   onClose: () => void
 }
 
-type Step = 'email' | 'sent'
+type Step = 'email' | 'code'
 
 export function SignInModal({ onClose }: Props) {
   const [step, setStep] = useState<Step>('email')
   const [email, setEmail] = useState('')
+  const [code, setCode] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleEmailSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
 
@@ -25,18 +26,32 @@ export function SignInModal({ onClose }: Props) {
     }
 
     setLoading(true)
-    const { error: authError } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    })
+    const { error: authError } = await supabase.auth.signInWithOtp({ email })
     setLoading(false)
 
     if (authError) {
       setError(authError.message)
     } else {
-      setStep('sent')
+      setStep('code')
+    }
+  }
+
+  async function handleCodeSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
+
+    const { error: verifyError } = await supabase.auth.verifyOtp({
+      email,
+      token: code,
+      type: 'email',
+    })
+    setLoading(false)
+
+    if (verifyError) {
+      setError('Invalid or expired code. Try again.')
+    } else {
+      onClose()
     }
   }
 
@@ -72,11 +87,11 @@ export function SignInModal({ onClose }: Props) {
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-unc-navy mb-2">Sign in to Purch</h2>
               <p className="text-slate-body text-sm">
-                Enter your UNC email and we'll send you a verification email — no password needed.
+                Enter your UNC email and we'll send you a 6-digit code — no password needed.
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleEmailSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-unc-navy mb-1.5">
                   UNC email address
@@ -103,7 +118,7 @@ export function SignInModal({ onClose }: Props) {
                 {loading ? (
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  <>Send magic link <ArrowRight className="w-4 h-4" /></>
+                  <>Send code <ArrowRight className="w-4 h-4" /></>
                 )}
               </button>
             </form>
@@ -113,19 +128,57 @@ export function SignInModal({ onClose }: Props) {
             </p>
           </>
         ) : (
-          <div className="text-center py-4">
-            <div className="w-14 h-14 bg-unc-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Mail className="w-7 h-7 text-unc-blue" />
+          <>
+            <div className="mb-6">
+              <div className="w-14 h-14 bg-unc-blue/10 rounded-full flex items-center justify-center mb-4">
+                <Mail className="w-7 h-7 text-unc-blue" />
+              </div>
+              <h2 className="text-2xl font-bold text-unc-navy mb-2">Check your inbox</h2>
+              <p className="text-slate-body text-sm">
+                We sent a 6-digit code to <span className="font-semibold text-unc-navy">{email}</span>
+              </p>
             </div>
-            <h2 className="text-2xl font-bold text-unc-navy mb-2">Check your inbox</h2>
-            <p className="text-slate-body text-sm mb-1">
-              We sent a magic link to
-            </p>
-            <p className="font-semibold text-unc-navy text-sm mb-6">{email}</p>
-            <p className="text-xs text-slate-400">
-              Click the link in the email to sign in. You can close this window.
-            </p>
-          </div>
+
+            <form onSubmit={handleCodeSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-unc-navy mb-1.5">
+                  Verification code
+                </label>
+                <input
+                  type="text"
+                  value={code}
+                  onChange={e => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  placeholder="123456"
+                  required
+                  autoFocus
+                  inputMode="numeric"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-unc-navy placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-unc-blue/40 focus:border-unc-blue transition-all text-sm tracking-widest"
+                />
+                {error && (
+                  <p className="text-red-500 text-xs mt-1.5">{error}</p>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading || code.length !== 6}
+                className="w-full inline-flex items-center justify-center gap-2 bg-unc-navy text-white font-semibold py-3 rounded-xl hover:bg-[#1c3a6b] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              >
+                {loading ? (
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <>Verify <ArrowRight className="w-4 h-4" /></>
+                )}
+              </button>
+            </form>
+
+            <button
+              onClick={() => { setStep('email'); setCode(''); setError('') }}
+              className="w-full text-xs text-slate-400 hover:text-slate-600 mt-4 transition-colors"
+            >
+              Use a different email
+            </button>
+          </>
         )}
       </motion.div>
     </div>
