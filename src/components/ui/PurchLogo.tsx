@@ -5,59 +5,50 @@ interface PurchLogoProps {
 }
 
 export function PurchLogo({ size = 28, variant = 'full', className = '' }: PurchLogoProps) {
+  // height is 1.3× width to match the hero birdhouse proportions
+  const w = size * 1.05
+  const h = w * 1.3
   return (
     <span className={`inline-flex items-center gap-2.5 ${className}`} aria-label="Purch">
       <svg
-        width={size * 1.05}
-        height={size * 1.05}
-        viewBox="0 0 48 48"
+        width={w}
+        height={h}
+        viewBox="0 0 40 52"
         fill="none"
         aria-hidden
         style={{ color: 'var(--ink)' }}
       >
-        {/* Roof */}
-        <path
-          d="M9 22 L24 8 L39 22 Z"
-          fill="var(--accent)"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-        {/* Roof shadow */}
-        <path d="M24 8 L24 11.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity="0.3" />
-        {/* Finial */}
-        <circle cx="24" cy="7" r="1.3" fill="currentColor" />
-        {/* House box */}
-        <rect x="12" y="21" width="24" height="18" rx="1.2" fill="var(--paper)" stroke="currentColor" strokeWidth="1.5" />
-        {/* Plank lines */}
-        <path d="M12 27 L36 27" stroke="currentColor" strokeWidth="0.7" opacity="0.28" />
-        <path d="M12 33 L36 33" stroke="currentColor" strokeWidth="0.7" opacity="0.28" />
-        {/* Entrance hole */}
-        <circle cx="24" cy="30" r="4.2" fill="currentColor" opacity="0.92" />
-        <circle cx="24" cy="30" r="4.2" fill="none" stroke="var(--accent)" strokeWidth="0.9" opacity="0.5" />
-        {/* Perch stick */}
-        <path d="M21 36.2 L27 36.2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-        <circle cx="21" cy="36.2" r="0.7" fill="currentColor" />
-        <circle cx="27" cy="36.2" r="0.7" fill="currentColor" />
+        {/* Shadow */}
+        <ellipse cx="20" cy="50.4" rx="8" ry="1" fill="currentColor" opacity="0.08" />
         {/* Post */}
-        <path d="M24 39 L24 46" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-        {/* Bird body */}
-        <path
-          d="M30.5 17.5 C 30.5 15.2, 32.2 13.8, 34.3 13.8 C 36.6 13.8, 38.2 15.4, 38.2 17.4 C 38.2 18.2, 37.9 18.9, 37.5 19.4 L 38.4 20.8 C 38.6 21.1, 38.4 21.5, 38.1 21.5 L 31.4 21.5 C 30.8 21.5, 30.5 21.1, 30.5 20.6 Z"
-          fill="var(--paper)"
-          stroke="currentColor"
-          strokeWidth="1.3"
-          strokeLinejoin="round"
-        />
-        {/* Wing */}
-        <path d="M33 17 C 34 16.2, 35.5 16.2, 36.5 17 C 36 18.5, 34.5 19, 33.2 18.5 Z" fill="currentColor" opacity="0.85" />
-        {/* Beak */}
-        <path d="M30.5 17 L 28.6 17.5 L 30.5 18.3 Z" fill="var(--accent)" stroke="currentColor" strokeWidth="0.8" strokeLinejoin="round" />
-        {/* Eye */}
-        <circle cx="32.2" cy="16.6" r="0.65" fill="currentColor" />
-        <circle cx="32.35" cy="16.45" r="0.2" fill="var(--paper)" />
-        {/* Tail feather */}
-        <path d="M38.2 19.5 L 41 18.5 L 40.5 20.8 Z" fill="var(--paper)" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round" />
+        <path d="M20 42 L20 50" stroke="currentColor" strokeWidth="0.8" strokeLinecap="round" />
+        {/* Roof */}
+        <path d="M6.8 18 L20 4 L33.2 18 Z" fill="var(--accent)" stroke="currentColor" strokeWidth="0.5" strokeLinejoin="round" />
+        {/* Finial */}
+        <circle cx="20" cy="3.2" r="0.8" fill="currentColor" />
+        {/* House body */}
+        <rect x="9.2" y="17.2" width="21.6" height="24.8" rx="0.6" fill="var(--paper)" stroke="currentColor" strokeWidth="0.5" />
+        {/* Plank lines */}
+        <path d="M9.2 24 L30.8 24" stroke="currentColor" strokeWidth="0.2" opacity="0.25" />
+        <path d="M9.2 32 L30.8 32" stroke="currentColor" strokeWidth="0.2" opacity="0.25" />
+        <path d="M9.2 39 L30.8 39" stroke="currentColor" strokeWidth="0.2" opacity="0.25" />
+        {/* Entrance hole */}
+        <circle cx="20" cy="28" r="4.4" fill="currentColor" opacity="0.9" />
+        <circle cx="20" cy="28" r="4.4" fill="none" stroke="var(--accent)" strokeWidth="0.36" opacity="0.55" />
+        {/* Perch */}
+        <path d="M16.8 35 L23.2 35" stroke="currentColor" strokeWidth="0.6" strokeLinecap="round" />
+        <circle cx="16.8" cy="35" r="0.4" fill="currentColor" />
+        <circle cx="23.2" cy="35" r="0.4" fill="currentColor" />
+        {/* Bird (at entrance hole) */}
+        <g transform="translate(18.8 30.8)">
+          <path d="M0 3 C 0 1.2, 1.4 0, 2.8 0 C 4.4 0, 5.6 1.2, 5.6 2.8 C 5.6 3.4, 5.4 3.8, 5 4.2 L 5.6 5 C 5.8 5.2, 5.6 5.6, 5.2 5.6 L 0.8 5.6 C 0.4 5.6, 0 5.2, 0 5 Z"
+            fill="var(--paper)" stroke="currentColor" strokeWidth="0.4" strokeLinejoin="round" />
+          <path d="M2 2.4 C 2.8 1.6, 4 1.6, 4.6 2.4 C 4.2 3.6, 3 4, 2.2 3.4 Z" fill="currentColor" opacity="0.85" />
+          <path d="M0 2.8 L -1 3.2 L 0 3.8 Z" fill="var(--accent)" stroke="currentColor" strokeWidth="0.28" strokeLinejoin="round" />
+          <circle cx="1.2" cy="2" r="0.32" fill="currentColor" />
+          <circle cx="1.28" cy="1.88" r="0.1" fill="var(--paper)" />
+          <path d="M5.6 4 L 7.2 3.4 L 6.8 4.8 Z" fill="var(--paper)" stroke="currentColor" strokeWidth="0.36" strokeLinejoin="round" />
+        </g>
       </svg>
       {variant === 'full' && (
         <span
