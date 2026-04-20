@@ -1,21 +1,76 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ─────────────────────────────────────────────────────────────
+   DESIGN TOKENS — warm community (default light)
+───────────────────────────────────────────────────────────────*/
+:root {
+  --bg:      #F7F4EE;
+  --bg-2:    #EEE8DC;
+  --ink:     #1B1D20;
+  --ink-2:   #3E4149;
+  --muted:   #7A7670;
+  --line:    #E3DDD0;
+  --paper:   #FBF9F3;
+
+  --carolina:     #4B9CD3;
+  --carolina-ink: #2E6E9E;
+  --navy:         #13294B;
+  --accent:       #4B9CD3;
+
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-ui:      'Geist', ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    'Geist Mono', ui-monospace, monospace;
+
+  /* Map tokens (light default) */
+  --map-surface:    var(--paper);
+  --map-street:     var(--line);
+  --map-street-hi:  var(--bg-2);
+  --map-street-fine:var(--line);
+  --map-label:      var(--muted);
+}
+
+/* ── Dark mode ────────────────────────────────────────────── */
+[data-mode="dark"] {
+  --bg:    #14130F;
+  --bg-2:  #1E1D18;
+  --ink:   #F5F1E8;
+  --ink-2: #D8D4CA;
+  --muted: #8F8A7E;
+  --line:  #2C2B25;
+  --paper: #1A1914;
+
+  --map-surface:     #0F1319;
+  --map-street:      #2B3240;
+  --map-street-hi:   #3A4454;
+  --map-street-fine: #232935;
+  --map-label:       #7A8494;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   BASE
+───────────────────────────────────────────────────────────────*/
 @layer base {
-  * {
+  *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body, #root {
+    height: 100%;
   }
 
   body {
-    font-family: 'Inter', system-ui, sans-serif;
-    background-color: #ffffff;
-    color: #111827;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-ui);
+    font-feature-settings: "ss01", "cv11";
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    transition: background 0.25s ease, color 0.25s ease;
   }
 
   a {
@@ -23,10 +78,139 @@
     color: inherit;
   }
 
-  /* Prevent iOS auto-zoom on input focus (requires font-size >= 16px) */
-  input,
-  textarea,
-  select {
+  h1, h2, h3, p {
+    text-wrap: pretty;
+  }
+
+  /* Prevent iOS auto-zoom */
+  input, textarea, select {
     font-size: 16px;
   }
+
+  ::selection {
+    background: var(--accent);
+    color: white;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   TYPOGRAPHY HELPERS
+───────────────────────────────────────────────────────────────*/
+.font-display {
+  font-family: var(--font-display);
+  font-feature-settings: "ss01";
+}
+.font-mono-var {
+  font-family: var(--font-mono);
+}
+.serif-i {
+  font-family: var(--font-display);
+  font-style: italic;
+}
+.tabnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   SURFACE HELPERS
+───────────────────────────────────────────────────────────────*/
+.surface-paper { background: var(--paper); }
+.surface-bg    { background: var(--bg); }
+.surface-bg-2  { background: var(--bg-2); }
+.hairline      { border-color: var(--line); }
+.text-ink      { color: var(--ink); }
+.text-ink-2    { color: var(--ink-2); }
+.text-muted    { color: var(--muted); }
+.text-accent   { color: var(--accent); }
+
+/* ─────────────────────────────────────────────────────────────
+   PLACEHOLDER PHOTOS — stripey warm neutrals
+───────────────────────────────────────────────────────────────*/
+.ph {
+  position: relative;
+  overflow: hidden;
+  background:
+    repeating-linear-gradient(135deg, rgba(0,0,0,.035) 0 1px, transparent 1px 10px),
+    linear-gradient(180deg, var(--bg-2), var(--bg));
+}
+[data-mode="dark"] .ph {
+  background:
+    repeating-linear-gradient(135deg, rgba(255,255,255,.025) 0 1px, transparent 1px 10px),
+    linear-gradient(180deg, var(--bg-2), var(--bg));
+}
+.ph::after {
+  content: attr(data-label);
+  position: absolute; inset: auto 0 0 0;
+  padding: 6px 10px;
+  font: 500 10px/1 var(--font-mono);
+  color: var(--muted);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.ph-accent {
+  background:
+    repeating-linear-gradient(135deg, rgba(75,156,211,.12) 0 1px, transparent 1px 10px),
+    linear-gradient(180deg, #DDEBF5, #C7DDED);
+}
+.ph-blue {
+  background:
+    repeating-linear-gradient(135deg, rgba(75,156,211,.14) 0 1px, transparent 1px 10px),
+    linear-gradient(180deg, #DDEBF5, #C7DDED);
+}
+.ph-green {
+  background:
+    repeating-linear-gradient(135deg, rgba(65,110,75,.14) 0 1px, transparent 1px 10px),
+    linear-gradient(180deg, #DDE4D7, #C5D1BA);
+}
+.ph-dusk {
+  background:
+    repeating-linear-gradient(135deg, rgba(60,50,90,.14) 0 1px, transparent 1px 10px),
+    linear-gradient(180deg, #E8DFEA, #CFC1D6);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   SCROLLBAR HIDE
+───────────────────────────────────────────────────────────────*/
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+/* ─────────────────────────────────────────────────────────────
+   ANIMATIONS
+───────────────────────────────────────────────────────────────*/
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee-track { animation: marquee 48s linear infinite; }
+
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(75,156,211,.45); }
+  80%  { box-shadow: 0 0 0 16px rgba(75,156,211,0); }
+  100% { box-shadow: 0 0 0 0 rgba(75,156,211,0); }
+}
+.pulse { animation: pulse-ring 2.2s infinite; }
+
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   EASED TRANSITION
+───────────────────────────────────────────────────────────────*/
+.eased { transition: all .4s cubic-bezier(0.16,1,0.3,1); }
+
+/* ─────────────────────────────────────────────────────────────
+   MAP GLOW
+───────────────────────────────────────────────────────────────*/
+.map-glow {
+  box-shadow:
+    0 0 0 1px var(--line),
+    0 30px 80px -20px rgba(0,0,0,0.18);
+}
+[data-mode="dark"] .map-glow {
+  box-shadow:
+    0 0 0 1px var(--line),
+    0 30px 80px -20px rgba(0,0,0,0.6),
+    inset 0 0 120px rgba(95,184,232,0.04);
 }
