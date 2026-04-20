@@ -29,6 +29,7 @@ export interface Listing {
   bedrooms: number
   bathrooms: number
   is_furnished: boolean
+  utilities_included: boolean
   photos: string[]
   amenities: string[]
   is_active: boolean

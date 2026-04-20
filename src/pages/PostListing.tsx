@@ -5,21 +5,23 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Upload, X, Check, ArrowRight, Loader } from 'lucide-react'
 import { Navbar } from '../components/layout/Navbar'
+import { AddressAutocomplete } from '../components/AddressAutocomplete'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { AMENITIES } from '../lib/constants'
 import { geocodeAddress } from '../lib/geocode'
 
 const schema = z.object({
-  title:          z.string().min(5, 'Title must be at least 5 characters'),
-  description:    z.string().min(20, 'Add a bit more detail (20 chars min)'),
-  address:        z.string().min(5, 'Enter a full address'),
-  rent:           z.coerce.number().min(100, 'Rent must be at least $100').max(10000),
-  available_from: z.string().min(1, 'Pick a start date'),
-  available_to:   z.string().min(1, 'Pick an end date'),
-  bedrooms:       z.coerce.number().min(0).max(10),
-  bathrooms:      z.coerce.number().min(0.5).max(10),
-  is_furnished:   z.boolean(),
+  title:               z.string().min(5, 'Title must be at least 5 characters'),
+  description:         z.string().min(20, 'Add a bit more detail (20 chars min)'),
+  address:             z.string().min(5, 'Enter a full address'),
+  rent:                z.coerce.number().min(100, 'Rent must be at least $100').max(10000),
+  available_from:      z.string().min(1, 'Pick a start date'),
+  available_to:        z.string().min(1, 'Pick an end date'),
+  bedrooms:            z.coerce.number().min(0).max(10),
+  bathrooms:           z.coerce.number().min(0.5).max(10),
+  is_furnished:        z.boolean(),
+  utilities_included:  z.boolean(),
 })
 
 type FormData = z.infer<typeof schema>
@@ -32,15 +34,20 @@ export default function PostListing() {
   const [previews, setPreviews] = useState<string[]>([])
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [resolvedCoords, setResolvedCoords] = useState<{ lat: number; lng: number } | null>(null)
 
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema) as any,
-    defaultValues: { bedrooms: 1, bathrooms: 1, is_furnished: false },
+    defaultValues: { bedrooms: 1, bathrooms: 1, is_furnished: false, utilities_included: false },
   })
+
+  const addressValue = watch('address') ?? ''
 
   function toggleAmenity(tag: string) {
     setAmenities(prev =>
@@ -78,34 +85,33 @@ export default function PostListing() {
     setError('')
 
     try {
-      // 1. Geocode address
-      const coords = await geocodeAddress(data.address)
+      // Use pre-resolved coords from autocomplete, fall back to geocoding
+      const coords = resolvedCoords ?? await geocodeAddress(data.address)
 
-      // 2. Create listing row first to get an ID
       const { data: listing, error: listingError } = await supabase
         .from('listings')
         .insert({
-          user_id:        user.id,
-          title:          data.title,
-          description:    data.description,
-          address:        data.address,
-          lat:            coords?.lat ?? null,
-          lng:            coords?.lng ?? null,
-          rent:           data.rent,
-          available_from: data.available_from,
-          available_to:   data.available_to,
-          bedrooms:       data.bedrooms,
-          bathrooms:      data.bathrooms,
-          is_furnished:   data.is_furnished,
+          user_id:            user.id,
+          title:              data.title,
+          description:        data.description,
+          address:            data.address,
+          lat:                coords?.lat ?? null,
+          lng:                coords?.lng ?? null,
+          rent:               data.rent,
+          available_from:     data.available_from,
+          available_to:       data.available_to,
+          bedrooms:           data.bedrooms,
+          bathrooms:          data.bathrooms,
+          is_furnished:       data.is_furnished,
+          utilities_included: data.utilities_included,
           amenities,
-          photos:         [],
+          photos:             [],
         })
         .select()
         .single()
 
       if (listingError) throw listingError
 
-      // 2. Upload photos to Storage
       const photoUrls: string[] = []
       for (const file of photos) {
         const ext = file.name.split('.').pop()
@@ -122,7 +128,6 @@ export default function PostListing() {
         photoUrls.push(urlData.publicUrl)
       }
 
-      // 3. Update listing with photo URLs
       if (photoUrls.length > 0) {
         await supabase
           .from('listings')
@@ -165,12 +170,12 @@ export default function PostListing() {
 
               <div>
                 <label className="block text-sm font-medium text-unc-navy mb-1.5">Address</label>
-                <input
-                  {...register('address')}
-                  placeholder="123 Franklin St, Chapel Hill, NC 27514"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-unc-navy placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-unc-blue/30 focus:border-unc-blue transition-all"
+                <AddressAutocomplete
+                  value={addressValue}
+                  onChange={val => setValue('address', val, { shouldValidate: true })}
+                  onCoords={setResolvedCoords}
+                  error={errors.address?.message}
                 />
-                {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address.message}</p>}
               </div>
 
               <div>
@@ -225,7 +230,7 @@ export default function PostListing() {
           {/* ── Property details ── */}
           <section>
             <h2 className="text-xs font-bold text-slate-400 tracking-widest uppercase mb-4">Property details</h2>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-unc-navy mb-1.5">Bedrooms</label>
                 <select
@@ -252,6 +257,13 @@ export default function PostListing() {
                 <label className="block text-sm font-medium text-unc-navy mb-1.5">Furnished</label>
                 <label className="flex items-center h-[46px] gap-3 px-4 rounded-xl border border-gray-200 cursor-pointer hover:border-unc-blue transition-colors">
                   <input type="checkbox" {...register('is_furnished')} className="w-4 h-4 accent-unc-blue" />
+                  <span className="text-sm text-unc-navy">Yes</span>
+                </label>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-unc-navy mb-1.5">Utilities included</label>
+                <label className="flex items-center h-[46px] gap-3 px-4 rounded-xl border border-gray-200 cursor-pointer hover:border-unc-blue transition-colors">
+                  <input type="checkbox" {...register('utilities_included')} className="w-4 h-4 accent-unc-blue" />
                   <span className="text-sm text-unc-navy">Yes</span>
                 </label>
               </div>
@@ -319,7 +331,6 @@ export default function PostListing() {
             )}
           </section>
 
-          {/* ── Submit ── */}
           {error && (
             <p className="text-red-500 text-sm bg-red-50 px-4 py-3 rounded-xl">{error}</p>
           )}
