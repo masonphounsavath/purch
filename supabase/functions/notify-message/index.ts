@@ -30,8 +30,9 @@ Deno.serve(async (req) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'Purch <noreply@purchit.org>',
+      from: 'Purch <hello@purchit.org>',
       to: recipient.email,
+      reply_to: 'hello@purchit.org',
       subject: `${senderName} sent you a message on Purch`,
       html: `
         <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 32px 24px;">
