@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import {
   MapPin, Calendar, ChevronLeft,
-  ChevronRight, MessageCircle, ArrowLeft, Pencil, Loader
+  ChevronRight, MessageCircle, ArrowLeft, Pencil, Loader, Mail, Phone
 } from 'lucide-react'
 import { Navbar } from '../components/layout/Navbar'
 import { DetailMap } from '../components/map/DetailMap'
@@ -89,15 +89,21 @@ export default function ListingDetail() {
     if (!id) return
     supabase
       .from('listings')
-      .select('*, profile:profiles(display_name, avatar_url)')
+      .select('*, profile:profiles(display_name, avatar_url, phone, email)')
       .eq('id', id)
       .single()
       .then(({ data, error }) => {
         if (error || !data) setNotFound(true)
-        else setListing(data as Listing)
+        else {
+          setListing(data as Listing)
+          // Increment view count for non-owners (best effort)
+          if (data && user?.id !== data.user_id) {
+            supabase.rpc('increment_view_count', { listing_uuid: id })
+          }
+        }
         setLoading(false)
       })
-  }, [id])
+  }, [id, user])
 
   async function sendMessage() {
     if (!user || !listing || !msgBody.trim()) return
@@ -304,6 +310,30 @@ export default function ListingDetail() {
               {isOwner && (
                 <div className="border-t border-gray-100 pt-4 text-center">
                   <p className="text-xs text-slate-400">This is your listing.</p>
+                </div>
+              )}
+
+              {!isOwner && isAuthed && (listing.profile?.email || listing.profile?.phone) && (
+                <div className="border-t border-gray-100 pt-4 space-y-2">
+                  <p className="text-xs font-bold text-slate-400 tracking-widest uppercase">Also reach out via</p>
+                  {listing.profile?.email && (
+                    <a
+                      href={`mailto:${listing.profile.email}`}
+                      className="flex items-center gap-2 text-sm text-slate-body hover:text-unc-navy transition-colors"
+                    >
+                      <Mail className="w-4 h-4 text-unc-blue flex-shrink-0" />
+                      {listing.profile.email}
+                    </a>
+                  )}
+                  {listing.profile?.phone && (
+                    <a
+                      href={`tel:${listing.profile.phone}`}
+                      className="flex items-center gap-2 text-sm text-slate-body hover:text-unc-navy transition-colors"
+                    >
+                      <Phone className="w-4 h-4 text-unc-blue flex-shrink-0" />
+                      {listing.profile.phone}
+                    </a>
+                  )}
                 </div>
               )}
             </div>
