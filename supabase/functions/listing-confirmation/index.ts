@@ -32,9 +32,10 @@ Deno.serve(async (req) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'Purch <noreply@purchit.org>',
+      from: 'Purch <hello@purchit.org>',
       to: user.email,
-      subject: 'Your listing is live on Purch 🎉',
+      reply_to: 'hello@purchit.org',
+      subject: 'Your listing is live on Purch',
       html: `
         <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 32px 24px;">
           <div style="margin-bottom: 24px;">
@@ -42,7 +43,7 @@ Deno.serve(async (req) => {
           </div>
 
           <p style="font-size: 20px; font-weight: 700; color: #13294B; margin-bottom: 8px;">
-            Your listing is live! 🎉
+            Your listing is live
           </p>
           <p style="color: #64748b; font-size: 15px; margin-bottom: 24px;">
             Hey ${name}, your sublease is now visible to UNC students on Purch.
@@ -50,9 +51,9 @@ Deno.serve(async (req) => {
 
           <div style="background: #f8fafc; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px;">
             <p style="font-size: 16px; font-weight: 700; color: #13294B; margin: 0 0 8px 0;">${listing.title}</p>
-            <p style="color: #64748b; font-size: 14px; margin: 0 0 4px 0;">📍 ${listing.address}</p>
-            <p style="color: #64748b; font-size: 14px; margin: 0 0 4px 0;">💰 $${listing.rent}/mo</p>
-            <p style="color: #64748b; font-size: 14px; margin: 0;">📅 ${availableFrom} – ${availableTo}</p>
+            <p style="color: #64748b; font-size: 14px; margin: 0 0 4px 0;">${listing.address}</p>
+            <p style="color: #64748b; font-size: 14px; margin: 0 0 4px 0;">$${listing.rent}/mo</p>
+            <p style="color: #64748b; font-size: 14px; margin: 0;">${availableFrom} – ${availableTo}</p>
           </div>
 
           <a href="https://purchit.org/browse"
