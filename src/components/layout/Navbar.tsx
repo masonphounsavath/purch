@@ -1,15 +1,25 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { LogOut, MessageCircle } from 'lucide-react'
+import { Link, useLocation } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { useAuth } from '../../hooks/useAuth'
 import { useUnreadCount } from '../../hooks/useUnreadCount'
+import { useDarkMode } from '../../hooks/useDarkMode'
 import { supabase } from '../../lib/supabase'
 import { SignInModal } from '../auth/SignInModal'
+import { PurchLogo } from '../ui/PurchLogo'
+
+const navLinks = [
+  { to: '/browse', label: 'Browse' },
+  { to: '/post', label: 'Post' },
+  { to: '/messages', label: 'Messages' },
+]
 
 export function Navbar() {
   const { isAuthed, user } = useAuth()
   const unreadCount = useUnreadCount()
+  const { isDark, toggle: toggleDark } = useDarkMode()
   const [showSignIn, setShowSignIn] = useState(false)
+  const location = useLocation()
 
   async function handleSignOut() {
     await supabase.auth.signOut()
@@ -17,52 +27,104 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+      <nav
+        className="sticky top-0 z-40 backdrop-blur-md"
+        style={{
+          background: 'color-mix(in oklab, var(--bg) 82%, transparent)',
+          borderBottom: '1px solid var(--line)',
+          height: 56,
+        }}
+      >
+        <div className="max-w-[1280px] mx-auto px-6 h-full flex items-center justify-between">
+          {/* Logo */}
           <Link to="/" className="flex items-center">
-            <img src="/logo.svg" alt="Purch" className="h-7" />
+            <PurchLogo size={22} />
           </Link>
-          <div className="hidden md:flex items-center gap-8">
-            <Link to="/browse" className="text-sm text-slate-500 hover:text-unc-navy transition-colors font-medium">
-              Browse
-            </Link>
-            {isAuthed && (
-              <>
-                <Link to="/post" className="text-sm text-slate-500 hover:text-unc-navy transition-colors font-medium">
-                  Post a listing
-                </Link>
-                <Link to="/messages" className="text-sm text-slate-500 hover:text-unc-navy transition-colors font-medium flex items-center gap-1.5 relative">
-                  <MessageCircle className="w-4 h-4" /> Messages
-                  {unreadCount > 0 && (
-                    <span className="min-w-[18px] h-[18px] bg-unc-blue text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">
+
+          {/* Center links */}
+          <div className="hidden md:flex items-center gap-7">
+            {navLinks.map(({ to, label }) => {
+              if ((to === '/post' || to === '/messages') && !isAuthed) return null
+              const active = location.pathname === to
+              return (
+                <Link
+                  key={to}
+                  to={to}
+                  className="relative text-[13px] eased"
+                  style={{
+                    color: active ? 'var(--ink)' : 'var(--muted)',
+                    fontWeight: active ? 500 : 400,
+                  }}
+                >
+                  {label}
+                  {label === 'Messages' && unreadCount > 0 && (
+                    <span
+                      className="ml-1.5 inline-flex items-center justify-center text-[10px] rounded-full px-1.5 py-0.5 text-white"
+                      style={{ background: 'var(--accent)' }}
+                    >
                       {unreadCount > 9 ? '9+' : unreadCount}
                     </span>
                   )}
+                  {active && (
+                    <motion.span
+                      layoutId="nav-underline"
+                      className="absolute left-0 right-0 -bottom-[19px] h-[2px]"
+                      style={{ background: 'var(--ink)' }}
+                    />
+                  )}
                 </Link>
-              </>
-            )}
+              )
+            })}
           </div>
-          <div className="flex items-center gap-3">
+
+          {/* Right side */}
+          <div className="flex items-center gap-2">
+            {/* Dark mode toggle */}
+            <button
+              onClick={toggleDark}
+              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              className="w-8 h-8 rounded-full grid place-items-center eased"
+              style={{
+                color: 'var(--ink-2)',
+                border: '1px solid var(--line)',
+                background: 'transparent',
+              }}
+            >
+              {isDark ? (
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="4" />
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+              )}
+            </button>
+
             {isAuthed ? (
               <>
                 <Link
                   to="/profile"
-                  className="w-8 h-8 rounded-full bg-unc-blue flex items-center justify-center text-white text-xs font-semibold hover:bg-unc-navy transition-colors"
+                  className="w-8 h-8 rounded-full grid place-items-center text-[11px] font-medium text-white eased"
+                  style={{ background: 'var(--accent)' }}
                   title={user?.email}
                 >
                   {user?.email?.slice(0, 2).toUpperCase()}
                 </Link>
                 <button
                   onClick={handleSignOut}
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-unc-navy transition-colors"
+                  className="text-[12px] px-3.5 py-1.5 rounded-full eased hidden sm:block"
+                  style={{ color: 'var(--muted)', border: '1px solid var(--line)', background: 'transparent' }}
                 >
-                  <LogOut className="w-4 h-4" /> Sign out
+                  Sign out
                 </button>
               </>
             ) : (
               <button
                 onClick={() => setShowSignIn(true)}
-                className="inline-flex items-center gap-1.5 text-sm font-semibold bg-unc-navy text-white px-4 py-2 rounded-lg hover:bg-[#1c3a6b] transition-colors"
+                className="text-[13px] px-3.5 py-1.5 rounded-full eased font-medium"
+                style={{ background: 'var(--ink)', color: 'var(--bg)' }}
               >
                 Sign in
               </button>

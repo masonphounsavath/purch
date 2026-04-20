@@ -23,13 +23,14 @@ function FilterSidebar({
   return (
     <div className="mb-6">
       <div className="flex items-center justify-between mb-5">
-        <h2 className="font-semibold text-unc-navy flex items-center gap-2 text-sm">
+        <h2 className="font-medium flex items-center gap-2 text-sm" style={{ color: 'var(--ink)' }}>
           <SlidersHorizontal className="w-4 h-4" /> Filters
         </h2>
         {hasFilters && (
           <button
             onClick={onReset}
-            className="text-xs text-slate-400 hover:text-unc-navy transition-colors flex items-center gap-1"
+            className="text-xs flex items-center gap-1 eased"
+            style={{ color: 'var(--muted)' }}
           >
             <X className="w-3 h-3" /> Clear
           </button>
@@ -49,7 +50,8 @@ function FilterSidebar({
             onChange={e =>
               onChange({ ...filters, minRent: e.target.value ? +e.target.value : undefined })
             }
-            className="w-20 px-2 py-1.5 rounded-lg border border-gray-200 text-xs text-unc-navy focus:outline-none focus:ring-2 focus:ring-unc-blue/30 focus:border-unc-blue transition-all"
+            className="w-20 px-2 py-1.5 rounded-lg text-xs focus:outline-none eased"
+            style={{ background: 'var(--paper)', border: '1px solid var(--line)', color: 'var(--ink)' }}
           />
           <span className="text-slate-300 text-xs">–</span>
           <input
@@ -59,7 +61,8 @@ function FilterSidebar({
             onChange={e =>
               onChange({ ...filters, maxRent: e.target.value ? +e.target.value : undefined })
             }
-            className="w-20 px-2 py-1.5 rounded-lg border border-gray-200 text-xs text-unc-navy focus:outline-none focus:ring-2 focus:ring-unc-blue/30 focus:border-unc-blue transition-all"
+            className="w-20 px-2 py-1.5 rounded-lg text-xs focus:outline-none eased"
+            style={{ background: 'var(--paper)', border: '1px solid var(--line)', color: 'var(--ink)' }}
           />
         </div>
 
@@ -79,11 +82,12 @@ function FilterSidebar({
               <button
                 key={opt.value}
                 onClick={() => onChange({ ...filters, bedrooms: opt.value })}
-                className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                  (filters.bedrooms ?? -1) === opt.value
-                    ? 'bg-unc-navy text-white border-unc-navy'
-                    : 'bg-white text-slate-600 border-gray-200 hover:border-unc-navy'
-                }`}
+                className="px-2.5 py-1.5 rounded-lg text-xs font-medium eased"
+                style={{
+                  background: (filters.bedrooms ?? -1) === opt.value ? 'var(--ink)' : 'var(--paper)',
+                  color: (filters.bedrooms ?? -1) === opt.value ? 'var(--bg)' : 'var(--ink-2)',
+                  border: `1px solid ${(filters.bedrooms ?? -1) === opt.value ? 'var(--ink)' : 'var(--line)'}`,
+                }}
               >
                 {opt.label}
               </button>
@@ -117,7 +121,8 @@ function FilterSidebar({
             onChange={e =>
               onChange({ ...filters, availableFrom: e.target.value || undefined })
             }
-            className="px-2 py-1.5 rounded-lg border border-gray-200 text-xs text-unc-navy focus:outline-none focus:ring-2 focus:ring-unc-blue/30 focus:border-unc-blue transition-all"
+            className="px-2 py-1.5 rounded-lg text-xs focus:outline-none eased"
+            style={{ background: 'var(--paper)', border: '1px solid var(--line)', color: 'var(--ink)' }}
           />
         </div>
 
@@ -129,7 +134,8 @@ function FilterSidebar({
           <select
             value={filters.sort ?? 'newest'}
             onChange={e => onChange({ ...filters, sort: e.target.value as SortOption })}
-            className="px-2 py-1.5 rounded-lg border border-gray-200 text-xs text-unc-navy focus:outline-none focus:ring-2 focus:ring-unc-blue/30 focus:border-unc-blue transition-all bg-white"
+            className="px-2 py-1.5 rounded-lg text-xs focus:outline-none eased"
+            style={{ background: 'var(--paper)', border: '1px solid var(--line)', color: 'var(--ink)' }}
           >
             <option value="newest">Newest</option>
             <option value="price_asc">Price: Low → High</option>
@@ -158,11 +164,11 @@ export default function Browse() {
   const [mobileView, setMobileView] = useState<'list' | 'map'>('list')
 
   return (
-    <div className="h-screen flex flex-col bg-white">
+    <div className="h-screen flex flex-col" style={{ background: 'var(--bg)' }}>
       <Navbar />
 
       {/* Split layout below navbar */}
-      <div className="flex flex-1 overflow-hidden pt-16">
+      <div className="flex flex-1 overflow-hidden">
 
         {/* ── Left panel (list) ── */}
         <div
@@ -174,8 +180,10 @@ export default function Browse() {
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h1 className="text-2xl font-bold text-unc-navy">Subleases in Chapel Hill</h1>
-                <p className="text-slate-body mt-0.5 text-sm">
+                <h1 className="font-display text-2xl" style={{ fontWeight: 400, letterSpacing: '-0.02em', color: 'var(--ink)' }}>
+                  Subleases in Chapel Hill
+                </h1>
+                <p className="mt-0.5 text-sm" style={{ color: 'var(--muted)' }}>
                   {loading
                     ? 'Loading...'
                     : `${listings.length} listing${listings.length !== 1 ? 's' : ''} available`}
@@ -184,7 +192,8 @@ export default function Browse() {
               {isAuthed && (
                 <Link
                   to="/post"
-                  className="inline-flex items-center gap-1.5 bg-unc-navy text-white text-xs font-semibold px-3.5 py-2 rounded-xl hover:bg-[#1c3a6b] transition-colors whitespace-nowrap"
+                  className="inline-flex items-center gap-1.5 text-xs font-medium px-3.5 py-2 rounded-full eased whitespace-nowrap"
+                  style={{ background: 'var(--ink)', color: 'var(--bg)' }}
                 >
                   <Plus className="w-3.5 h-3.5" /> Post a listing
                 </Link>
@@ -220,29 +229,31 @@ export default function Browse() {
               <div className="text-center py-24 px-4">
                 {hasActiveFilters(filters) ? (
                   <>
-                    <p className="text-slate-400 text-lg font-medium mb-2">No listings match your filters</p>
-                    <p className="text-slate-300 text-sm mb-4">Try adjusting or clearing your filters</p>
+                    <p className="text-lg font-medium mb-2" style={{ color: 'var(--ink)' }}>No listings match your filters</p>
+                    <p className="text-sm mb-4" style={{ color: 'var(--muted)' }}>Try adjusting or clearing your filters</p>
                     <button
                       onClick={() => setFilters(EMPTY_FILTERS)}
-                      className="text-unc-blue text-sm font-medium hover:underline"
+                      className="text-sm font-medium eased"
+                      style={{ color: 'var(--accent)' }}
                     >
                       Clear filters
                     </button>
                   </>
                 ) : (
                   <>
-                    <p className="text-2xl font-bold text-unc-navy mb-2">No listings yet</p>
-                    <p className="text-slate-400 text-sm mb-6">Be the first UNC student to post a sublease on Purch.</p>
+                    <p className="font-display text-2xl mb-2" style={{ fontWeight: 400, color: 'var(--ink)' }}>No listings yet</p>
+                    <p className="text-sm mb-6" style={{ color: 'var(--muted)' }}>Be the first UNC student to post a sublease on Purch.</p>
                     {isAuthed ? (
                       <Link
                         to="/post"
-                        className="inline-flex items-center gap-2 bg-unc-navy text-white text-sm font-semibold px-5 py-3 rounded-xl hover:bg-[#1c3a6b] transition-colors"
+                        className="inline-flex items-center gap-2 text-sm font-medium px-5 py-3 rounded-full eased"
+                        style={{ background: 'var(--ink)', color: 'var(--bg)' }}
                       >
                         <Plus className="w-4 h-4" /> Post a listing
                       </Link>
                     ) : (
-                      <p className="text-slate-400 text-sm">
-                        <Link to="/" className="text-unc-blue font-medium hover:underline">Sign in</Link> to post the first listing.
+                      <p className="text-sm" style={{ color: 'var(--muted)' }}>
+                        <Link to="/" className="font-medium" style={{ color: 'var(--accent)' }}>Sign in</Link> to post the first listing.
                       </p>
                     )}
                   </>
@@ -298,7 +309,8 @@ export default function Browse() {
       <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
         <button
           onClick={() => setMobileView(v => (v === 'list' ? 'map' : 'list'))}
-          className="inline-flex items-center gap-2 bg-unc-navy text-white text-sm font-semibold px-5 py-3 rounded-full shadow-xl hover:bg-[#1c3a6b] transition-colors"
+          className="inline-flex items-center gap-2 text-sm font-medium px-5 py-3 rounded-full shadow-xl eased"
+          style={{ background: 'var(--ink)', color: 'var(--bg)' }}
         >
           {mobileView === 'list' ? (
             <><MapIcon className="w-4 h-4" /> Show map</>

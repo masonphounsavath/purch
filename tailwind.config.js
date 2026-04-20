@@ -4,15 +4,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        'unc-blue': '#4B9CD3',
-        'unc-navy': '#13294B',
-        'slate-body': '#425466',
+        'unc-blue':  '#4B9CD3',
+        'unc-navy':  '#13294B',
+        'accent':    '#D97A3A',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Fraunces', 'Georgia', 'serif'],
+        sans:    ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono:    ['Geist Mono', 'ui-monospace', 'monospace'],
       },
     },
   },
   plugins: [],
 }
-
