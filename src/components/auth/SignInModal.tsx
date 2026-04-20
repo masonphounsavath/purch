@@ -147,8 +147,8 @@ export function SignInModal({ onClose }: Props) {
                 <input
                   type="text"
                   value={code}
-                  onChange={e => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  placeholder="123456"
+                  onChange={e => setCode(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                  placeholder="12345678"
                   required
                   autoFocus
                   inputMode="numeric"
@@ -161,7 +161,7 @@ export function SignInModal({ onClose }: Props) {
 
               <button
                 type="submit"
-                disabled={loading || code.length !== 6}
+                disabled={loading || code.length !== 8}
                 className="w-full inline-flex items-center justify-center gap-2 bg-unc-navy text-white font-semibold py-3 rounded-xl hover:bg-[#1c3a6b] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
               >
                 {loading ? (
