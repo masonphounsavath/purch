@@ -9,6 +9,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { AMENITIES } from '../lib/constants'
 import { geocodeAddress } from '../lib/geocode'
+import { AddressAutocomplete } from '../components/AddressAutocomplete'
 
 const schema = z.object({
   title:          z.string().min(5, 'Title must be at least 5 characters'),
@@ -28,6 +29,7 @@ export default function PostListing() {
   const { user } = useAuth()
   const navigate = useNavigate()
   const [amenities, setAmenities] = useState<string[]>([])
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null)
   const [photos, setPhotos] = useState<File[]>([])
   const [previews, setPreviews] = useState<string[]>([])
   const [submitting, setSubmitting] = useState(false)
@@ -36,6 +38,7 @@ export default function PostListing() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema) as any,
@@ -78,8 +81,8 @@ export default function PostListing() {
     setError('')
 
     try {
-      // 1. Geocode address
-      const coords = await geocodeAddress(data.address)
+      // 1. Geocode address (use pre-resolved coords if user picked a suggestion)
+      const resolvedCoords = coords ?? await geocodeAddress(data.address)
 
       // 2. Create listing row first to get an ID
       const { data: listing, error: listingError } = await supabase
@@ -89,8 +92,8 @@ export default function PostListing() {
           title:          data.title,
           description:    data.description,
           address:        data.address,
-          lat:            coords?.lat ?? null,
-          lng:            coords?.lng ?? null,
+          lat:            resolvedCoords?.lat ?? null,
+          lng:            resolvedCoords?.lng ?? null,
           rent:           data.rent,
           available_from: data.available_from,
           available_to:   data.available_to,
@@ -165,10 +168,11 @@ export default function PostListing() {
 
               <div>
                 <label className="block text-sm font-medium text-unc-navy mb-1.5">Address</label>
-                <input
-                  {...register('address')}
-                  placeholder="123 Franklin St, Chapel Hill, NC 27514"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-unc-navy placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-unc-blue/30 focus:border-unc-blue transition-all"
+                <AddressAutocomplete
+                  value=""
+                  onChange={val => setValue('address', val, { shouldValidate: true })}
+                  onCoordsChange={(lat, lng) => setCoords({ lat, lng })}
+                  error={errors.address?.message}
                 />
                 {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address.message}</p>}
               </div>
@@ -225,7 +229,7 @@ export default function PostListing() {
           {/* ── Property details ── */}
           <section>
             <h2 className="text-xs font-bold text-slate-400 tracking-widest uppercase mb-4">Property details</h2>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-unc-navy mb-1.5">Bedrooms</label>
                 <select
@@ -252,6 +256,24 @@ export default function PostListing() {
                 <label className="block text-sm font-medium text-unc-navy mb-1.5">Furnished</label>
                 <label className="flex items-center h-[46px] gap-3 px-4 rounded-xl border border-gray-200 cursor-pointer hover:border-unc-blue transition-colors">
                   <input type="checkbox" {...register('is_furnished')} className="w-4 h-4 accent-unc-blue" />
+                  <span className="text-sm text-unc-navy">Yes</span>
+                </label>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-unc-navy mb-1.5">Utilities included</label>
+                <label className="flex items-center h-[46px] gap-3 px-4 rounded-xl border border-gray-200 cursor-pointer hover:border-unc-blue transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={amenities.includes('Utilities Included')}
+                    onChange={e =>
+                      setAmenities(prev =>
+                        e.target.checked
+                          ? [...prev.filter(a => a !== 'Utilities Included'), 'Utilities Included']
+                          : prev.filter(a => a !== 'Utilities Included')
+                      )
+                    }
+                    className="w-4 h-4 accent-unc-blue"
+                  />
                   <span className="text-sm text-unc-navy">Yes</span>
                 </label>
               </div>
