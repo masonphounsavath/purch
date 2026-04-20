@@ -87,7 +87,7 @@ export function SignInModal({ onClose }: Props) {
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-unc-navy mb-2">Sign in to Purch</h2>
               <p className="text-slate-body text-sm">
-                Enter your UNC email and we'll send you a 6-digit code — no password needed.
+                Enter your UNC email and we'll send you an 8-digit code — no password needed.
               </p>
             </div>
 
@@ -135,7 +135,7 @@ export function SignInModal({ onClose }: Props) {
               </div>
               <h2 className="text-2xl font-bold text-unc-navy mb-2">Check your inbox</h2>
               <p className="text-slate-body text-sm">
-                We sent a 6-digit code to <span className="font-semibold text-unc-navy">{email}</span>
+                We sent an 8-digit code to <span className="font-semibold text-unc-navy">{email}</span>
               </p>
             </div>
 
