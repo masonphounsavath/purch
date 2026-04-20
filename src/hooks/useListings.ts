@@ -2,12 +2,15 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Listing } from '../types'
 
+export type SortOption = 'newest' | 'price_asc' | 'price_desc'
+
 export interface Filters {
   minRent?: number
   maxRent?: number
   bedrooms?: number        // -1 = any
   furnished?: boolean
   availableFrom?: string
+  sort?: SortOption
 }
 
 export function useListings(filters: Filters = {}) {
@@ -18,11 +21,15 @@ export function useListings(filters: Filters = {}) {
   useEffect(() => {
     async function fetch() {
       setLoading(true)
+      const sort = filters.sort ?? 'newest'
       let query = supabase
         .from('listings')
         .select('*, profile:profiles(display_name, avatar_url)')
         .eq('is_active', true)
-        .order('created_at', { ascending: false })
+        .order(
+          sort === 'newest' ? 'created_at' : 'rent',
+          { ascending: sort === 'price_asc' }
+        )
 
       if (filters.minRent)      query = query.gte('rent', filters.minRent)
       if (filters.maxRent)      query = query.lte('rent', filters.maxRent)
@@ -45,6 +52,7 @@ export function useListings(filters: Filters = {}) {
     filters.bedrooms,
     filters.furnished,
     filters.availableFrom,
+    filters.sort,
   ])
 
   return { listings, loading, error }

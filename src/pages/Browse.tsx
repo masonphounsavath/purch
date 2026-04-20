@@ -5,7 +5,7 @@ import { SlidersHorizontal, X, Plus, Map as MapIcon, List } from 'lucide-react'
 import { Navbar } from '../components/layout/Navbar'
 import { ListingCard } from '../components/listings/ListingCard'
 import { BrowseMap } from '../components/map/BrowseMap'
-import { useListings, type Filters } from '../hooks/useListings'
+import { useListings, type Filters, type SortOption } from '../hooks/useListings'
 import { useAuth } from '../hooks/useAuth'
 import { useSavedListings } from '../hooks/useSavedListings'
 
@@ -120,12 +120,34 @@ function FilterSidebar({
             className="px-2 py-1.5 rounded-lg border border-gray-200 text-xs text-unc-navy focus:outline-none focus:ring-2 focus:ring-unc-blue/30 focus:border-unc-blue transition-all"
           />
         </div>
+
+        {/* Sort */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-bold text-slate-400 tracking-widest uppercase whitespace-nowrap">
+            Sort
+          </span>
+          <select
+            value={filters.sort ?? 'newest'}
+            onChange={e => onChange({ ...filters, sort: e.target.value as SortOption })}
+            className="px-2 py-1.5 rounded-lg border border-gray-200 text-xs text-unc-navy focus:outline-none focus:ring-2 focus:ring-unc-blue/30 focus:border-unc-blue transition-all bg-white"
+          >
+            <option value="newest">Newest</option>
+            <option value="price_asc">Price: Low → High</option>
+            <option value="price_desc">Price: High → Low</option>
+          </select>
+        </div>
       </div>
     </div>
   )
 }
 
 const EMPTY_FILTERS: Filters = { bedrooms: -1 }
+
+function hasActiveFilters(f: Filters) {
+  return f.minRent !== undefined || f.maxRent !== undefined ||
+    (f.bedrooms !== undefined && f.bedrooms !== -1) ||
+    f.furnished || f.availableFrom !== undefined
+}
 
 export default function Browse() {
   const { isAuthed } = useAuth()
@@ -195,16 +217,35 @@ export default function Browse() {
                 ))}
               </div>
             ) : listings.length === 0 ? (
-              <div className="text-center py-24">
-                <p className="text-slate-400 text-lg font-medium mb-2">No listings found</p>
-                <p className="text-slate-300 text-sm mb-6">Try adjusting your filters</p>
-                {isAuthed && (
-                  <Link
-                    to="/post"
-                    className="text-unc-blue text-sm font-medium hover:underline"
-                  >
-                    Be the first to post →
-                  </Link>
+              <div className="text-center py-24 px-4">
+                {hasActiveFilters(filters) ? (
+                  <>
+                    <p className="text-slate-400 text-lg font-medium mb-2">No listings match your filters</p>
+                    <p className="text-slate-300 text-sm mb-4">Try adjusting or clearing your filters</p>
+                    <button
+                      onClick={() => setFilters(EMPTY_FILTERS)}
+                      className="text-unc-blue text-sm font-medium hover:underline"
+                    >
+                      Clear filters
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-2xl font-bold text-unc-navy mb-2">No listings yet</p>
+                    <p className="text-slate-400 text-sm mb-6">Be the first UNC student to post a sublease on Purch.</p>
+                    {isAuthed ? (
+                      <Link
+                        to="/post"
+                        className="inline-flex items-center gap-2 bg-unc-navy text-white text-sm font-semibold px-5 py-3 rounded-xl hover:bg-[#1c3a6b] transition-colors"
+                      >
+                        <Plus className="w-4 h-4" /> Post a listing
+                      </Link>
+                    ) : (
+                      <p className="text-slate-400 text-sm">
+                        <Link to="/" className="text-unc-blue font-medium hover:underline">Sign in</Link> to post the first listing.
+                      </p>
+                    )}
+                  </>
                 )}
               </div>
             ) : (
