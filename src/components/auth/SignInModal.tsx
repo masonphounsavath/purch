@@ -72,7 +72,7 @@ export function SignInModal({ onClose }: Props) {
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-unc-navy mb-2">Sign in to Purch</h2>
               <p className="text-slate-body text-sm">
-                Enter your UNC email and we'll send you a magic link — no password needed.
+                Enter your UNC email and we'll send you a verification email — no password needed.
               </p>
             </div>
 
@@ -109,7 +109,7 @@ export function SignInModal({ onClose }: Props) {
             </form>
 
             <p className="text-xs text-slate-400 text-center mt-5">
-              Only @unc.edu emails are accepted.
+              Only @unc.edu / @ad.unc.edu emails are accepted.
             </p>
           </>
         ) : (
