@@ -21,13 +21,13 @@ interface Cluster {
 }
 
 function groupByCoordinate(listings: Listing[]): Cluster[] {
-  const groups = new Map<string, Listing[]>()
+  const groups: Record<string, Listing[]> = {}
   for (const l of listings) {
     const key = `${l.lat!.toFixed(5)},${l.lng!.toFixed(5)}`
-    if (!groups.has(key)) groups.set(key, [])
-    groups.get(key)!.push(l)
+    if (!groups[key]) groups[key] = []
+    groups[key].push(l)
   }
-  return Array.from(groups.entries()).map(([key, items]) => {
+  return Object.entries(groups).map(([key, items]) => {
     const [lat, lng] = key.split(',').map(Number)
     return { key, lat, lng, items }
   })
