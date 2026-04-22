@@ -1,12 +1,31 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Navbar } from '../components/layout/Navbar'
 import { SignInModal } from '../components/auth/SignInModal'
 import { PurchLogo } from '../components/ui/PurchLogo'
 import { useAuth } from '../hooks/useAuth'
+import { supabase } from '../lib/supabase'
 
 const ease = [0.16, 1, 0.3, 1] as [number, number, number, number]
+
+// ── Animated counter ──────────────────────────────────────────
+function AnimatedCounter({ value }: { value: number }) {
+  const [display, setDisplay] = useState(0)
+  useEffect(() => {
+    if (value === 0) return
+    const duration = 1400
+    const startTime = performance.now()
+    const tick = (now: number) => {
+      const progress = Math.min((now - startTime) / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setDisplay(Math.round(eased * value))
+      if (progress < 1) requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
+  }, [value])
+  return <>{display.toLocaleString()}</>
+}
 
 // ── Shared primitives ─────────────────────────────────────────
 
@@ -201,7 +220,7 @@ function HeroVignette() {
 }
 
 // ── Hero ──────────────────────────────────────────────────────
-function HeroStory({ onSignIn, isAuthed }: { onSignIn: () => void; isAuthed: boolean }) {
+function HeroStory({ onSignIn, isAuthed, weeklyViews }: { onSignIn: () => void; isAuthed: boolean; weeklyViews: number }) {
   const navigate = useNavigate()
   return (
     <section className="relative overflow-hidden" style={{ paddingTop: 64, paddingBottom: 80 }}>
@@ -262,6 +281,22 @@ function HeroStory({ onSignIn, isAuthed }: { onSignIn: () => void; isAuthed: boo
               <p className="mt-5 text-[12px] font-mono uppercase tracking-[0.12em]" style={{ color: 'var(--muted)' }}>
                 Sign in with @unc.edu · no new password
               </p>
+              {weeklyViews > 0 && (
+                <div className="mt-3 flex items-center gap-2">
+                  <span className="relative inline-flex w-1.5 h-1.5 rounded-full" style={{ background: '#22c55e' }}>
+                    <span className="absolute inset-0 rounded-full animate-ping" style={{ background: '#22c55e', opacity: 0.5 }} />
+                  </span>
+                  <span className="font-mono text-[11px] uppercase tracking-[0.12em]" style={{ color: 'var(--muted)' }}>
+                    <AnimatedCounter value={weeklyViews} /> people visited this week
+                  </span>
+                  <span
+                    className="font-mono text-[10px] uppercase tracking-[0.1em] px-1.5 py-0.5 rounded-full"
+                    style={{ background: 'color-mix(in oklab, var(--accent) 12%, transparent)', color: 'var(--accent)' }}
+                  >
+                    growing fast
+                  </span>
+                </div>
+              )}
             </Reveal>
           </div>
 
@@ -783,6 +818,25 @@ export default function Landing() {
   const { isAuthed } = useAuth()
   const navigate = useNavigate()
   const [showSignIn, setShowSignIn] = useState(false)
+  const [weeklyViews, setWeeklyViews] = useState(0)
+  const tracked = useRef(false)
+
+  useEffect(() => {
+    if (tracked.current) return
+    tracked.current = true
+
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+
+    // Insert view and fetch count in parallel
+    supabase.from('page_views').insert({}).then(() => {})
+    supabase
+      .from('page_views')
+      .select('id', { count: 'exact', head: true })
+      .gte('created_at', sevenDaysAgo)
+      .then(({ count }) => {
+        if (count != null) setWeeklyViews(count)
+      })
+  }, [])
 
   function handleSignIn() {
     setShowSignIn(true)
@@ -795,7 +849,7 @@ export default function Landing() {
         {showSignIn && <SignInModal onClose={() => setShowSignIn(false)} />}
       </AnimatePresence>
 
-      <HeroStory onSignIn={handleSignIn} isAuthed={isAuthed} />
+      <HeroStory onSignIn={handleSignIn} isAuthed={isAuthed} weeklyViews={weeklyViews} />
       <HowItWorks />
       <MapSection onOpen={() => navigate('/browse')} />
       <TrustBlock />
