@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Navbar } from '../components/layout/Navbar'
+import { Footer } from '../components/layout/Footer'
 import { SignInModal } from '../components/auth/SignInModal'
-import { PurchLogo } from '../components/ui/PurchLogo'
 import { useAuth } from '../hooks/useAuth'
 import { supabase } from '../lib/supabase'
 
@@ -797,19 +797,6 @@ function FinalCTA({ onSignIn, isAuthed }: { onSignIn: () => void; isAuthed: bool
         </Reveal>
       </div>
     </section>
-  )
-}
-
-// ── Footer ────────────────────────────────────────────────────
-function Footer() {
-  return (
-    <footer className="px-6 py-10" style={{ borderTop: '1px solid var(--line)' }}>
-      <div className="max-w-[1280px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-[12px]" style={{ color: 'var(--muted)' }}>
-        <PurchLogo size={18} />
-        <span className="font-mono uppercase tracking-[0.14em]">The Chapel Hill sublease board · made in 27514</span>
-        <span className="font-mono">© 2026</span>
-      </div>
-    </footer>
   )
 }
 

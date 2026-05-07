@@ -7,6 +7,10 @@ import Messages from './pages/Messages'
 import AuthCallback from './pages/AuthCallback'
 import Profile from './pages/Profile'
 import EditListing from './pages/EditListing'
+import About from './pages/About'
+import Privacy from './pages/Privacy'
+import Terms from './pages/Terms'
+import Contact from './pages/Contact'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 
 export default function App() {
@@ -49,6 +53,10 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/about" element={<About />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
     </BrowserRouter>
   )
