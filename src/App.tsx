@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import Landing from './pages/Landing'
 import Browse from './pages/Browse'
 import ListingDetail from './pages/ListingDetail'
@@ -14,12 +15,35 @@ import Contact from './pages/Contact'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import { PushOptIn } from './components/PushOptIn'
 import { MobileTabBar } from './components/layout/MobileTabBar'
+import { NotificationEmailGate } from './components/NotificationEmailGate'
 import { useAuth } from './hooks/useAuth'
+import { supabase } from './lib/supabase'
 
 function AppInner() {
   const { user } = useAuth()
+  // undefined = still loading, null = loaded & not set, string = set
+  const [notifEmail, setNotifEmail] = useState<string | null | undefined>(undefined)
+
+  useEffect(() => {
+    if (!user?.id) { setNotifEmail(undefined); return }
+    supabase
+      .from('profiles')
+      .select('notification_email')
+      .eq('id', user.id)
+      .single()
+      .then(({ data }) => setNotifEmail(data?.notification_email ?? null))
+  }, [user?.id])
+
+  const showGate = !!user && notifEmail === null
+
   return (
     <>
+      {showGate && (
+        <NotificationEmailGate
+          userId={user.id}
+          onComplete={() => setNotifEmail('set')}
+        />
+      )}
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/auth/callback" element={<AuthCallback />} />

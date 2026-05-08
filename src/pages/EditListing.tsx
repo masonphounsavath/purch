@@ -165,18 +165,18 @@ export default function EditListing() {
 
   if (fetchLoading) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen">
         <Navbar />
-        <div className="pt-28 text-center text-slate-body text-sm">Loading…</div>
+        <div className="pt-28 text-center text-muted text-sm">Loading…</div>
       </div>
     )
   }
 
   if (notFound) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen">
         <Navbar />
-        <div className="pt-28 text-center text-slate-body text-sm">Listing not found.</div>
+        <div className="pt-28 text-center text-muted text-sm">Listing not found.</div>
       </div>
     )
   }
@@ -184,38 +184,38 @@ export default function EditListing() {
   const totalPhotos = existingPhotos.filter(u => !removedPhotos.has(u)).length + newPhotos.length
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       <Navbar />
       <div className="max-w-2xl mx-auto px-6 pt-28 pb-20">
 
         <div className="mb-10">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-1 text-sm text-slate-body hover:text-unc-navy transition-colors mb-4"
+            className="flex items-center gap-1 text-sm text-muted hover:text-ink transition-colors mb-4"
           >
             <ArrowLeft className="w-4 h-4" /> Back
           </button>
-          <h1 className="text-4xl font-bold text-unc-navy mb-2">Edit listing</h1>
-          <p className="text-slate-body">Changes go live immediately.</p>
+          <h1 className="text-4xl font-bold font-display mb-2">Edit listing</h1>
+          <p className="text-muted">Changes go live immediately.</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
 
           {/* ── The basics ── */}
           <section>
-            <h2 className="text-xs font-bold text-slate-400 tracking-widest uppercase mb-4">The basics</h2>
+            <h2 className="text-xs font-bold text-muted tracking-widest uppercase mb-4">The basics</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-unc-navy mb-1.5">Listing title</label>
+                <label className="block text-sm font-medium mb-1.5">Listing title</label>
                 <input
                   {...register('title')}
                   placeholder="e.g. 1BR near Franklin St, fully furnished"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-unc-navy placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-unc-blue/30 focus:border-unc-blue transition-all"
+                  className="w-full px-4 py-3 rounded-xl border hairline text-sm surface-paper focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all"
                 />
                 {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-unc-navy mb-1.5">Address</label>
+                <label className="block text-sm font-medium mb-1.5">Address</label>
                 <AddressAutocomplete
                   value={watch('address') ?? ''}
                   onChange={val => setValue('address', val, { shouldValidate: true })}
@@ -225,22 +225,22 @@ export default function EditListing() {
                 {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-unc-navy mb-1.5">Monthly rent ($)</label>
+                <label className="block text-sm font-medium mb-1.5">Monthly rent ($)</label>
                 <input
                   {...register('rent')}
                   type="number"
                   placeholder="850"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-unc-navy placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-unc-blue/30 focus:border-unc-blue transition-all"
+                  className="w-full px-4 py-3 rounded-xl border hairline text-sm surface-paper focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all"
                 />
                 {errors.rent && <p className="text-red-500 text-xs mt-1">{errors.rent.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-unc-navy mb-1.5">Description</label>
+                <label className="block text-sm font-medium mb-1.5">Description</label>
                 <textarea
                   {...register('description')}
                   rows={4}
                   placeholder="Tell potential subletters what makes your place great..."
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-unc-navy placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-unc-blue/30 focus:border-unc-blue transition-all resize-none"
+                  className="w-full px-4 py-3 rounded-xl border hairline text-sm surface-paper focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all resize-none"
                 />
                 {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description.message}</p>}
               </div>
@@ -249,23 +249,23 @@ export default function EditListing() {
 
           {/* ── Availability ── */}
           <section>
-            <h2 className="text-xs font-bold text-slate-400 tracking-widest uppercase mb-4">Availability</h2>
+            <h2 className="text-xs font-bold text-muted tracking-widest uppercase mb-4">Availability</h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-unc-navy mb-1.5">Available from</label>
+                <label className="block text-sm font-medium mb-1.5">Available from</label>
                 <input
                   {...register('available_from')}
                   type="date"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-unc-navy focus:outline-none focus:ring-2 focus:ring-unc-blue/30 focus:border-unc-blue transition-all"
+                  className="w-full px-4 py-3 rounded-xl border hairline text-sm surface-paper focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all"
                 />
                 {errors.available_from && <p className="text-red-500 text-xs mt-1">{errors.available_from.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-unc-navy mb-1.5">Available to</label>
+                <label className="block text-sm font-medium mb-1.5">Available to</label>
                 <input
                   {...register('available_to')}
                   type="date"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-unc-navy focus:outline-none focus:ring-2 focus:ring-unc-blue/30 focus:border-unc-blue transition-all"
+                  className="w-full px-4 py-3 rounded-xl border hairline text-sm surface-paper focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all"
                 />
                 {errors.available_to && <p className="text-red-500 text-xs mt-1">{errors.available_to.message}</p>}
               </div>
@@ -274,13 +274,13 @@ export default function EditListing() {
 
           {/* ── Property details ── */}
           <section>
-            <h2 className="text-xs font-bold text-slate-400 tracking-widest uppercase mb-4">Property details</h2>
+            <h2 className="text-xs font-bold text-muted tracking-widest uppercase mb-4">Property details</h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-unc-navy mb-1.5">Bedrooms</label>
+                <label className="block text-sm font-medium mb-1.5">Bedrooms</label>
                 <select
                   {...register('bedrooms')}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-unc-navy focus:outline-none focus:ring-2 focus:ring-unc-blue/30 focus:border-unc-blue transition-all bg-white"
+                  className="w-full px-4 py-3 rounded-xl border hairline text-sm surface-paper focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all"
                 >
                   {[0, 1, 2, 3, 4, 5].map(n => (
                     <option key={n} value={n}>{n === 0 ? 'Studio' : n}</option>
@@ -288,10 +288,10 @@ export default function EditListing() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-unc-navy mb-1.5">Bathrooms</label>
+                <label className="block text-sm font-medium mb-1.5">Bathrooms</label>
                 <select
                   {...register('bathrooms')}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-unc-navy focus:outline-none focus:ring-2 focus:ring-unc-blue/30 focus:border-unc-blue transition-all bg-white"
+                  className="w-full px-4 py-3 rounded-xl border hairline text-sm surface-paper focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all"
                 >
                   {[0.5, 1, 1.5, 2, 2.5, 3].map(n => (
                     <option key={n} value={n}>{n}</option>
@@ -299,15 +299,15 @@ export default function EditListing() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-unc-navy mb-1.5">Furnished</label>
-                <label className="flex items-center h-[46px] gap-3 px-4 rounded-xl border border-gray-200 cursor-pointer hover:border-unc-blue transition-colors">
-                  <input type="checkbox" {...register('is_furnished')} className="w-4 h-4 accent-unc-blue" />
-                  <span className="text-sm text-unc-navy">Yes</span>
+                <label className="block text-sm font-medium mb-1.5">Furnished</label>
+                <label className="flex items-center h-[46px] gap-3 px-4 rounded-xl border hairline cursor-pointer hover:border-[var(--accent)] transition-colors">
+                  <input type="checkbox" {...register('is_furnished')} className="w-4 h-4 accent-[var(--accent)]" />
+                  <span className="text-sm">Yes</span>
                 </label>
               </div>
               <div>
-                <label className="block text-sm font-medium text-unc-navy mb-1.5">Utilities included</label>
-                <label className="flex items-center h-[46px] gap-3 px-4 rounded-xl border border-gray-200 cursor-pointer hover:border-unc-blue transition-colors">
+                <label className="block text-sm font-medium mb-1.5">Utilities included</label>
+                <label className="flex items-center h-[46px] gap-3 px-4 rounded-xl border hairline cursor-pointer hover:border-[var(--accent)] transition-colors">
                   <input
                     type="checkbox"
                     checked={amenities.includes('Utilities Included')}
@@ -318,9 +318,9 @@ export default function EditListing() {
                           : prev.filter(a => a !== 'Utilities Included')
                       )
                     }
-                    className="w-4 h-4 accent-unc-blue"
+                    className="w-4 h-4 accent-[var(--accent)]"
                   />
-                  <span className="text-sm text-unc-navy">Yes</span>
+                  <span className="text-sm">Yes</span>
                 </label>
               </div>
             </div>
@@ -328,7 +328,7 @@ export default function EditListing() {
 
           {/* ── Amenities ── */}
           <section>
-            <h2 className="text-xs font-bold text-slate-400 tracking-widest uppercase mb-4">Amenities</h2>
+            <h2 className="text-xs font-bold text-muted tracking-widest uppercase mb-4">Amenities</h2>
             <div className="flex flex-wrap gap-2">
               {AMENITIES.map(tag => {
                 const selected = amenities.includes(tag)
@@ -339,8 +339,8 @@ export default function EditListing() {
                     onClick={() => toggleAmenity(tag)}
                     className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium border transition-all ${
                       selected
-                        ? 'bg-unc-navy text-white border-unc-navy'
-                        : 'bg-white text-slate-600 border-gray-200 hover:border-unc-navy hover:text-unc-navy'
+                        ? 'bg-[var(--ink)] text-[var(--bg)] border-[var(--ink)]'
+                        : 'surface-paper text-muted hairline hover:border-[var(--ink)] hover:text-ink'
                     }`}
                   >
                     {selected && <Check className="w-3.5 h-3.5" />}
@@ -353,8 +353,8 @@ export default function EditListing() {
 
           {/* ── Photos ── */}
           <section>
-            <h2 className="text-xs font-bold text-slate-400 tracking-widest uppercase mb-4">
-              Photos <span className="normal-case font-normal text-slate-300">— up to 8</span>
+            <h2 className="text-xs font-bold text-muted tracking-widest uppercase mb-4">
+              Photos <span className="normal-case font-normal opacity-40">— up to 8</span>
             </h2>
             {totalPhotos > 0 ? (
               <div className="grid grid-cols-3 gap-3 mb-3">
@@ -383,17 +383,17 @@ export default function EditListing() {
                   </div>
                 ))}
                 {totalPhotos < 8 && (
-                  <label className="aspect-square rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center cursor-pointer hover:border-unc-blue transition-colors">
-                    <Upload className="w-5 h-5 text-slate-300" />
+                  <label className="aspect-square rounded-xl border-2 border-dashed hairline flex items-center justify-center cursor-pointer hover:border-[var(--accent)] transition-colors">
+                    <Upload className="w-5 h-5 text-muted" />
                     <input type="file" accept="image/*" multiple onChange={handleNewPhotos} className="hidden" />
                   </label>
                 )}
               </div>
             ) : (
-              <label className="flex flex-col items-center justify-center w-full h-36 rounded-xl border-2 border-dashed border-gray-200 cursor-pointer hover:border-unc-blue transition-colors group">
-                <Upload className="w-6 h-6 text-slate-300 group-hover:text-unc-blue transition-colors mb-2" />
-                <p className="text-sm text-slate-400">Click to upload photos</p>
-                <p className="text-xs text-slate-300 mt-1">JPG, PNG, WEBP</p>
+              <label className="flex flex-col items-center justify-center w-full h-36 rounded-xl border-2 border-dashed hairline cursor-pointer hover:border-[var(--accent)] transition-colors group">
+                <Upload className="w-6 h-6 text-muted group-hover:text-accent transition-colors mb-2" />
+                <p className="text-sm text-muted">Click to upload photos</p>
+                <p className="text-xs text-muted opacity-60 mt-1">JPG, PNG, WEBP</p>
                 <input type="file" accept="image/*" multiple onChange={handleNewPhotos} className="hidden" />
               </label>
             )}
@@ -406,7 +406,7 @@ export default function EditListing() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full inline-flex items-center justify-center gap-2 bg-unc-navy text-white font-semibold py-4 rounded-xl hover:bg-[#1c3a6b] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-[15px]"
+            className="w-full inline-flex items-center justify-center gap-2 bg-[var(--ink)] text-[var(--bg)] font-semibold py-4 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed text-[15px] hover:opacity-90"
           >
             {submitting ? (
               <><Loader className="w-4 h-4 animate-spin" /> Saving…</>
