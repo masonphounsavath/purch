@@ -12,10 +12,14 @@ import Privacy from './pages/Privacy'
 import Terms from './pages/Terms'
 import Contact from './pages/Contact'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
+import { PushOptIn } from './components/PushOptIn'
+import { MobileTabBar } from './components/layout/MobileTabBar'
+import { useAuth } from './hooks/useAuth'
 
-export default function App() {
+function AppInner() {
+  const { user } = useAuth()
   return (
-    <BrowserRouter>
+    <>
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
@@ -58,6 +62,16 @@ export default function App() {
         <Route path="/terms" element={<Terms />} />
         <Route path="/contact" element={<Contact />} />
       </Routes>
+      <MobileTabBar />
+      {user && <PushOptIn userId={user.id} />}
+    </>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppInner />
     </BrowserRouter>
   )
 }
