@@ -8,10 +8,14 @@ import AuthCallback from './pages/AuthCallback'
 import Profile from './pages/Profile'
 import EditListing from './pages/EditListing'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
+import { PushOptIn } from './components/PushOptIn'
+import { MobileTabBar } from './components/layout/MobileTabBar'
+import { useAuth } from './hooks/useAuth'
 
-export default function App() {
+function AppInner() {
+  const { user } = useAuth()
   return (
-    <BrowserRouter>
+    <>
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
@@ -50,6 +54,16 @@ export default function App() {
           }
         />
       </Routes>
+      <MobileTabBar />
+      {user && <PushOptIn userId={user.id} />}
+    </>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppInner />
     </BrowserRouter>
   )
 }
