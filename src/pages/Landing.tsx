@@ -133,88 +133,166 @@ function ArrowR() {
   )
 }
 
-// ── Mini postcard for hero ────────────────────────────────────
-function PostcardMini({ tone, label, price }: { tone: 'warm' | 'blue' | 'green' | 'dusk'; label: string; price: string }) {
+// ── Mock listing data for carousel ───────────────────────────
+const MOCK_LISTINGS = [
+  {
+    tone: 'warm' as const,
+    label: 'Mill Creek 3BR',
+    title: 'Mill Creek — 3 Bed 2 Bath',
+    address: '1405 Mill Creek Dr, Chapel Hill',
+    rent: 1120,
+    beds: 3,
+    baths: 2,
+    dates: 'May 15 – Aug 1',
+    tags: ['Parking', 'W/D included', 'Furnished'],
+  },
+  {
+    tone: 'dusk' as const,
+    label: 'Franklin 2BR',
+    title: 'Franklin St — 2 Bed 1 Bath',
+    address: '428 W Franklin St, Chapel Hill',
+    rent: 875,
+    beds: 2,
+    baths: 1,
+    dates: 'Jun 1 – Aug 15',
+    tags: ['Near campus', 'Pets OK', 'A/C'],
+  },
+  {
+    tone: 'green' as const,
+    label: 'Carrboro Studio',
+    title: 'Carrboro Studio',
+    address: '105 W Weaver St, Carrboro',
+    rent: 720,
+    beds: 0,
+    baths: 1,
+    dates: 'May 1 – Jul 31',
+    tags: ['Utilities included', 'Furnished'],
+  },
+  {
+    tone: 'blue' as const,
+    label: 'Estes Park 4BR',
+    title: 'Estes Park — 4 Bed 2 Bath',
+    address: '12 Estes Dr, Chapel Hill',
+    rent: 1400,
+    beds: 4,
+    baths: 2,
+    dates: 'May 10 – Aug 10',
+    tags: ['Pool', 'Parking', 'Furnished'],
+  },
+]
+
+// ── Hero listing carousel ─────────────────────────────────────
+function ListingCarousel() {
+  const [active, setActive] = useState(0)
+  const [dir, setDir] = useState(1)
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setDir(1)
+      setActive(i => (i + 1) % MOCK_LISTINGS.length)
+    }, 3500)
+    return () => clearInterval(t)
+  }, [])
+
+  function goTo(i: number) {
+    setDir(i > active ? 1 : -1)
+    setActive(i)
+  }
+
+  const listing = MOCK_LISTINGS[active]
+
   return (
-    <div className="rounded-xl overflow-hidden shadow-xl" style={{ background: 'var(--paper)', border: '1px solid var(--line)' }}>
-      <Photo label={label} tone={tone} aspect="4/3" className="rounded-none" />
-      <div className="px-2.5 py-2 flex items-center justify-between">
-        <span className="font-display tabnum" style={{ fontSize: 14, fontWeight: 500, letterSpacing: '-0.01em' }}>{price}</span>
-        <span className="font-mono text-[9px] uppercase tracking-[0.1em]" style={{ color: 'var(--muted)' }}>/mo</span>
+    <div className="relative select-none">
+      {/* Header row */}
+      <div className="flex items-center justify-between mb-4 px-1">
+        <div className="flex items-center gap-2">
+          <span className="relative inline-flex w-1.5 h-1.5 rounded-full" style={{ background: '#22c55e' }}>
+            <span className="absolute inset-0 rounded-full animate-ping" style={{ background: '#22c55e', opacity: 0.5 }} />
+          </span>
+          <span className="font-mono text-[11px] uppercase tracking-[0.14em]" style={{ color: 'var(--muted)' }}>
+            Live on Purch
+          </span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          {MOCK_LISTINGS.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i)}
+              className="rounded-full eased"
+              style={{
+                width: i === active ? 18 : 6,
+                height: 6,
+                background: i === active ? 'var(--accent)' : 'var(--line)',
+                transition: 'width 0.3s ease, background 0.3s ease',
+              }}
+            />
+          ))}
+        </div>
       </div>
-    </div>
-  )
-}
 
-// ── Birdhouse + floating postcards vignette ───────────────────
-function HeroVignette() {
-  return (
-    <div className="relative" style={{ aspectRatio: '4/5' }}>
-      {/* Big birdhouse illustration */}
-      <motion.div
-        animate={{ y: [0, -6, 0] }}
-        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute inset-0 grid place-items-center"
-      >
-        <svg viewBox="0 0 200 260" className="w-[82%] h-auto" fill="none">
-          <ellipse cx="100" cy="252" rx="40" ry="5" fill="currentColor" opacity="0.08" />
-          <path d="M100 210 L100 250" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
-          <path d="M34 90 L100 20 L166 90 Z" fill="var(--accent)" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round" />
-          <circle cx="100" cy="16" r="4" fill="currentColor" />
-          <rect x="46" y="86" width="108" height="124" rx="3" fill="var(--paper)" stroke="currentColor" strokeWidth="2.5" />
-          <path d="M46 120 L154 120" stroke="currentColor" strokeWidth="1" opacity="0.25" />
-          <path d="M46 160 L154 160" stroke="currentColor" strokeWidth="1" opacity="0.25" />
-          <path d="M46 195 L154 195" stroke="currentColor" strokeWidth="1" opacity="0.25" />
-          <circle cx="100" cy="140" r="22" fill="currentColor" opacity="0.9" />
-          <circle cx="100" cy="140" r="22" fill="none" stroke="var(--accent)" strokeWidth="1.8" opacity="0.55" />
-          <path d="M84 175 L116 175" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-          <circle cx="84" cy="175" r="2" fill="currentColor" />
-          <circle cx="116" cy="175" r="2" fill="currentColor" />
-          <g transform="translate(94 154)">
-            <path d="M0 15 C 0 6, 7 0, 14 0 C 22 0, 28 6, 28 14 C 28 17, 27 19, 25 21 L 28 25 C 29 26, 28 28, 26 28 L 4 28 C 2 28, 0 26, 0 25 Z"
-              fill="var(--paper)" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-            <path d="M10 12 C 14 8, 20 8, 23 12 C 21 18, 15 20, 11 17 Z" fill="currentColor" opacity="0.85" />
-            <path d="M0 14 L -5 16 L 0 19 Z" fill="var(--accent)" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
-            <circle cx="6" cy="10" r="1.6" fill="currentColor" />
-            <circle cx="6.4" cy="9.4" r="0.5" fill="var(--paper)" />
-            <path d="M28 20 L 36 17 L 34 24 Z" fill="var(--paper)" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
-          </g>
-        </svg>
-      </motion.div>
+      {/* Card */}
+      <div className="overflow-hidden rounded-2xl" style={{ border: '1px solid var(--line)' }}>
+        <AnimatePresence mode="wait" custom={dir}>
+          <motion.div
+            key={active}
+            custom={dir}
+            initial={{ x: dir * 48, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -dir * 48, opacity: 0 }}
+            transition={{ duration: 0.38, ease }}
+          >
+            {/* Photo */}
+            <Photo label={listing.label} tone={listing.tone} aspect="16/9" className="rounded-none" />
 
-      {/* Floating listing postcards */}
-      <motion.div
-        initial={{ opacity: 0, y: 20, rotate: -10 }}
-        animate={{ opacity: 1, y: 0, rotate: -8 }}
-        transition={{ delay: 0.4, duration: 0.7, ease }}
-        className="absolute top-[18%] left-[2%] w-[140px]"
-      >
-        <motion.div animate={{ y: [0, -6, 0] }} transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}>
-          <PostcardMini tone="green" label="Carrboro studio" price="$720" />
-        </motion.div>
-      </motion.div>
+            {/* Info */}
+            <div className="p-4" style={{ background: 'var(--paper)' }}>
+              <div className="flex items-start justify-between gap-2 mb-1">
+                <h3 className="font-display text-[15px] leading-snug" style={{ fontWeight: 500, letterSpacing: '-0.005em', color: 'var(--ink)' }}>
+                  {listing.title}
+                </h3>
+                <span className="font-display tabnum whitespace-nowrap" style={{ fontSize: 18, fontWeight: 500, letterSpacing: '-0.01em', color: 'var(--ink)' }}>
+                  ${listing.rent.toLocaleString()}
+                  <span className="font-mono text-[11px]" style={{ color: 'var(--muted)', fontWeight: 400 }}>/mo</span>
+                </span>
+              </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20, rotate: 6 }}
-        animate={{ opacity: 1, y: 0, rotate: 5 }}
-        transition={{ delay: 0.55, duration: 0.7, ease }}
-        className="absolute bottom-[18%] right-[0%] w-[150px]"
-      >
-        <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0.9 }}>
-          <PostcardMini tone="dusk" label="Franklin 2BR" price="$875" />
-        </motion.div>
-      </motion.div>
+              <p className="text-[12px] flex items-center gap-1 mb-3 truncate" style={{ color: 'var(--muted)' }}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="11" height="11">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
+                </svg>
+                {listing.address}
+              </p>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20, rotate: -2 }}
-        animate={{ opacity: 1, y: 0, rotate: -2 }}
-        transition={{ delay: 0.7, duration: 0.7, ease }}
-        className="absolute bottom-[4%] left-[10%] w-[120px]"
-      >
-        <motion.div animate={{ y: [0, -5, 0] }} transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}>
-          <PostcardMini tone="warm" label="Mill Creek 3BR" price="$1,120" />
-        </motion.div>
-      </motion.div>
+              <div className="flex items-center gap-3 text-[12px] mb-3" style={{ color: 'var(--ink-2)' }}>
+                <span className="flex items-center gap-1">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="13" height="13"><path d="M2 4v16M22 4v16M2 8h20M2 16h20M6 8v8M18 8v8" /></svg>
+                  {listing.beds === 0 ? 'Studio' : `${listing.beds}BR`}
+                </span>
+                <span className="flex items-center gap-1">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="13" height="13"><path d="M9 6 C9 4.343 10.343 3 12 3s3 1.343 3 3v6H9V6z" /><rect x="3" y="12" width="18" height="4" rx="1" /><path d="M5 16v3M19 16v3" /></svg>
+                  {listing.baths}BA
+                </span>
+                <span className="flex items-center gap-1 ml-auto" style={{ color: 'var(--muted)' }}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="13" height="13"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
+                  {listing.dates}
+                </span>
+              </div>
+
+              <div className="flex gap-1.5 flex-wrap">
+                {listing.tags.map(tag => (
+                  <span
+                    key={tag}
+                    className="text-[10px] font-mono px-2 py-0.5 rounded-full"
+                    style={{ background: 'var(--bg-2)', color: 'var(--muted)' }}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </div>
   )
 }
@@ -300,10 +378,10 @@ function HeroStory({ onSignIn, isAuthed, weeklyViews }: { onSignIn: () => void; 
             </Reveal>
           </div>
 
-          {/* Right — birdhouse vignette */}
+          {/* Right — listing carousel */}
           <div className="lg:col-span-5 relative hidden lg:block">
             <Reveal delay={0.2}>
-              <HeroVignette />
+              <ListingCarousel />
             </Reveal>
           </div>
         </div>

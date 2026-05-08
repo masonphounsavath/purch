@@ -38,7 +38,7 @@ export function Navbar() {
         <div className="max-w-[1280px] mx-auto px-6 h-full flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <PurchLogo size={22} />
+            <PurchLogo size={34} />
           </Link>
 
           {/* Center links */}
