@@ -175,13 +175,13 @@ export default function Messages() {
     <>
       {convLoading ? (
         <div className="flex items-center justify-center h-32">
-          <Loader className="w-5 h-5 text-unc-blue animate-spin" />
+          <Loader className="w-5 h-5 text-accent animate-spin" />
         </div>
       ) : conversations.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-40 px-6 text-center">
-          <MessageCircle className="w-8 h-8 text-slate-200 mb-3" />
-          <p className="text-sm text-slate-400">No messages yet</p>
-          <p className="text-xs text-slate-300 mt-1">Messages about listings will appear here</p>
+          <MessageCircle className="w-8 h-8 text-muted opacity-30 mb-3" />
+          <p className="text-sm text-muted">No messages yet</p>
+          <p className="text-xs text-muted opacity-60 mt-1">Messages about listings will appear here</p>
         </div>
       ) : (
         conversations.map(conv => {
@@ -191,28 +191,28 @@ export default function Messages() {
             <button
               key={key}
               onClick={() => setSearchParams({ c: key })}
-              className={`w-full text-left px-4 py-3.5 border-b border-gray-50 hover:bg-gray-50 transition-colors ${isActive ? 'bg-blue-50/60 border-l-2 border-l-unc-blue' : ''}`}
+              className={`w-full text-left px-4 py-3.5 border-b hairline hover:surface-bg-2 transition-colors ${isActive ? 'surface-bg-2 border-l-2 border-l-[var(--accent)]' : ''}`}
             >
               <div className="flex items-start justify-between gap-2 mb-1">
                 <div className="flex items-center gap-2 min-w-0">
-                  <div className="w-7 h-7 rounded-full bg-unc-blue/15 flex items-center justify-center text-xs font-bold text-unc-blue flex-shrink-0">
+                  <div className="w-7 h-7 rounded-full bg-[var(--accent)]/15 flex items-center justify-center text-xs font-bold text-accent flex-shrink-0">
                     {conv.other.display_name?.[0]?.toUpperCase() ?? 'U'}
                   </div>
-                  <span className="text-sm font-semibold text-unc-navy truncate">
+                  <span className="text-sm font-semibold truncate">
                     {conv.other.display_name ?? 'UNC Student'}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 flex-shrink-0">
                   {conv.unread > 0 && (
-                    <span className="w-5 h-5 bg-unc-blue text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                    <span className="w-5 h-5 bg-[var(--ink)] text-[var(--bg)] text-[10px] font-bold rounded-full flex items-center justify-center">
                       {conv.unread}
                     </span>
                   )}
-                  <span className="text-[10px] text-slate-400">{timeAgo(conv.lastMessage.created_at)}</span>
+                  <span className="text-[10px] text-muted">{timeAgo(conv.lastMessage.created_at)}</span>
                 </div>
               </div>
-              <p className="text-xs text-slate-400 truncate pl-9">{conv.listing.title}</p>
-              <p className="text-xs text-slate-500 truncate pl-9 mt-0.5">{conv.lastMessage.body}</p>
+              <p className="text-xs text-muted truncate pl-9">{conv.listing.title}</p>
+              <p className="text-xs text-muted opacity-70 truncate pl-9 mt-0.5">{conv.lastMessage.body}</p>
             </button>
           )
         })
@@ -223,18 +223,18 @@ export default function Messages() {
   const threadPanel = activeKey ? (
     <div className="flex-1 flex flex-col min-w-0 min-h-0">
       {/* Thread header */}
-      <div className="px-5 py-3.5 border-b border-gray-100 flex-shrink-0 flex items-center gap-3">
+      <div className="px-5 py-3.5 border-b hairline flex-shrink-0 flex items-center gap-3">
         <button
           onClick={() => setSearchParams({})}
-          className="md:hidden p-1 -ml-1 text-slate-400 hover:text-unc-navy transition-colors"
+          className="md:hidden p-1 -ml-1 text-muted hover:text-ink transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div className="min-w-0">
-          <p className="font-semibold text-unc-navy text-sm">
+          <p className="font-semibold text-sm">
             {activeConv?.other.display_name ?? 'UNC Student'}
           </p>
-          <p className="text-xs text-slate-400 truncate">{activeConv?.listing.title}</p>
+          <p className="text-xs text-muted truncate">{activeConv?.listing.title}</p>
         </div>
       </div>
 
@@ -242,7 +242,7 @@ export default function Messages() {
       <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
         {msgLoading ? (
           <div className="flex justify-center pt-8">
-            <Loader className="w-5 h-5 text-unc-blue animate-spin" />
+            <Loader className="w-5 h-5 text-accent animate-spin" />
           </div>
         ) : messages.map(msg => {
           const isMe = msg.sender_id === user?.id
@@ -250,11 +250,11 @@ export default function Messages() {
             <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[72%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                 isMe
-                  ? 'bg-unc-navy text-white rounded-br-sm'
-                  : 'bg-gray-100 text-unc-navy rounded-bl-sm'
+                  ? 'bg-[var(--ink)] text-[var(--bg)] rounded-br-sm'
+                  : 'surface-bg-2 rounded-bl-sm'
               }`}>
                 {msg.body}
-                <p className={`text-[10px] mt-1 ${isMe ? 'text-white/50' : 'text-slate-400'}`}>
+                <p className={`text-[10px] mt-1 ${isMe ? 'opacity-50' : 'text-muted'}`}>
                   {timeAgo(msg.created_at)}
                 </p>
               </div>
@@ -265,7 +265,7 @@ export default function Messages() {
       </div>
 
       {/* Input */}
-      <div className="px-5 py-4 border-t border-gray-100 flex-shrink-0">
+      <div className="px-5 py-4 border-t hairline flex-shrink-0">
         <div className="flex items-end gap-3">
           <textarea
             value={body}
@@ -273,12 +273,12 @@ export default function Messages() {
             onKeyDown={handleKeyDown}
             rows={1}
             placeholder="Type a message... (Enter to send)"
-            className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-unc-navy placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-unc-blue/30 focus:border-unc-blue transition-all resize-none"
+            className="flex-1 px-4 py-2.5 rounded-xl border hairline text-sm surface-paper focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all resize-none"
           />
           <button
             onClick={sendMessage}
             disabled={sending || !body.trim()}
-            className="w-10 h-10 bg-unc-navy text-white rounded-xl flex items-center justify-center hover:bg-[#1c3a6b] transition-colors disabled:opacity-40 flex-shrink-0"
+            className="w-10 h-10 bg-[var(--ink)] text-[var(--bg)] rounded-xl flex items-center justify-center hover:opacity-90 transition-opacity disabled:opacity-40 flex-shrink-0"
           >
             {sending
               ? <Loader className="w-4 h-4 animate-spin" />
@@ -290,27 +290,27 @@ export default function Messages() {
     </div>
   ) : (
     <div className="flex-1 hidden md:flex flex-col items-center justify-center text-center px-8">
-      <MessageCircle className="w-10 h-10 text-slate-200 mb-3" />
-      <p className="text-slate-400 font-medium">Select a conversation</p>
-      <p className="text-slate-300 text-sm mt-1">Choose one from the left to read and reply</p>
+      <MessageCircle className="w-10 h-10 text-muted opacity-30 mb-3" />
+      <p className="text-muted font-medium">Select a conversation</p>
+      <p className="text-muted opacity-60 text-sm mt-1">Choose one from the left to read and reply</p>
     </div>
   )
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       <Navbar />
       <div className="max-w-5xl mx-auto px-4 md:px-6 pt-20 pb-0 h-screen flex flex-col">
 
         {/* Hide heading on mobile when thread is open */}
-        <h1 className={`text-2xl font-bold text-unc-navy py-5 flex-shrink-0 ${activeKey ? 'hidden md:block' : ''}`}>
+        <h1 className={`text-2xl font-bold font-display py-5 flex-shrink-0 ${activeKey ? 'hidden md:block' : ''}`}>
           Messages
         </h1>
 
         {/* Mobile: full-width list or full-width thread */}
-        <div className="flex flex-1 border border-gray-100 rounded-2xl overflow-hidden min-h-0 mb-6">
+        <div className="flex flex-1 border hairline rounded-2xl overflow-hidden min-h-0 mb-6">
 
           {/* Conversation list — full width on mobile (hidden when thread open), sidebar on desktop */}
-          <div className={`flex-col overflow-y-auto border-r border-gray-100
+          <div className={`flex-col overflow-y-auto border-r hairline
             ${activeKey ? 'hidden md:flex md:w-72 md:flex-shrink-0' : 'flex w-full md:w-72 md:flex-shrink-0'}
           `}>
             {conversationList}

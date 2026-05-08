@@ -69,7 +69,7 @@ export function SignInModal({ onClose }: Props) {
 
       {/* Modal */}
       <motion.div
-        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-8"
+        className="relative surface-paper rounded-2xl shadow-2xl w-full max-w-md p-8"
         initial={{ opacity: 0, scale: 0.95, y: 12 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 12 }}
@@ -77,7 +77,7 @@ export function SignInModal({ onClose }: Props) {
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
+          className="absolute top-4 right-4 text-muted hover:text-ink transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
@@ -85,15 +85,15 @@ export function SignInModal({ onClose }: Props) {
         {step === 'email' ? (
           <>
             <div className="mb-6">
-              <h2 className="text-2xl font-bold text-unc-navy mb-2">Sign in to Purch</h2>
-              <p className="text-slate-body text-sm">
+              <h2 className="text-2xl font-bold font-display mb-2">Sign in to Purch</h2>
+              <p className="text-muted text-sm">
                 Enter your UNC email and we'll send you an 8-digit code — no password needed.
               </p>
             </div>
 
             <form onSubmit={handleEmailSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-unc-navy mb-1.5">
+                <label className="block text-sm font-medium mb-1.5">
                   UNC email address
                 </label>
                 <input
@@ -103,7 +103,7 @@ export function SignInModal({ onClose }: Props) {
                   placeholder="onyen@unc.edu"
                   required
                   autoFocus
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-unc-navy placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-unc-blue/40 focus:border-unc-blue transition-all text-sm"
+                  className="w-full px-4 py-3 rounded-xl border hairline text-sm surface-paper focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all"
                 />
                 {error && (
                   <p className="text-red-500 text-xs mt-1.5">{error}</p>
@@ -113,35 +113,35 @@ export function SignInModal({ onClose }: Props) {
               <button
                 type="submit"
                 disabled={loading || !email}
-                className="w-full inline-flex items-center justify-center gap-2 bg-unc-navy text-white font-semibold py-3 rounded-xl hover:bg-[#1c3a6b] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                className="w-full inline-flex items-center justify-center gap-2 bg-[var(--ink)] text-[var(--bg)] font-semibold py-3 rounded-full hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed text-sm"
               >
                 {loading ? (
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-[var(--bg)] border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <>Send code <ArrowRight className="w-4 h-4" /></>
                 )}
               </button>
             </form>
 
-            <p className="text-xs text-slate-400 text-center mt-5">
+            <p className="text-xs text-muted text-center mt-5">
               Only @unc.edu / @ad.unc.edu emails are accepted.
             </p>
           </>
         ) : (
           <>
             <div className="mb-6">
-              <div className="w-14 h-14 bg-unc-blue/10 rounded-full flex items-center justify-center mb-4">
-                <Mail className="w-7 h-7 text-unc-blue" />
+              <div className="w-14 h-14 bg-[var(--accent)]/10 rounded-full flex items-center justify-center mb-4">
+                <Mail className="w-7 h-7 text-accent" />
               </div>
-              <h2 className="text-2xl font-bold text-unc-navy mb-2">Check your inbox</h2>
-              <p className="text-slate-body text-sm">
-                We sent an 8-digit code to <span className="font-semibold text-unc-navy">{email}</span>
+              <h2 className="text-2xl font-bold font-display mb-2">Check your inbox</h2>
+              <p className="text-muted text-sm">
+                We sent an 8-digit code to <span className="font-semibold text-ink">{email}</span>
               </p>
             </div>
 
             <form onSubmit={handleCodeSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-unc-navy mb-1.5">
+                <label className="block text-sm font-medium mb-1.5">
                   Verification code
                 </label>
                 <input
@@ -152,7 +152,7 @@ export function SignInModal({ onClose }: Props) {
                   required
                   autoFocus
                   inputMode="numeric"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-unc-navy placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-unc-blue/40 focus:border-unc-blue transition-all text-sm tracking-widest"
+                  className="w-full px-4 py-3 rounded-xl border hairline text-sm surface-paper focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all tracking-widest"
                 />
                 {error && (
                   <p className="text-red-500 text-xs mt-1.5">{error}</p>
@@ -162,10 +162,10 @@ export function SignInModal({ onClose }: Props) {
               <button
                 type="submit"
                 disabled={loading || code.length !== 8}
-                className="w-full inline-flex items-center justify-center gap-2 bg-unc-navy text-white font-semibold py-3 rounded-xl hover:bg-[#1c3a6b] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                className="w-full inline-flex items-center justify-center gap-2 bg-[var(--ink)] text-[var(--bg)] font-semibold py-3 rounded-full hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed text-sm"
               >
                 {loading ? (
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-[var(--bg)] border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <>Verify <ArrowRight className="w-4 h-4" /></>
                 )}
@@ -174,7 +174,7 @@ export function SignInModal({ onClose }: Props) {
 
             <button
               onClick={() => { setStep('email'); setCode(''); setError('') }}
-              className="w-full text-xs text-slate-400 hover:text-slate-600 mt-4 transition-colors"
+              className="w-full text-xs text-muted hover:text-ink mt-4 transition-colors"
             >
               Use a different email
             </button>
