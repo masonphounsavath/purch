@@ -16,6 +16,7 @@ import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import { PushOptIn } from './components/PushOptIn'
 import { MobileTabBar } from './components/layout/MobileTabBar'
 import { NotificationEmailGate } from './components/NotificationEmailGate'
+import { PhotoRequiredGate } from './components/PhotoRequiredGate'
 import { useAuth } from './hooks/useAuth'
 import { supabase } from './lib/supabase'
 
@@ -23,25 +24,42 @@ function AppInner() {
   const { user } = useAuth()
   // undefined = still loading, null = loaded & not set, string = set
   const [notifEmail, setNotifEmail] = useState<string | null | undefined>(undefined)
+  // undefined = loading, null = none, string = listing ID that has no photos
+  const [photolessListingId, setPhotolessListingId] = useState<string | null | undefined>(undefined)
 
   useEffect(() => {
-    if (!user?.id) { setNotifEmail(undefined); return }
+    if (!user?.id) { setNotifEmail(undefined); setPhotolessListingId(undefined); return }
     supabase
       .from('profiles')
       .select('notification_email')
       .eq('id', user.id)
       .single()
       .then(({ data }) => setNotifEmail(data?.notification_email ?? null))
+    supabase
+      .from('listings')
+      .select('id, photos')
+      .eq('user_id', user.id)
+      .then(({ data }) => {
+        const found = (data ?? []).find(l => !l.photos || l.photos.length === 0)
+        setPhotolessListingId(found ? found.id : null)
+      })
   }, [user?.id])
 
-  const showGate = !!user && notifEmail === null
+  const showNotifGate = !!user && notifEmail === null
+  const showPhotoGate = !showNotifGate && !!user && typeof photolessListingId === 'string'
 
   return (
     <>
-      {showGate && (
+      {showNotifGate && (
         <NotificationEmailGate
           userId={user.id}
           onComplete={() => setNotifEmail('set')}
+        />
+      )}
+      {showPhotoGate && (
+        <PhotoRequiredGate
+          listingId={photolessListingId!}
+          onBack={() => setPhotolessListingId(null)}
         />
       )}
       <Routes>

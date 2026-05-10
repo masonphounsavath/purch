@@ -13,7 +13,7 @@ export function Footer() {
     <footer className="px-6 py-10" style={{ borderTop: '1px solid var(--line)' }}>
       <div className="max-w-[1280px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <Link to="/" className="flex items-center">
-          <PurchLogo size={18} />
+          <PurchLogo size={34} />
         </Link>
 
         <div className="flex items-center gap-5">
