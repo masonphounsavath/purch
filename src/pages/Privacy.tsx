@@ -111,8 +111,8 @@ export default function Privacy() {
               </svg>
               <p className="text-[13px]" style={{ color: 'var(--muted)' }}>
                 Questions about your data? Email us at{' '}
-                <a href="mailto:hello@purch.app" className="underline eased" style={{ color: 'var(--ink-2)' }}>
-                  hello@purch.app
+                <a href="mailto:mason@purchit.org" className="underline eased" style={{ color: 'var(--ink-2)' }}>
+                  mason@purchit.org
                 </a>{' '}
                 and we'll respond within 48 hours.
               </p>

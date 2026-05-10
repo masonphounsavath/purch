@@ -48,11 +48,11 @@ export default function Contact() {
               Primary contact
             </p>
             <a
-              href="mailto:hello@purch.app"
+              href="mailto:mason@purchit.org"
               className="font-display eased"
               style={{ fontSize: 'clamp(22px, 3.5vw, 32px)', fontWeight: 400, letterSpacing: '-0.015em', color: 'var(--accent)', textDecoration: 'none' }}
             >
-              hello@purch.app
+              mason@purchit.org
             </a>
             <p className="mt-4 text-[13.5px] leading-[1.6]" style={{ color: 'var(--ink-2)' }}>
               We aim to respond within 48 hours. If you're a UNC student with an urgent listing issue, mention that in the subject line.
@@ -64,7 +64,7 @@ export default function Contact() {
             {reasons.map(r => (
               <a
                 key={r.label}
-                href={`mailto:hello@purch.app?subject=${encodeURIComponent(r.label)}`}
+                href={`mailto:mason@purchit.org?subject=${encodeURIComponent(r.label)}`}
                 className="rounded-xl p-5 eased group"
                 style={{ background: 'var(--paper)', border: '1px solid var(--line)', textDecoration: 'none', display: 'block' }}
               >
