@@ -10,6 +10,7 @@ import { useAuth } from '../hooks/useAuth'
 import { AMENITIES } from '../lib/constants'
 import { geocodeAddress } from '../lib/geocode'
 import { AddressAutocomplete } from '../components/AddressAutocomplete'
+import { PhotoRequiredGate } from '../components/PhotoRequiredGate'
 
 const schema = z.object({
   title:          z.string().min(5, 'Title must be at least 5 characters'),
@@ -40,6 +41,7 @@ export default function EditListing() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [notFound, setNotFound] = useState(false)
+  const [showPhotoGate, setShowPhotoGate] = useState(false)
 
   const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema) as any,
@@ -109,6 +111,8 @@ export default function EditListing() {
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     if (!user || !id) return
+    const totalPhotos = existingPhotos.filter(u => !removedPhotos.has(u)).length + newPhotos.length
+    if (totalPhotos === 0) { setShowPhotoGate(true); return }
     setSubmitting(true)
     setError('')
 
@@ -162,6 +166,8 @@ export default function EditListing() {
       setSubmitting(false)
     }
   }
+
+  if (showPhotoGate) return <PhotoRequiredGate onBack={() => setShowPhotoGate(false)} />
 
   if (fetchLoading) {
     return (

@@ -10,6 +10,7 @@ import { useAuth } from '../hooks/useAuth'
 import { AMENITIES } from '../lib/constants'
 import { geocodeAddress } from '../lib/geocode'
 import { AddressAutocomplete } from '../components/AddressAutocomplete'
+import { PhotoRequiredGate } from '../components/PhotoRequiredGate'
 
 const schema = z.object({
   title:          z.string().min(5, 'Title must be at least 5 characters'),
@@ -34,6 +35,7 @@ export default function PostListing() {
   const [previews, setPreviews] = useState<string[]>([])
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [showPhotoGate, setShowPhotoGate] = useState(false)
 
   const {
     register,
@@ -77,6 +79,7 @@ export default function PostListing() {
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     if (!user) return
+    if (photos.length === 0) { setShowPhotoGate(true); return }
     setSubmitting(true)
     setError('')
 
@@ -139,6 +142,8 @@ export default function PostListing() {
       setSubmitting(false)
     }
   }
+
+  if (showPhotoGate) return <PhotoRequiredGate onBack={() => setShowPhotoGate(false)} />
 
   return (
     <div className="min-h-screen">
