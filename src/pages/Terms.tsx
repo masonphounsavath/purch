@@ -133,8 +133,8 @@ export default function Terms() {
               </svg>
               <p className="text-[13px]" style={{ color: 'var(--muted)' }}>
                 Questions about these terms? Reach us at{' '}
-                <a href="mailto:hello@purch.app" className="underline eased" style={{ color: 'var(--ink-2)' }}>
-                  hello@purch.app
+                <a href="mailto:mason@purchit.org" className="underline eased" style={{ color: 'var(--ink-2)' }}>
+                  mason@purchit.org
                 </a>.
               </p>
             </div>
