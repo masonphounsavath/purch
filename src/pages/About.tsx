@@ -112,7 +112,7 @@ export default function About() {
                 className="font-display tracking-[-0.02em] leading-[1.05]"
                 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 400 }}
               >
-                Built by Tar Heels,<br />for Tar Heels.
+                Skip the search.<br />Purch it.
               </h2>
               <p className="mt-4 text-[14px] leading-[1.6]" style={{ color: 'color-mix(in oklab, var(--bg) 65%, transparent)' }}>
                 Got feedback, a bug report, or just want to say hey? We'd love to hear from you.
