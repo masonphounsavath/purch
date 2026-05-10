@@ -105,6 +105,17 @@ export default function Terms() {
 
             <div style={{ borderTop: '1px solid var(--line)' }} />
 
+            <Section title="Subletting & lease policies">
+              <p>
+                Many apartments and landlords have specific policies regarding subletting — including restrictions or outright prohibitions. <strong>It is your responsibility to review and comply with your own lease agreement and your landlord's policies before listing or taking over a sublet.</strong>
+              </p>
+              <p>
+                Purch does not review, enforce, or intervene in the terms between you and your landlord. By using the platform, you acknowledge that any subletting arrangement you enter into is solely your own, and that Purch bears no responsibility for lease violations or disputes that may arise.
+              </p>
+            </Section>
+
+            <div style={{ borderTop: '1px solid var(--line)' }} />
+
             <Section title="Changes to these terms">
               <p>
                 We may update these terms as the platform evolves. If we make a material change, we'll let you know via the email on file. Continued use of Purch after an update means you accept the revised terms.
