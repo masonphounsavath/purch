@@ -12,17 +12,19 @@ Deno.serve(async (req) => {
 
     const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
-    // Fetch sender name + recipient notification email in parallel
-    const [{ data: sender, error: senderErr }, { data: recipient, error: recipientErr }] = await Promise.all([
+    // Fetch sender name, recipient notification email, and recipient auth email in parallel
+    const [{ data: sender, error: senderErr }, { data: recipient, error: recipientErr }, { data: { user: recipientUser } }] = await Promise.all([
       admin.from('profiles').select('display_name').eq('id', message.sender_id).single(),
       admin.from('profiles').select('notification_email').eq('id', message.recipient_id).single(),
+      admin.auth.admin.getUserById(message.recipient_id),
     ])
 
     if (senderErr) console.error('sender fetch error:', senderErr.message)
     if (recipientErr) console.error('recipient fetch error:', recipientErr.message)
 
     const senderName = sender?.display_name ?? 'Someone'
-    console.log('sender:', senderName, '| notification_email:', recipient?.notification_email ?? 'none')
+    const toEmail = recipient?.notification_email ?? recipientUser?.email
+    console.log('sender:', senderName, '| to:', toEmail ?? 'none')
 
     // Send push notification (existing behavior)
     const pushRes = await fetch(`${SUPABASE_URL}/functions/v1/send-push`, {
@@ -40,8 +42,8 @@ Deno.serve(async (req) => {
     })
     console.log('push result:', pushRes.status)
 
-    // Send email notification if recipient has a personal email set
-    if (recipient?.notification_email) {
+    // Send email notification — prefer notification_email, fall back to auth email
+    if (toEmail) {
       const emailRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
@@ -50,7 +52,7 @@ Deno.serve(async (req) => {
         },
         body: JSON.stringify({
           from: 'Mason at Purch <mason@purchit.org>',
-          to: recipient.notification_email,
+          to: toEmail,
           reply_to: 'mason@purchit.org',
           subject: `${senderName} sent you a message on Purch`,
           html: `
@@ -76,7 +78,7 @@ Deno.serve(async (req) => {
       const emailBody = await emailRes.text()
       console.log('resend result:', emailRes.status, emailBody)
     } else {
-      console.log('no notification_email set, skipping email')
+      console.log('no email address available, skipping email')
     }
   } catch (err) {
     console.error('notify-message error:', err)
