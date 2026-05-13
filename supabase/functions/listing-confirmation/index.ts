@@ -21,6 +21,7 @@ Deno.serve(async (req) => {
     .eq('id', listing.user_id)
     .single()
 
+  const name = profile?.display_name ?? 'there'
   const toEmail = profile?.notification_email ?? user.email
   const availableFrom = new Date(listing.available_from).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
   const availableTo   = new Date(listing.available_to).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
