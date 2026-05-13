@@ -21,14 +21,6 @@ const STEP_HEADINGS = [
   'Looks good?',
 ] as const
 
-const NEIGHBORHOODS = [
-  'North Campus',
-  'Downtown',
-  'Carrboro',
-  'Northside',
-  'East Franklin',
-  'Granville',
-]
 
 type FormState = {
   title: string
@@ -36,7 +28,6 @@ type FormState = {
   beds: number
   baths: number
   furnished: boolean
-  neighborhood: string
   address: string
   amenities: string[]
   rent: number
@@ -54,7 +45,6 @@ export default function PostListing() {
     beds: 1,
     baths: 1,
     furnished: true,
-    neighborhood: 'North Campus',
     address: '',
     amenities: [],
     rent: 850,
@@ -341,20 +331,6 @@ export default function PostListing() {
             {/* ── Step 1: Place ── */}
             {step === 1 && (
               <>
-                <Field label="Neighborhood">
-                  <div className="flex flex-wrap gap-2">
-                    {NEIGHBORHOODS.map(n => (
-                      <Chip
-                        key={n}
-                        selected={form.neighborhood === n}
-                        onClick={() => setForm({ ...form, neighborhood: n })}
-                      >
-                        {n}
-                      </Chip>
-                    ))}
-                  </div>
-                </Field>
-
                 <Field label="Street address">
                   <AddressAutocomplete
                     value={form.address}
@@ -485,7 +461,7 @@ export default function PostListing() {
                   {form.title}
                 </h3>
                 <p className="text-[13px] font-mono mt-1" style={{ color: 'var(--muted)' }}>
-                  {form.neighborhood} · {form.address}
+                  {form.address}
                 </p>
                 <div className="mt-4 flex items-center gap-4 text-[13px]" style={{ color: 'var(--ink-2)' }}>
                   <span>{form.beds === 0 ? 'Studio' : `${form.beds} bed`}</span>
