@@ -17,11 +17,12 @@ Deno.serve(async (req) => {
   // Get poster's display name from profile
   const { data: profile } = await admin
     .from('profiles')
-    .select('display_name')
+    .select('display_name, notification_email')
     .eq('id', listing.user_id)
     .single()
 
   const name = profile?.display_name ?? 'there'
+  const toEmail = profile?.notification_email ?? user.email
   const availableFrom = new Date(listing.available_from).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
   const availableTo   = new Date(listing.available_to).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
 
@@ -33,7 +34,7 @@ Deno.serve(async (req) => {
     },
     body: JSON.stringify({
       from: 'Purch <hello@purchit.org>',
-      to: user.email,
+      to: toEmail,
       reply_to: 'hello@purchit.org',
       subject: 'Your listing is live on Purch',
       html: `
