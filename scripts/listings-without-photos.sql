@@ -8,5 +8,5 @@ FROM listings l
 JOIN auth.users au ON au.id = l.user_id
 WHERE
   l.photos IS NULL
-  OR l.photos = '[]'::jsonb
-  OR jsonb_array_length(l.photos) = 0;
+  OR l.photos = '{}'
+  OR cardinality(l.photos) = 0;
