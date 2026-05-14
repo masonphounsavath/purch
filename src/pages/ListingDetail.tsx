@@ -4,6 +4,24 @@ import {
   MapPin, Calendar, ChevronLeft,
   ChevronRight, MessageCircle, ArrowLeft, Pencil, Loader, Mail, Phone
 } from 'lucide-react'
+
+// Deterministic color from amenity string — always the same color per tag
+const AMENITY_COLORS = [
+  { bg: '#EEF2FF', text: '#4338CA' }, // indigo
+  { bg: '#F0FDF4', text: '#15803D' }, // green
+  { bg: '#FFF7ED', text: '#C2410C' }, // orange
+  { bg: '#FDF4FF', text: '#A21CAF' }, // purple
+  { bg: '#ECFDF5', text: '#065F46' }, // emerald
+  { bg: '#FFF1F2', text: '#BE123C' }, // rose
+  { bg: '#EFF6FF', text: '#1D4ED8' }, // blue
+  { bg: '#FFFBEB', text: '#B45309' }, // amber
+]
+
+function amenityColor(tag: string) {
+  let hash = 0
+  for (let i = 0; i < tag.length; i++) hash = (hash * 31 + tag.charCodeAt(i)) >>> 0
+  return AMENITY_COLORS[hash % AMENITY_COLORS.length]
+}
 import { Navbar } from '../components/layout/Navbar'
 import { DetailMap } from '../components/map/DetailMap'
 import { supabase } from '../lib/supabase'
@@ -170,9 +188,14 @@ export default function ListingDetail() {
             {/* Title row */}
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h1 className="text-2xl font-bold font-display leading-snug">{listing.title}</h1>
-                <p className="text-muted text-sm flex items-center gap-1 mt-1">
-                  <MapPin className="w-3.5 h-3.5" /> {listing.address}
+                <h1
+                  className="font-display leading-snug"
+                  style={{ fontSize: 36, fontWeight: 400, letterSpacing: '-0.02em', color: 'var(--ink)' }}
+                >
+                  {listing.title}
+                </h1>
+                <p className="flex items-center gap-1 mt-1.5 font-mono text-[12px]" style={{ color: 'var(--muted)' }}>
+                  <MapPin className="w-3 h-3" /> {listing.address}
                 </p>
               </div>
               {isOwner && (
@@ -193,37 +216,44 @@ export default function ListingDetail() {
                 { label: 'Furnished', value: listing.is_furnished ? 'Yes' : 'No' },
                 { label: 'Monthly rent', value: `$${listing.rent.toLocaleString()}` },
               ].map(stat => (
-                <div key={stat.label} className="surface-bg-2 rounded-xl p-3">
-                  <p className="text-xs text-muted mb-1">{stat.label}</p>
-                  <p className="font-semibold text-sm">{stat.value}</p>
+                <div key={stat.label} className="rounded-xl p-3" style={{ background: 'var(--paper)', border: '1px solid var(--line)' }}>
+                  <p className="font-mono uppercase text-[9.5px] tracking-[0.14em] mb-1.5" style={{ color: 'var(--muted)' }}>{stat.label}</p>
+                  <p className="font-display text-[17px]" style={{ fontWeight: 400, letterSpacing: '-0.01em', color: 'var(--ink)' }}>{stat.value}</p>
                 </div>
               ))}
             </div>
 
             {/* Availability */}
-            <div className="flex items-center gap-3 text-sm text-muted">
-              <Calendar className="w-4 h-4 text-accent flex-shrink-0" />
-              <span>Available <strong className="text-ink">{formatDate(listing.available_from)}</strong> through <strong className="text-ink">{formatDate(listing.available_to)}</strong></span>
+            <div className="flex items-center gap-3" style={{ color: 'var(--ink-2)' }}>
+              <Calendar className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--accent)' }} />
+              <span className="text-[14px]">Available <strong className="font-semibold" style={{ color: 'var(--ink)' }}>{formatDate(listing.available_from)}</strong> through <strong className="font-semibold" style={{ color: 'var(--ink)' }}>{formatDate(listing.available_to)}</strong></span>
             </div>
 
             {/* Description */}
             {listing.description && (
               <div>
-                <h2 className="text-xs font-bold text-muted tracking-widest uppercase mb-3">About this place</h2>
-                <p className="text-muted leading-relaxed text-sm whitespace-pre-line">{listing.description}</p>
+                <h2 className="font-mono uppercase text-[10.5px] tracking-[0.14em] mb-3" style={{ color: 'var(--muted)' }}>About this place</h2>
+                <p className="leading-relaxed text-[15px] whitespace-pre-line" style={{ color: 'var(--ink-2)' }}>{listing.description}</p>
               </div>
             )}
 
             {/* Amenities */}
             {listing.amenities?.length > 0 && (
               <div>
-                <h2 className="text-xs font-bold text-muted tracking-widest uppercase mb-3">Amenities</h2>
+                <h2 className="font-mono uppercase text-[10.5px] tracking-[0.14em] mb-3" style={{ color: 'var(--muted)' }}>Amenities</h2>
                 <div className="flex flex-wrap gap-2">
-                  {listing.amenities.map(tag => (
-                    <span key={tag} className="inline-flex items-center gap-1.5 text-sm font-medium surface-bg-2 border hairline text-muted px-3 py-1.5 rounded-full">
-                      {tag}
-                    </span>
-                  ))}
+                  {listing.amenities.map(tag => {
+                    const c = amenityColor(tag)
+                    return (
+                      <span
+                        key={tag}
+                        className="inline-flex items-center text-[12.5px] font-mono font-medium px-3 py-1.5 rounded-full"
+                        style={{ background: c.bg, color: c.text }}
+                      >
+                        {tag}
+                      </span>
+                    )
+                  })}
                 </div>
               </div>
             )}
@@ -231,7 +261,7 @@ export default function ListingDetail() {
             {/* Location map */}
             {listing.lat != null && listing.lng != null && (
               <div>
-                <h2 className="text-xs font-bold text-muted tracking-widest uppercase mb-3">Location</h2>
+                <h2 className="font-mono uppercase text-[10.5px] tracking-[0.14em] mb-3" style={{ color: 'var(--muted)' }}>Location</h2>
                 <DetailMap lat={listing.lat} lng={listing.lng} />
                 <p className="text-xs text-muted mt-2 flex items-center gap-1">
                   <MapPin className="w-3 h-3" /> {listing.address}
@@ -249,7 +279,7 @@ export default function ListingDetail() {
               </div>
 
               <div className="border-t hairline pt-4">
-                <p className="text-xs text-muted mb-1">Posted by</p>
+                <p className="font-mono uppercase text-[9.5px] tracking-[0.14em] mb-1.5" style={{ color: 'var(--muted)' }}>Posted by</p>
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-full bg-[var(--accent)]/15 flex items-center justify-center text-xs font-bold text-accent">
                     {(listing.profile?.display_name ?? 'U')[0].toUpperCase()}
@@ -314,7 +344,7 @@ export default function ListingDetail() {
 
               {!isOwner && isAuthed && (listing.profile?.email || listing.profile?.phone) && (
                 <div className="border-t hairline pt-4 space-y-2">
-                  <p className="text-xs font-bold text-muted tracking-widest uppercase">Also reach out via</p>
+                  <p className="font-mono uppercase text-[9.5px] tracking-[0.14em]" style={{ color: 'var(--muted)' }}>Also reach out via</p>
                   {listing.profile?.email && (
                     <a
                       href={`mailto:${listing.profile.email}`}
