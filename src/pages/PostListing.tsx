@@ -401,6 +401,16 @@ export default function PostListing() {
 
             {/* ── Step 3: Photos ── */}
             {step === 3 && (
+              <>
+              <div
+                className="flex items-start gap-2.5 rounded-2xl px-4 py-3 mb-1"
+                style={{ background: 'var(--paper)', border: '1px solid var(--line)' }}
+              >
+                <span className="text-[15px] mt-px">💡</span>
+                <p className="text-[12.5px] leading-relaxed" style={{ color: 'var(--ink-2)' }}>
+                  <span className="font-semibold" style={{ color: 'var(--ink)' }}>Tip:</span> 16:9 photos look best on Purch — aim for <span className="font-mono">1920×1080</span> or similar. Landscape shots of rooms perform significantly better than portrait or square crops.
+                </p>
+              </div>
               <Field label={`Photos · ${photos.length} of 8`}>
                 {previews.length > 0 ? (
                   <div className="grid grid-cols-4 gap-3">
@@ -438,6 +448,7 @@ export default function PostListing() {
                   </label>
                 )}
               </Field>
+              </>
             )}
 
             {/* ── Step 4: Review ── */}
