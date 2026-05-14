@@ -20,8 +20,8 @@ export function SignInModal({ onClose }: Props) {
     e.preventDefault()
     setError('')
 
-    if (!email.endsWith('@unc.edu')) {
-      setError('You need a @unc.edu email to use Purch.')
+    if (!email.endsWith('@unc.edu') && !email.endsWith('@ad.unc.edu')) {
+      setError('You need a @unc.edu or @ad.unc.edu email to use Purch.')
       return
     }
 
