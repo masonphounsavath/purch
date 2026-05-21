@@ -200,10 +200,10 @@ function ReelCard({ listing }: { listing: Listing }) {
   )
 }
 
-// ── Live listing reel ─────────────────────────────────────────
+// ── Live listing reel — conveyor belt ────────────────────────
 function LiveListingReel() {
   const [listings, setListings] = useState<Listing[]>([])
-  const reelRef = useRef<HTMLDivElement>(null)
+  const [paused, setPaused] = useState(false)
 
   useEffect(() => {
     supabase
@@ -215,74 +215,47 @@ function LiveListingReel() {
       .then(({ data }) => {
         if (!data) return
         const withPhotos = (data as Listing[]).filter(l => l.photos?.length > 0)
-        // Shuffle randomly
         const shuffled = withPhotos.sort(() => Math.random() - 0.5).slice(0, 8)
         setListings(shuffled)
       })
   }, [])
 
-  // Auto-scroll on desktop (hover-capable devices only)
-  useEffect(() => {
-    const el = reelRef.current
-    if (!el || listings.length === 0) return
-    if (window.matchMedia('(hover: none)').matches) return
-
-    const CARD_W = 288 // 272px card + 16px gap
-    const loopW  = listings.length * CARD_W
-
-    let paused = false
-    let raf: number
-
-    const tick = () => {
-      if (!paused) {
-        el.scrollLeft += 0.55
-        if (el.scrollLeft >= loopW) el.scrollLeft -= loopW
-      }
-      raf = requestAnimationFrame(tick)
-    }
-
-    const pause  = () => { paused = true }
-    const resume = () => { paused = false }
-    el.addEventListener('mouseenter', pause)
-    el.addEventListener('mouseleave', resume)
-    raf = requestAnimationFrame(tick)
-
-    return () => {
-      cancelAnimationFrame(raf)
-      el.removeEventListener('mouseenter', pause)
-      el.removeEventListener('mouseleave', resume)
-    }
-  }, [listings.length])
-
   if (listings.length === 0) return null
 
-  // Duplicate cards for seamless infinite loop
+  // Duplicate for seamless loop — track moves -50% then resets
   const items = [...listings, ...listings]
+  // Speed: ~55px/s. One loop = listings.length × 288px
+  const duration = (listings.length * 288) / 55
 
   return (
-    <div className="relative mt-14">
-      <style>{`.reel::-webkit-scrollbar { display: none; }`}</style>
+    <div
+      className="relative mt-14 overflow-hidden"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      <style>{`
+        @keyframes conveyor {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-50%); }
+        }
+      `}</style>
 
-      {/* Fade edges (desktop) */}
+      {/* Fade edges */}
       <div
-        className="absolute inset-y-0 left-0 w-16 z-10 pointer-events-none hidden sm:block"
+        className="absolute inset-y-0 left-0 w-20 z-10 pointer-events-none"
         style={{ background: 'linear-gradient(to right, var(--bg), transparent)' }}
       />
       <div
-        className="absolute inset-y-0 right-0 w-16 z-10 pointer-events-none hidden sm:block"
+        className="absolute inset-y-0 right-0 w-20 z-10 pointer-events-none"
         style={{ background: 'linear-gradient(to left, var(--bg), transparent)' }}
       />
 
+      {/* Conveyor track */}
       <div
-        ref={reelRef}
-        className="reel flex gap-4 overflow-x-auto pb-2"
+        className="flex gap-4 w-max pb-4 pl-4"
         style={{
-          scrollSnapType: 'x mandatory',
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none',
-          paddingLeft: 24,
-          paddingRight: 24,
-          scrollBehavior: 'auto',
+          animation: `conveyor ${duration}s linear infinite`,
+          animationPlayState: paused ? 'paused' : 'running',
         }}
       >
         {items.map((listing, i) => (
