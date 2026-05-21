@@ -41,8 +41,14 @@ export function Navbar() {
             <PurchLogo size={34} />
           </Link>
 
-          {/* Center links */}
-          <div className="hidden md:flex items-center gap-7">
+          {/* Center — pill group */}
+          <div
+            className="hidden md:flex items-center rounded-full p-1 gap-0.5"
+            style={{
+              background: 'var(--bg-2)',
+              border: '1px solid var(--line)',
+            }}
+          >
             {navLinks.map(({ to, label }) => {
               if ((to === '/post' || to === '/messages') && !isAuthed) return null
               const active = location.pathname === to
@@ -50,28 +56,38 @@ export function Navbar() {
                 <Link
                   key={to}
                   to={to}
-                  className="relative text-[13px] eased"
+                  className="relative px-4 py-1.5 rounded-full text-[13px] font-medium eased"
                   style={{
-                    color: active ? 'var(--ink)' : 'var(--muted)',
+                    color: active ? 'var(--bg)' : 'var(--muted)',
                     fontWeight: active ? 500 : 400,
+                    zIndex: 1,
                   }}
                 >
-                  {label}
-                  {label === 'Messages' && unreadCount > 0 && (
-                    <span
-                      className="ml-1.5 inline-flex items-center justify-center text-[10px] rounded-full px-1.5 py-0.5 text-white"
-                      style={{ background: 'var(--accent)' }}
-                    >
-                      {unreadCount > 9 ? '9+' : unreadCount}
-                    </span>
-                  )}
                   {active && (
                     <motion.span
-                      layoutId="nav-underline"
-                      className="absolute left-0 right-0 -bottom-[19px] h-[2px]"
+                      layoutId="nav-pill"
+                      className="absolute inset-0 rounded-full"
                       style={{ background: 'var(--ink)' }}
+                      transition={{ type: 'spring', stiffness: 380, damping: 32 }}
                     />
                   )}
+                  <span className="relative z-10 flex items-center gap-1.5">
+                    {label}
+                    {label === 'Messages' && unreadCount > 0 && (
+                      <span
+                        className="inline-flex items-center justify-center text-[9px] rounded-full font-semibold"
+                        style={{
+                          background: 'var(--accent)',
+                          color: 'white',
+                          minWidth: 16,
+                          height: 16,
+                          padding: '0 4px',
+                        }}
+                      >
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </span>
+                    )}
+                  </span>
                 </Link>
               )
             })}
