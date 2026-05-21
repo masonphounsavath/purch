@@ -1,13 +1,19 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Navbar } from '../components/layout/Navbar'
 import { Footer } from '../components/layout/Footer'
 import { SignInModal } from '../components/auth/SignInModal'
 import { useAuth } from '../hooks/useAuth'
 import { supabase } from '../lib/supabase'
+import type { Listing } from '../types'
 
 const ease = [0.16, 1, 0.3, 1] as [number, number, number, number]
+
+// Grain texture — computed once at module load
+const GRAIN_URL = `url("data:image/svg+xml,${encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="4" stitchTiles="stitch"/></filter><rect width="200" height="200" filter="url(#n)"/></svg>'
+)}")`
 
 // ── Animated counter ──────────────────────────────────────────
 function AnimatedCounter({ value }: { value: number }) {
@@ -28,7 +34,6 @@ function AnimatedCounter({ value }: { value: number }) {
 }
 
 // ── Shared primitives ─────────────────────────────────────────
-
 function Reveal({
   children,
   delay = 0,
@@ -55,7 +60,7 @@ function Reveal({
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <p className="font-mono uppercase text-[11px] tracking-[0.14em]" style={{ color: 'var(--muted)' }}>
+    <p className="font-label uppercase text-[11px] tracking-[0.14em]" style={{ color: 'var(--muted)' }}>
       {children}
     </p>
   )
@@ -102,7 +107,7 @@ function Btn({
   )
 }
 
-// Placeholder photo using design-system CSS classes
+// Placeholder photo — still used by MapSection
 function Photo({
   label = 'chapel hill · photo',
   tone = 'warm',
@@ -133,259 +138,309 @@ function ArrowR() {
   )
 }
 
-// ── Mock listing data for carousel ───────────────────────────
-const MOCK_LISTINGS = [
-  {
-    tone: 'warm' as const,
-    label: 'Mill Creek 3BR',
-    title: 'Mill Creek — 3 Bed 2 Bath',
-    address: '1405 Mill Creek Dr, Chapel Hill',
-    rent: 1120,
-    beds: 3,
-    baths: 2,
-    dates: 'May 15 – Aug 1',
-    tags: ['Parking', 'W/D included', 'Furnished'],
-  },
-  {
-    tone: 'dusk' as const,
-    label: 'Franklin 2BR',
-    title: 'Franklin St — 2 Bed 1 Bath',
-    address: '428 W Franklin St, Chapel Hill',
-    rent: 875,
-    beds: 2,
-    baths: 1,
-    dates: 'Jun 1 – Aug 15',
-    tags: ['Near campus', 'Pets OK', 'A/C'],
-  },
-  {
-    tone: 'green' as const,
-    label: 'Carrboro Studio',
-    title: 'Carrboro Studio',
-    address: '105 W Weaver St, Carrboro',
-    rent: 720,
-    beds: 0,
-    baths: 1,
-    dates: 'May 1 – Jul 31',
-    tags: ['Utilities included', 'Furnished'],
-  },
-  {
-    tone: 'blue' as const,
-    label: 'Estes Park 4BR',
-    title: 'Estes Park — 4 Bed 2 Bath',
-    address: '12 Estes Dr, Chapel Hill',
-    rent: 1400,
-    beds: 4,
-    baths: 2,
-    dates: 'May 10 – Aug 10',
-    tags: ['Pool', 'Parking', 'Furnished'],
-  },
-]
-
-// ── Hero listing carousel ─────────────────────────────────────
-function ListingCarousel() {
-  const [active, setActive] = useState(0)
-  const [dir, setDir] = useState(1)
-
-  useEffect(() => {
-    const t = setInterval(() => {
-      setDir(1)
-      setActive(i => (i + 1) % MOCK_LISTINGS.length)
-    }, 3500)
-    return () => clearInterval(t)
-  }, [])
-
-  function goTo(i: number) {
-    setDir(i > active ? 1 : -1)
-    setActive(i)
-  }
-
-  const listing = MOCK_LISTINGS[active]
-
+// ── Real listing reel card ────────────────────────────────────
+function ReelCard({ listing }: { listing: Listing }) {
+  const from = new Date(listing.available_from).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  const to   = new Date(listing.available_to).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   return (
-    <div className="relative select-none">
-      {/* Header row */}
-      <div className="flex items-center justify-between mb-4 px-1">
-        <div className="flex items-center gap-2">
-          <span className="relative inline-flex w-1.5 h-1.5 rounded-full" style={{ background: '#22c55e' }}>
-            <span className="absolute inset-0 rounded-full animate-ping" style={{ background: '#22c55e', opacity: 0.5 }} />
-          </span>
-          <span className="font-mono text-[11px] uppercase tracking-[0.14em]" style={{ color: 'var(--muted)' }}>
-            Live on Purch
-          </span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          {MOCK_LISTINGS.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => goTo(i)}
-              className="rounded-full eased"
-              style={{
-                width: i === active ? 18 : 6,
-                height: 6,
-                background: i === active ? 'var(--accent)' : 'var(--line)',
-                transition: 'width 0.3s ease, background 0.3s ease',
-              }}
-            />
-          ))}
+    <Link
+      to={`/listings/${listing.id}`}
+      className="flex-shrink-0 rounded-2xl overflow-hidden block text-left group eased"
+      style={{
+        width: 272,
+        background: 'var(--paper)',
+        border: '1px solid var(--line)',
+        scrollSnapAlign: 'start',
+        textDecoration: 'none',
+      }}
+    >
+      {/* Photo */}
+      <div className="relative overflow-hidden" style={{ aspectRatio: '4/3', background: 'var(--bg-2)' }}>
+        <img
+          src={listing.photos[0]}
+          alt={listing.title}
+          className="w-full h-full object-cover eased"
+          style={{ transition: 'transform 0.4s ease' }}
+          onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.04)')}
+          onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
+        />
+        {/* Price badge */}
+        <div
+          className="absolute bottom-2.5 left-2.5 rounded-full font-display tabnum"
+          style={{
+            background: 'color-mix(in oklab, var(--paper) 88%, transparent)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            border: '1px solid color-mix(in oklab, var(--line) 60%, transparent)',
+            padding: '4px 10px',
+            fontSize: 14,
+            fontWeight: 500,
+            color: 'var(--ink)',
+            letterSpacing: '-0.01em',
+          }}
+        >
+          ${listing.rent.toLocaleString()}
+          <span style={{ fontSize: 10, color: 'var(--muted)', fontWeight: 400 }}>/mo</span>
         </div>
       </div>
 
-      {/* Card */}
-      <div className="overflow-hidden rounded-2xl" style={{ border: '1px solid var(--line)' }}>
-        <AnimatePresence mode="wait" custom={dir}>
-          <motion.div
-            key={active}
-            custom={dir}
-            initial={{ x: dir * 48, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: -dir * 48, opacity: 0 }}
-            transition={{ duration: 0.38, ease }}
-          >
-            {/* Photo */}
-            <Photo label={listing.label} tone={listing.tone} aspect="16/9" className="rounded-none" />
+      {/* Info */}
+      <div className="p-3.5">
+        <p
+          className="font-display leading-snug line-clamp-1 mb-1"
+          style={{ fontSize: 14, fontWeight: 500, color: 'var(--ink)', letterSpacing: '-0.005em' }}
+        >
+          {listing.title}
+        </p>
+        <p className="font-mono text-[10.5px] truncate" style={{ color: 'var(--muted)' }}>
+          {listing.bedrooms === 0 ? 'Studio' : `${listing.bedrooms}BR`} · {listing.bathrooms}BA · {from} – {to}
+        </p>
+      </div>
+    </Link>
+  )
+}
 
-            {/* Info */}
-            <div className="p-4" style={{ background: 'var(--paper)' }}>
-              <div className="flex items-start justify-between gap-2 mb-1">
-                <h3 className="font-display text-[15px] leading-snug" style={{ fontWeight: 500, letterSpacing: '-0.005em', color: 'var(--ink)' }}>
-                  {listing.title}
-                </h3>
-                <span className="font-display tabnum whitespace-nowrap" style={{ fontSize: 18, fontWeight: 500, letterSpacing: '-0.01em', color: 'var(--ink)' }}>
-                  ${listing.rent.toLocaleString()}
-                  <span className="font-mono text-[11px]" style={{ color: 'var(--muted)', fontWeight: 400 }}>/mo</span>
-                </span>
-              </div>
+// ── Live listing reel ─────────────────────────────────────────
+function LiveListingReel() {
+  const [listings, setListings] = useState<Listing[]>([])
+  const reelRef = useRef<HTMLDivElement>(null)
 
-              <p className="text-[12px] flex items-center gap-1 mb-3 truncate" style={{ color: 'var(--muted)' }}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="11" height="11">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
-                </svg>
-                {listing.address}
-              </p>
+  useEffect(() => {
+    supabase
+      .from('listings')
+      .select('id, title, rent, address, bedrooms, bathrooms, photos, available_from, available_to')
+      .eq('is_active', true)
+      .not('photos', 'eq', '{}')
+      .limit(30)
+      .then(({ data }) => {
+        if (!data) return
+        const withPhotos = (data as Listing[]).filter(l => l.photos?.length > 0)
+        // Shuffle randomly
+        const shuffled = withPhotos.sort(() => Math.random() - 0.5).slice(0, 8)
+        setListings(shuffled)
+      })
+  }, [])
 
-              <div className="flex items-center gap-3 text-[12px] mb-3" style={{ color: 'var(--ink-2)' }}>
-                <span className="flex items-center gap-1">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="13" height="13"><path d="M2 4v16M22 4v16M2 8h20M2 16h20M6 8v8M18 8v8" /></svg>
-                  {listing.beds === 0 ? 'Studio' : `${listing.beds}BR`}
-                </span>
-                <span className="flex items-center gap-1">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="13" height="13"><path d="M9 6 C9 4.343 10.343 3 12 3s3 1.343 3 3v6H9V6z" /><rect x="3" y="12" width="18" height="4" rx="1" /><path d="M5 16v3M19 16v3" /></svg>
-                  {listing.baths}BA
-                </span>
-                <span className="flex items-center gap-1 ml-auto" style={{ color: 'var(--muted)' }}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="13" height="13"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
-                  {listing.dates}
-                </span>
-              </div>
+  // Auto-scroll on desktop (hover-capable devices only)
+  useEffect(() => {
+    const el = reelRef.current
+    if (!el || listings.length === 0) return
+    if (window.matchMedia('(hover: none)').matches) return
 
-              <div className="flex gap-1.5 flex-wrap">
-                {listing.tags.map(tag => (
-                  <span
-                    key={tag}
-                    className="text-[10px] font-mono px-2 py-0.5 rounded-full"
-                    style={{ background: 'var(--bg-2)', color: 'var(--muted)' }}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        </AnimatePresence>
+    const CARD_W = 288 // 272px card + 16px gap
+    const loopW  = listings.length * CARD_W
+
+    let paused = false
+    let raf: number
+
+    const tick = () => {
+      if (!paused) {
+        el.scrollLeft += 0.55
+        if (el.scrollLeft >= loopW) el.scrollLeft -= loopW
+      }
+      raf = requestAnimationFrame(tick)
+    }
+
+    const pause  = () => { paused = true }
+    const resume = () => { paused = false }
+    el.addEventListener('mouseenter', pause)
+    el.addEventListener('mouseleave', resume)
+    raf = requestAnimationFrame(tick)
+
+    return () => {
+      cancelAnimationFrame(raf)
+      el.removeEventListener('mouseenter', pause)
+      el.removeEventListener('mouseleave', resume)
+    }
+  }, [listings.length])
+
+  if (listings.length === 0) return null
+
+  // Duplicate cards for seamless infinite loop
+  const items = [...listings, ...listings]
+
+  return (
+    <div className="relative mt-14">
+      <style>{`.reel::-webkit-scrollbar { display: none; }`}</style>
+
+      {/* Fade edges (desktop) */}
+      <div
+        className="absolute inset-y-0 left-0 w-16 z-10 pointer-events-none hidden sm:block"
+        style={{ background: 'linear-gradient(to right, var(--bg), transparent)' }}
+      />
+      <div
+        className="absolute inset-y-0 right-0 w-16 z-10 pointer-events-none hidden sm:block"
+        style={{ background: 'linear-gradient(to left, var(--bg), transparent)' }}
+      />
+
+      <div
+        ref={reelRef}
+        className="reel flex gap-4 overflow-x-auto pb-2"
+        style={{
+          scrollSnapType: 'x mandatory',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          paddingLeft: 24,
+          paddingRight: 24,
+          scrollBehavior: 'auto',
+        }}
+      >
+        {items.map((listing, i) => (
+          <ReelCard key={`${listing.id}-${i}`} listing={listing} />
+        ))}
       </div>
     </div>
   )
 }
 
 // ── Hero ──────────────────────────────────────────────────────
-function HeroStory({ onSignIn, isAuthed, weeklyViews }: { onSignIn: () => void; isAuthed: boolean; weeklyViews: number }) {
+function HeroStory({
+  onSignIn,
+  isAuthed,
+  weeklyViews,
+}: {
+  onSignIn: () => void
+  isAuthed: boolean
+  weeklyViews: number
+}) {
   const navigate = useNavigate()
+
   return (
-    <section className="relative overflow-hidden" style={{ paddingTop: 64, paddingBottom: 80 }}>
-      {/* Faint backdrop halo */}
+    <section className="relative overflow-hidden" style={{ paddingTop: 72, paddingBottom: 0 }}>
+      {/* Radial halo */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1400 800">
+        <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1400 700">
           <defs>
-            <radialGradient id="hero-halo" cx="85%" cy="20%" r="45%">
-              <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.10" />
+            <radialGradient id="hero-halo" cx="50%" cy="30%" r="55%">
+              <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.08" />
               <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
             </radialGradient>
           </defs>
-          <rect width="1400" height="800" fill="url(#hero-halo)" />
+          <rect width="1400" height="700" fill="url(#hero-halo)" />
         </svg>
       </div>
 
-      <div className="max-w-[1280px] mx-auto px-6 relative">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Left — headline + CTA */}
-          <div className="lg:col-span-7">
-            <Reveal>
-              <div className="flex items-center gap-2.5 mb-7">
-                <span className="relative inline-flex w-2 h-2 rounded-full" style={{ background: 'var(--accent)' }}>
-                  <span className="absolute inset-0 rounded-full animate-ping" style={{ background: 'var(--accent)', opacity: 0.5 }} />
-                </span>
-                <span className="font-mono text-[11px] tracking-[0.16em] uppercase" style={{ color: 'var(--muted)' }}>
-                  Chapel Hill · @unc.edu only
-                </span>
-              </div>
-            </Reveal>
+      <div className="max-w-[1100px] mx-auto px-6 relative text-center">
+        {/* Eyebrow */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease, delay: 0.05 }}
+          className="flex items-center justify-center gap-2.5 mb-8"
+        >
+          <span className="relative inline-flex w-1.5 h-1.5 rounded-full" style={{ background: 'var(--accent)' }}>
+            <span className="absolute inset-0 rounded-full animate-ping" style={{ background: 'var(--accent)', opacity: 0.5 }} />
+          </span>
+          <span className="font-label text-[11px] tracking-[0.16em] uppercase" style={{ color: 'var(--muted)' }}>
+            Chapel Hill · @unc.edu only
+          </span>
+        </motion.div>
 
-            <Reveal delay={0.05}>
-              <h1
-                className="font-display leading-[0.98] tracking-[-0.025em]"
-                style={{ fontSize: 'clamp(52px, 8vw, 96px)', fontWeight: 400, color: 'var(--ink)' }}
+        {/* Headline — word-by-word slide-up reveal */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.11, delayChildren: 0.1 } } }}
+          className="font-display leading-[0.93] tracking-[-0.03em]"
+          style={{ fontSize: 'clamp(52px, 10vw, 130px)', color: 'var(--ink)' }}
+        >
+          {/* Line 1 */}
+          <div className="overflow-hidden">
+            {['Skip', 'the'].map(w => (
+              <motion.span
+                key={w}
+                className="inline-block mr-[0.2em]"
+                variants={{ hidden: { y: '115%' }, visible: { y: 0, transition: { duration: 0.95, ease } } }}
               >
-                A <em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>better</em> home<br />
-                for subleases.
-              </h1>
-            </Reveal>
-
-            <Reveal delay={0.15}>
-              <p className="mt-7 text-[17px] leading-[1.55] max-w-[540px]" style={{ color: 'var(--ink-2)' }}>
-                Your friend needs a sublease. They're scrolling through the Snap story. Again.
-                Purch is the place you send them instead — a real board, built for Tar Heels.
-              </p>
-            </Reveal>
-
-            <Reveal delay={0.25}>
-              <div className="mt-9 flex flex-wrap items-center gap-3">
-                <Btn size="lg" onClick={() => navigate('/browse')} icon={<ArrowR />}>
-                  Browse listings
-                </Btn>
-                <Btn size="lg" variant="outline" onClick={isAuthed ? () => navigate('/post') : onSignIn}>
-                  Post yours — free
-                </Btn>
-              </div>
-              <p className="mt-5 text-[12px] font-mono uppercase tracking-[0.12em]" style={{ color: 'var(--muted)' }}>
-                Sign in with @unc.edu · no new password
-              </p>
-              {weeklyViews > 0 && (
-                <div className="mt-3 flex items-center gap-2">
-                  <span className="relative inline-flex w-1.5 h-1.5 rounded-full" style={{ background: '#22c55e' }}>
-                    <span className="absolute inset-0 rounded-full animate-ping" style={{ background: '#22c55e', opacity: 0.5 }} />
-                  </span>
-                  <span className="font-mono text-[11px] uppercase tracking-[0.12em]" style={{ color: 'var(--muted)' }}>
-                    <AnimatedCounter value={weeklyViews} /> people visited this week
-                  </span>
-                  <span
-                    className="font-mono text-[10px] uppercase tracking-[0.1em] px-1.5 py-0.5 rounded-full"
-                    style={{ background: 'color-mix(in oklab, var(--accent) 12%, transparent)', color: 'var(--accent)' }}
-                  >
-                    growing fast
-                  </span>
-                </div>
-              )}
-            </Reveal>
+                {w}
+              </motion.span>
+            ))}
           </div>
-
-          {/* Right — listing carousel */}
-          <div className="lg:col-span-5 relative hidden lg:block">
-            <Reveal delay={0.2}>
-              <ListingCarousel />
-            </Reveal>
+          {/* Line 2 */}
+          <div className="overflow-hidden">
+            <motion.span
+              className="inline-block"
+              variants={{ hidden: { y: '115%' }, visible: { y: 0, transition: { duration: 0.95, ease } } }}
+            >
+              search.
+            </motion.span>
           </div>
-        </div>
+          {/* Line 3 */}
+          <div className="overflow-hidden">
+            <motion.span
+              className="inline-block mr-[0.18em]"
+              style={{ color: 'var(--accent)', fontStyle: 'italic' }}
+              variants={{ hidden: { y: '115%' }, visible: { y: 0, transition: { duration: 0.95, ease } } }}
+            >
+              Purch
+            </motion.span>
+            <motion.span
+              className="inline-block"
+              variants={{ hidden: { y: '115%' }, visible: { y: 0, transition: { duration: 0.95, ease } } }}
+            >
+              it.
+            </motion.span>
+          </div>
+        </motion.div>
+
+        {/* Subtitle */}
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease, delay: 0.62 }}
+          className="mt-8 text-[17px] leading-[1.6] max-w-[500px] mx-auto"
+          style={{ color: 'var(--ink-2)' }}
+        >
+          Your friend needs a sublease. They're scrolling through the Snap story. Again.
+          Purch is the place you send them instead.
+        </motion.p>
+
+        {/* CTAs */}
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease, delay: 0.76 }}
+          className="mt-9 flex items-center justify-center flex-wrap gap-3"
+        >
+          <Btn size="lg" onClick={() => navigate('/browse')} icon={<ArrowR />}>
+            Browse listings
+          </Btn>
+          <Btn size="lg" variant="outline" onClick={isAuthed ? () => navigate('/post') : onSignIn}>
+            Post yours — free
+          </Btn>
+        </motion.div>
+
+        {/* Fine print + live stat */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.9 }}
+          className="mt-5 flex flex-col items-center gap-2"
+        >
+          <p className="text-[12px] font-label uppercase tracking-[0.12em]" style={{ color: 'var(--muted)' }}>
+            Sign in with @unc.edu · no new password
+          </p>
+          {weeklyViews > 0 && (
+            <div className="flex items-center gap-2">
+              <span className="relative inline-flex w-1.5 h-1.5 rounded-full" style={{ background: '#22c55e' }}>
+                <span className="absolute inset-0 rounded-full animate-ping" style={{ background: '#22c55e', opacity: 0.5 }} />
+              </span>
+              <span className="font-label text-[11px] uppercase tracking-[0.12em]" style={{ color: 'var(--muted)' }}>
+                <AnimatedCounter value={weeklyViews} /> people visited this week
+              </span>
+              <span
+                className="font-label text-[10px] uppercase tracking-[0.1em] px-1.5 py-0.5 rounded-full"
+                style={{ background: 'color-mix(in oklab, var(--accent) 12%, transparent)', color: 'var(--accent)' }}
+              >
+                growing fast
+              </span>
+            </div>
+          )}
+        </motion.div>
       </div>
+
+      {/* Real listing reel — full width below hero text */}
+      <LiveListingReel />
     </section>
   )
 }
@@ -438,7 +493,7 @@ function HowItWorks() {
             <Reveal key={r.n} delay={i * 0.08}>
               <div className="rounded-2xl p-6 h-full flex flex-col" style={{ background: 'var(--paper)', border: '1px solid var(--line)' }}>
                 <div className="flex items-center justify-between mb-5">
-                  <span className="font-mono text-[11px] tracking-[0.14em]" style={{ color: 'var(--muted)' }}>
+                  <span className="font-label text-[11px] tracking-[0.14em]" style={{ color: 'var(--muted)' }}>
                     STEP / {r.n}
                   </span>
                   <span
@@ -607,7 +662,6 @@ function MapSection({ onOpen }: { onOpen: () => void }) {
     { id: 'r7', x: 72, y: 66, price: 810, hot: false, label: 'S. Elliott' },
   ]
 
-  // Cycle through pins
   useEffect(() => {
     const order = ['r1', 'r3', 'r5', 'r2', 'r4']
     let i = 0
@@ -618,7 +672,6 @@ function MapSection({ onOpen }: { onOpen: () => void }) {
     return () => clearInterval(t)
   }, [])
 
-  // Sweep animation
   useEffect(() => {
     let raf: number
     const start = performance.now()
@@ -635,7 +688,6 @@ function MapSection({ onOpen }: { onOpen: () => void }) {
   return (
     <section className="relative px-6" style={{ paddingTop: 80, paddingBottom: 72 }}>
       <div className="max-w-[1280px] mx-auto">
-        {/* Section intro */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8 items-end">
           <div className="lg:col-span-7">
             <Eyebrow>02 · The map</Eyebrow>
@@ -663,7 +715,6 @@ function MapSection({ onOpen }: { onOpen: () => void }) {
           </div>
         </div>
 
-        {/* Map */}
         <Reveal delay={0.15}>
           <div
             className="relative rounded-3xl overflow-hidden map-glow"
@@ -719,14 +770,14 @@ function MapSection({ onOpen }: { onOpen: () => void }) {
               className="absolute bottom-4 left-4 rounded-2xl backdrop-blur-xl p-4 min-w-[220px]"
               style={{ background: 'color-mix(in oklab, var(--paper) 85%, transparent)', border: '1px solid var(--line)' }}
             >
-              <div className="font-mono text-[10px] uppercase tracking-[0.16em] mb-3" style={{ color: 'var(--muted)' }}>
+              <div className="font-label text-[10px] uppercase tracking-[0.16em] mb-3" style={{ color: 'var(--muted)' }}>
                 Chapel Hill · Summer 2026
               </div>
               <div className="grid grid-cols-2 gap-x-4 gap-y-3">
                 {[{ n: '47', l: 'active' }, { n: '$845', l: 'median' }, { n: '11', l: 'this week' }, { n: '96%', l: 'filled' }].map(s => (
                   <div key={s.l}>
                     <div className="font-display tabnum" style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-0.01em', color: 'var(--ink)' }}>{s.n}</div>
-                    <div className="font-mono text-[9.5px] uppercase tracking-[0.12em]" style={{ color: 'var(--muted)' }}>{s.l}</div>
+                    <div className="font-label text-[9.5px] uppercase tracking-[0.12em]" style={{ color: 'var(--muted)' }}>{s.l}</div>
                   </div>
                 ))}
               </div>
@@ -791,7 +842,7 @@ function TrustBlock() {
       <div className="max-w-[1280px] mx-auto">
         <div className="max-w-[900px] mb-20">
           <Reveal>
-            <span className="font-mono text-[11px] tracking-[0.16em] uppercase" style={{ color: 'color-mix(in oklab, var(--bg) 50%, transparent)' }}>
+            <span className="font-label text-[11px] tracking-[0.16em] uppercase" style={{ color: 'color-mix(in oklab, var(--bg) 50%, transparent)' }}>
               Built for Heels, by Heels
             </span>
           </Reveal>
@@ -853,7 +904,7 @@ function FinalCTA({ onSignIn, isAuthed }: { onSignIn: () => void; isAuthed: bool
         <Reveal>
           <div className="flex items-center justify-center gap-2 mb-6">
             <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: 'var(--accent)' }} />
-            <span className="font-mono text-[11px] tracking-[0.16em] uppercase" style={{ color: 'var(--muted)' }}>
+            <span className="font-label text-[11px] tracking-[0.16em] uppercase" style={{ color: 'var(--muted)' }}>
               Open now · @unc.edu only
             </span>
           </div>
@@ -892,7 +943,6 @@ export default function Landing() {
 
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
 
-    // Insert view and fetch count in parallel
     supabase.from('page_views').insert({}).then(() => {})
     supabase
       .from('page_views')
@@ -908,7 +958,16 @@ export default function Landing() {
   }
 
   return (
-    <div style={{ background: 'var(--bg)', color: 'var(--ink)', minHeight: '100vh' }}>
+    <div
+      style={{
+        backgroundColor: 'var(--bg)',
+        backgroundImage: GRAIN_URL,
+        backgroundRepeat: 'repeat',
+        backgroundBlendMode: 'overlay',
+        color: 'var(--ink)',
+        minHeight: '100vh',
+      }}
+    >
       <Navbar />
       <AnimatePresence>
         {showSignIn && <SignInModal onClose={() => setShowSignIn(false)} />}

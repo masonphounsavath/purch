@@ -12,6 +12,7 @@ export default {
         display: ['Fraunces', 'Georgia', 'serif'],
         sans:    ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         mono:    ['Geist Mono', 'ui-monospace', 'monospace'],
+        label:   ['Syne', 'ui-sans-serif', 'sans-serif'],
       },
     },
   },
