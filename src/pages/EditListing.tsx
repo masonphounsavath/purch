@@ -32,6 +32,7 @@ export default function EditListing() {
   const navigate = useNavigate()
 
   const [amenities, setAmenities] = useState<string[]>([])
+  const [preferredGender, setPreferredGender] = useState<'female' | 'male' | null>(null)
   const [resolvedCoords, setResolvedCoords] = useState<{ lat: number; lng: number } | null>(null)
   const [existingPhotos, setExistingPhotos] = useState<string[]>([])
   const [removedPhotos, setRemovedPhotos] = useState<Set<string>>(new Set())
@@ -70,6 +71,7 @@ export default function EditListing() {
         is_furnished:   data.is_furnished,
       })
       setAmenities(data.amenities ?? [])
+      setPreferredGender(data.preferred_gender ?? null)
       setExistingPhotos(data.photos ?? [])
       setFetchLoading(false)
     }
@@ -155,6 +157,7 @@ export default function EditListing() {
         bedrooms:       data.bedrooms,
         bathrooms:      data.bathrooms,
         is_furnished:   data.is_furnished,
+        preferred_gender: preferredGender,
         amenities,
         photos:         [...keptPhotos, ...newUrls],
       }).eq('id', id)
@@ -310,6 +313,29 @@ export default function EditListing() {
                   <input type="checkbox" {...register('is_furnished')} className="w-4 h-4 accent-[var(--accent)]" />
                   <span className="text-sm">Yes</span>
                 </label>
+              </div>
+              <div className="col-span-2">
+                <label className="block text-sm font-medium mb-1.5">Preferred subletter</label>
+                <div className="flex gap-2">
+                  {([
+                    { label: 'Any', value: null },
+                    { label: 'Female', value: 'female' as const },
+                    { label: 'Male', value: 'male' as const },
+                  ] as const).map(opt => (
+                    <button
+                      key={opt.label}
+                      type="button"
+                      onClick={() => setPreferredGender(opt.value)}
+                      className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
+                        preferredGender === opt.value
+                          ? 'bg-[var(--ink)] text-[var(--bg)] border-[var(--ink)]'
+                          : 'surface-paper text-muted hairline hover:border-[var(--ink)] hover:text-ink'
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1.5">Utilities included</label>

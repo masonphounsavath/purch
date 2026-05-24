@@ -37,6 +37,18 @@ export function ListingCard({
             <MapPin className="w-8 h-8" style={{ color: 'var(--line)' }} />
           </div>
         )}
+        {listing.preferred_gender && (
+          <span
+            className="absolute top-3 left-3 text-[10px] font-mono px-2 py-1 rounded-full backdrop-blur-sm"
+            style={{
+              background: 'color-mix(in oklab, var(--paper) 88%, transparent)',
+              border: '1px solid var(--line)',
+              color: 'var(--ink-2)',
+            }}
+          >
+            {listing.preferred_gender === 'female' ? '♀ Female' : '♂ Male'}
+          </span>
+        )}
         {onToggleSave && (
           <motion.button
             onClick={e => { e.preventDefault(); e.stopPropagation(); onToggleSave(listing.id) }}

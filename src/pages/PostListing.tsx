@@ -28,6 +28,7 @@ type FormState = {
   beds: number
   baths: number
   furnished: boolean
+  preferredGender: 'female' | 'male' | null
   address: string
   amenities: string[]
   rent: number
@@ -45,6 +46,7 @@ export default function PostListing() {
     beds: 1,
     baths: 1,
     furnished: true,
+    preferredGender: null,
     address: '',
     amenities: [],
     rent: 850,
@@ -147,6 +149,7 @@ export default function PostListing() {
           bedrooms:       form.beds,
           bathrooms:      form.baths,
           is_furnished:   form.furnished,
+          preferred_gender: form.preferredGender,
           amenities:      form.amenities,
           photos:         [],
         })
@@ -325,6 +328,14 @@ export default function PostListing() {
                     </div>
                   </Field>
                 </div>
+
+                <Field label="Preferred subletter">
+                  <div className="flex gap-1.5 pt-1">
+                    <Chip selected={form.preferredGender === null} onClick={() => setForm({ ...form, preferredGender: null })}>Any</Chip>
+                    <Chip selected={form.preferredGender === 'female'} onClick={() => setForm({ ...form, preferredGender: 'female' })}>Female</Chip>
+                    <Chip selected={form.preferredGender === 'male'} onClick={() => setForm({ ...form, preferredGender: 'male' })}>Male</Chip>
+                  </div>
+                </Field>
               </>
             )}
 
