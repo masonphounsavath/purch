@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useAuth } from '../../hooks/useAuth'
 import { useUnreadCount } from '../../hooks/useUnreadCount'
-import { useDarkMode } from '../../hooks/useDarkMode'
 import { supabase } from '../../lib/supabase'
 import { SignInModal } from '../auth/SignInModal'
 import { PurchLogo } from '../ui/PurchLogo'
@@ -17,7 +16,6 @@ const navLinks = [
 export function Navbar() {
   const { isAuthed, user } = useAuth()
   const unreadCount = useUnreadCount()
-  const { isDark, toggle: toggleDark } = useDarkMode()
   const [showSignIn, setShowSignIn] = useState(false)
   const location = useLocation()
 
@@ -95,29 +93,6 @@ export function Navbar() {
 
           {/* Right side */}
           <div className="flex items-center gap-2">
-            {/* Dark mode toggle */}
-            <button
-              onClick={toggleDark}
-              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-              className="w-8 h-8 rounded-full grid place-items-center eased"
-              style={{
-                color: 'var(--ink-2)',
-                border: '1px solid var(--line)',
-                background: 'transparent',
-              }}
-            >
-              {isDark ? (
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="4" />
-                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
-                </svg>
-              ) : (
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                </svg>
-              )}
-            </button>
-
             {isAuthed ? (
               <>
                 <Link
