@@ -126,6 +126,33 @@ function FilterSidebar({
           />
         </div>
 
+        {/* Gender preference */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-bold text-slate-400 tracking-widest uppercase whitespace-nowrap">
+            Looking for
+          </span>
+          <div className="flex gap-1">
+            {([
+              { label: 'Any', value: undefined },
+              { label: 'Female', value: 'female' as const },
+              { label: 'Male', value: 'male' as const },
+            ] as const).map(opt => (
+              <button
+                key={opt.label}
+                onClick={() => onChange({ ...filters, preferredGender: opt.value })}
+                className="px-2.5 py-1.5 rounded-lg text-xs font-medium eased"
+                style={{
+                  background: (filters.preferredGender ?? undefined) === opt.value ? 'var(--ink)' : 'var(--paper)',
+                  color: (filters.preferredGender ?? undefined) === opt.value ? 'var(--bg)' : 'var(--ink-2)',
+                  border: `1px solid ${(filters.preferredGender ?? undefined) === opt.value ? 'var(--ink)' : 'var(--line)'}`,
+                }}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Sort */}
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold text-slate-400 tracking-widest uppercase whitespace-nowrap">
@@ -152,7 +179,7 @@ const EMPTY_FILTERS: Filters = { bedrooms: -1 }
 function hasActiveFilters(f: Filters) {
   return f.minRent !== undefined || f.maxRent !== undefined ||
     (f.bedrooms !== undefined && f.bedrooms !== -1) ||
-    f.furnished || f.availableFrom !== undefined
+    f.furnished || f.availableFrom !== undefined || f.preferredGender !== undefined
 }
 
 export default function Browse() {

@@ -34,6 +34,7 @@ export interface Listing {
   is_active: boolean
   view_count: number
   created_at: string
+  preferred_gender: 'female' | 'male' | null
   profile?: Profile
 }
 
