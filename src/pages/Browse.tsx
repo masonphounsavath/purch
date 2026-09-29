@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { SlidersHorizontal, X, Plus, Map as MapIcon, List } from 'lucide-react'
 import { Navbar } from '../components/layout/Navbar'
@@ -176,15 +176,29 @@ function FilterSidebar({
 
 const EMPTY_FILTERS: Filters = { bedrooms: -1 }
 
+// Seeds filters from links like /browse?from=2027-01-05&to=2027-05-10&maxRent=900&furnished=1
+function filtersFromParams(params: URLSearchParams): Filters {
+  const maxRent = Number(params.get('maxRent'))
+  return {
+    ...EMPTY_FILTERS,
+    maxRent: maxRent > 0 ? maxRent : undefined,
+    availableFrom: params.get('from') || undefined,
+    availableTo: params.get('to') || undefined,
+    furnished: params.get('furnished') === '1' || undefined,
+  }
+}
+
 function hasActiveFilters(f: Filters) {
   return f.minRent !== undefined || f.maxRent !== undefined ||
     (f.bedrooms !== undefined && f.bedrooms !== -1) ||
-    f.furnished || f.availableFrom !== undefined || f.preferredGender !== undefined
+    f.furnished || f.availableFrom !== undefined || f.availableTo !== undefined ||
+    f.preferredGender !== undefined
 }
 
 export default function Browse() {
   const { isAuthed } = useAuth()
-  const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS)
+  const [searchParams] = useSearchParams()
+  const [filters, setFilters] = useState<Filters>(() => filtersFromParams(searchParams))
   const { listings, loading } = useListings(filters)
   const { savedIds, toggleSave } = useSavedListings()
   const [hoveredId, setHoveredId] = useState<string | null>(null)

@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" role="img" aria-label="Purch Student Subleases logo">
+  <defs>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#69AFFF"/>
+      <stop offset="100%" stop-color="#4384D5"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(70,95) scale(1.05)">
+    <path d="
+M 82 82
+C 82 55 104 34 132 34
+C 174 34 208 64 215 103
+C 220 132 208 155 185 166
+C 172 172 158 176 143 176
+L 143 214
+C 143 226 133 236 121 236
+L 82 236
+Z
+" fill="#F7F8F8"/>
+    <path d="
+M 82 82
+C 108 62 137 53 164 57
+C 190 61 211 78 215 103
+C 218 121 216 135 211 146
+C 197 125 176 106 151 97
+C 129 89 105 85 82 82
+Z
+" fill="url(#blue)"/>
+    <path d="
+M 82 82
+C 109 83 132 89 151 97
+C 174 107 195 123 211 146
+C 201 161 182 171 160 175
+C 151 177 143 177 135 176
+C 121 174 110 164 108 151
+C 106 139 111 126 121 118
+C 128 112 137 109 147 109
+C 158 109 169 113 177 120
+L 188 128
+L 176 132
+C 170 145 158 153 144 154
+C 137 155 130 153 125 150
+C 118 146 113 140 112 132
+C 110 124 113 116 119 110
+C 108 101 96 92 82 82
+Z
+" fill="#F7F8F8"/>
+    <path d="
+M 139 113
+C 153 105 171 110 179 121
+C 183 127 184 134 182 140
+L 195 143
+L 181 149
+C 176 158 166 164 154 165
+C 142 166 132 161 126 153
+C 120 145 119 135 123 126
+C 127 120 132 116 139 113
+Z
+" fill="#07111B"/>
+    <circle cx="151" cy="126" r="5.5" fill="#F7F8F8"/>
+  </g>
+  <text x="345" y="275" fill="#F7F8F8" font-family="Inter, Arial, Helvetica, sans-serif"
+        font-size="145" font-weight="700" letter-spacing="-7">purch</text>
+  <text x="350" y="365" fill="#F7F8F8" font-family="Inter, Arial, Helvetica, sans-serif"
+        font-size="31" font-weight="500" letter-spacing="9">STUDENT SUBLEASES</text>
+</svg>

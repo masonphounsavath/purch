@@ -3,15 +3,18 @@ import { X, ArrowRight, Mail } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { supabase } from '../../lib/supabase'
 
-interface Props {
-  onClose: () => void
-}
-
 type Step = 'email' | 'code'
 
-export function SignInModal({ onClose }: Props) {
-  const [step, setStep] = useState<Step>('email')
-  const [email, setEmail] = useState('')
+interface Props {
+  onClose: () => void
+  // Lets a page send the code itself and open the modal straight at the code step
+  initialEmail?: string
+  initialStep?: Step
+}
+
+export function SignInModal({ onClose, initialEmail = '', initialStep = 'email' }: Props) {
+  const [step, setStep] = useState<Step>(initialStep)
+  const [email, setEmail] = useState(initialEmail)
   const [code, setCode] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
