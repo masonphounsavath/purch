@@ -125,7 +125,7 @@ function LandingHeader({ isAuthed, onSignIn }: { isAuthed: boolean; onSignIn: ()
       <div className="mx-auto max-w-[1440px] h-[72px] px-5 sm:px-8 lg:px-16 flex items-center justify-between">
         <div className="flex items-center gap-10">
           <Link to="/" aria-label="Purch home" className="flex items-center">
-            <img src="/brand/purch-lockup.svg" alt="purch" className="h-9 sm:h-10 w-auto block" />
+            <img src="/brand/purch_exact_reference.svg" alt="purch" className="h-10 sm:h-11 w-auto block" />
           </Link>
           <nav className="hidden md:flex gap-1.5 text-[15px] font-semibold">
             <Link to="/browse" className="px-3.5 py-2.5 rounded-full hover:bg-white/10 transition-colors">Browse</Link>
@@ -326,7 +326,7 @@ function HeroMap({ listings }: { listings: LandingListing[] }) {
               <img src={featured.listing.photos[0]} alt="" className="w-16 h-16 shrink-0 rounded-[10px] object-cover" />
             ) : (
               <span className="w-16 h-16 shrink-0 rounded-[10px] bg-brand-navy flex items-center justify-center">
-                <img src="/brand/purch-mark.svg" alt="" className="h-9 w-auto" />
+                <img src="/brand/purch_exact_mark.svg" alt="" className="h-9 w-auto" />
               </span>
             )}
             <div className="flex-1 min-w-0 flex flex-col gap-0.5">
@@ -555,7 +555,7 @@ function SignInBand({ onCodeSent }: { onCodeSent: (email: string) => void }) {
     <section className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-16 pb-20 lg:pb-24">
       <Reveal className="p-8 sm:p-12 lg:p-16 rounded-[20px] bg-brand-navy text-white flex flex-col lg:flex-row lg:items-center justify-between gap-8 lg:gap-12">
         <div className="flex items-center gap-6 lg:gap-7">
-          <img src="/brand/purch-mark.svg" alt="" className="h-16 lg:h-[84px] w-auto block shrink-0" />
+          <img src="/brand/purch_exact_mark.svg" alt="" className="h-16 lg:h-[84px] w-auto block shrink-0" />
           <h2 className="font-outfit text-3xl sm:text-4xl lg:text-[44px] leading-[1.02] font-extrabold tracking-[-0.03em] max-w-[480px]">
             Sign in with your @unc.edu. No password.
           </h2>
@@ -599,7 +599,7 @@ function LandingFooter() {
     <footer className="bg-brand-navy text-white">
       <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-16 py-14 flex flex-col gap-10">
         <div className="flex flex-col gap-3.5">
-          <img src="/brand/purch-lockup.svg" alt="purch" className="h-12 w-auto self-start block" />
+          <img src="/brand/purch_exact_reference.svg" alt="purch" className="h-12 w-auto self-start block" />
           <span className="text-xs font-medium tracking-[0.34em] text-[#C9D5E3]">STUDENT SUBLEASES</span>
         </div>
         <div className="flex flex-wrap gap-x-[120px] gap-y-8 text-[15px]">

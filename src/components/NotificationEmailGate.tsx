@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { PurchLogo } from './ui/PurchLogo'
 
 interface Props {
   userId: string
@@ -55,11 +56,8 @@ export function NotificationEmailGate({ userId, onComplete }: Props) {
     >
       <div style={{ width: '100%', maxWidth: '420px' }}>
         {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '48px' }}>
-          <img src="/logo-icon.png" alt="Purch" style={{ width: '28px', height: '28px' }} />
-          <span style={{ fontFamily: 'var(--font-display, Fraunces)', fontSize: '18px', fontWeight: 600, color: 'var(--ink)' }}>
-            purch
-          </span>
+        <div style={{ marginBottom: '48px' }}>
+          <PurchLogo size={36} />
         </div>
 
         {/* Heading */}
