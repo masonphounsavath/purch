@@ -125,7 +125,7 @@ function LandingHeader({ isAuthed, onSignIn }: { isAuthed: boolean; onSignIn: ()
       <div className="mx-auto max-w-[1440px] h-[72px] px-5 sm:px-8 lg:px-16 flex items-center justify-between">
         <div className="flex items-center gap-10">
           <Link to="/" aria-label="Purch home" className="flex items-center">
-            <img src="/brand/purch-lockup.svg" alt="purch" className="h-9 sm:h-10 w-auto block" />
+            <img src="/brand/purch-exact-reference.png" alt="purch — Student Subleases" className="h-11 sm:h-12 w-auto block" />
           </Link>
           <nav className="hidden md:flex gap-1.5 text-[15px] font-semibold">
             <Link to="/browse" className="px-3.5 py-2.5 rounded-full hover:bg-white/10 transition-colors">Browse</Link>
