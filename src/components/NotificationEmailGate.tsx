@@ -56,7 +56,7 @@ export function NotificationEmailGate({ userId, onComplete }: Props) {
       <div style={{ width: '100%', maxWidth: '420px' }}>
         {/* Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '48px' }}>
-          <img src="/logo-icon.png" alt="Purch" style={{ width: '28px', height: '28px' }} />
+          <img src="/logo-icon.svg" alt="Purch" style={{ width: '28px', height: '28px' }} />
           <span style={{ fontFamily: 'var(--font-display, Fraunces)', fontSize: '18px', fontWeight: 600, color: 'var(--ink)' }}>
             purch
           </span>
