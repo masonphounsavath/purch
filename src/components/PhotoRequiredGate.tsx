@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { PurchLogo } from './ui/PurchLogo'
 
 interface Props {
   listingId?: string  // if set, back button navigates to that listing's edit page
@@ -29,11 +30,8 @@ export function PhotoRequiredGate({ listingId, onBack }: Props) {
     >
       <div style={{ width: '100%', maxWidth: '420px' }}>
         {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '48px' }}>
-          <img src="/logo-icon.svg" alt="Purch" style={{ width: '28px', height: '28px' }} />
-          <span style={{ fontFamily: 'var(--font-display, Fraunces)', fontSize: '18px', fontWeight: 600, color: 'var(--ink)' }}>
-            purch
-          </span>
+        <div style={{ marginBottom: '48px' }}>
+          <PurchLogo size={36} />
         </div>
 
         {/* Heading */}
