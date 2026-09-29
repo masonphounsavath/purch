@@ -10,6 +10,7 @@ export interface Filters {
   bedrooms?: number        // -1 = any
   furnished?: boolean
   availableFrom?: string
+  availableTo?: string
   preferredGender?: 'female' | 'male'
   sort?: SortOption
 }
@@ -40,6 +41,7 @@ export function useListings(filters: Filters = {}) {
           : query.eq('bedrooms', filters.bedrooms)
       if (filters.furnished)    query = query.eq('is_furnished', true)
       if (filters.availableFrom) query = query.lte('available_from', filters.availableFrom)
+      if (filters.availableTo)   query = query.gte('available_to', filters.availableTo)
       if (filters.preferredGender)
         query = query.or(`preferred_gender.eq.${filters.preferredGender},preferred_gender.is.null`)
 
@@ -55,6 +57,7 @@ export function useListings(filters: Filters = {}) {
     filters.bedrooms,
     filters.furnished,
     filters.availableFrom,
+    filters.availableTo,
     filters.preferredGender,
     filters.sort,
   ])
