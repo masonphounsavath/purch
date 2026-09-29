@@ -1,17 +1,13 @@
 interface PurchLogoProps {
   size?: number
-  variant?: 'full' | 'icon'
   className?: string
 }
 
-export function PurchLogo({ size = 28, variant = 'full', className = '' }: PurchLogoProps) {
-  const src = variant === 'icon' ? '/logo-icon.png' : '/logo-full.png'
-  const alt = 'Purch'
-
+export function PurchLogo({ size = 28, className = '' }: PurchLogoProps) {
   return (
     <img
-      src={src}
-      alt={alt}
+      src="/logo-icon.svg"
+      alt="Purch"
       height={size}
       style={{ height: size, width: 'auto', display: 'block' }}
       className={className}
