@@ -2,11 +2,13 @@ import { useEffect, useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   LogOut, Plus, MapPin, Calendar, Pencil, Trash2,
-  Camera, MessageSquare, Heart, Settings, Home, Phone, Star, Eye,
+  Camera, MessageSquare, Heart, Settings, Home, Phone, Eye, BadgeCheck, Loader,
 } from 'lucide-react'
-import { Navbar } from '../components/layout/Navbar'
+import { PageShell } from '../components/layout/PageShell'
+import { button, cardHeading, field, fieldHint, fieldLabel } from '../components/ui/styles'
 import { useAuth } from '../hooks/useAuth'
 import { supabase } from '../lib/supabase'
+import { cn } from '../lib/utils'
 import type { Listing } from '../types'
 
 type Tab = 'listings' | 'saved' | 'settings'
@@ -173,344 +175,343 @@ export default function Profile() {
     : null
   const displayName = profileData.display_name || email.split('@')[0]
 
+  const tabs = [
+    { id: 'listings', label: 'My listings', icon: Home },
+    { id: 'saved',    label: 'Saved',       icon: Heart },
+    { id: 'settings', label: 'Settings',    icon: Settings },
+  ] as const
+
+  const thumb = (listing: Listing) => (
+    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-brand-navy flex-shrink-0">
+      {listing.photos?.[0]
+        ? <img src={listing.photos[0]} alt="" className="w-full h-full object-cover" />
+        : <div className="w-full h-full flex items-center justify-center"><img src="/brand/purch_exact_mark.svg" alt="" className="h-8 w-auto" /></div>
+      }
+    </div>
+  )
+
+  const iconButton = 'p-2.5 rounded-[10px] border border-brand-line text-brand-muted hover:border-brand-sky hover:text-brand-sky-ink transition-colors'
+
   return (
-    <>
-      <Navbar />
-      <div className="min-h-screen pt-14">
+    <PageShell>
+      {/* Identity band */}
+      <section className="bg-brand-navy text-white">
+        <div className="mx-auto max-w-4xl px-5 sm:px-8 pt-10 lg:pt-14 pb-8">
+          <div className="flex items-start justify-between gap-6">
+            <div className="flex items-center gap-5 min-w-0">
 
-        {/* Hero banner */}
-        <div className="bg-[var(--ink)] h-32" />
-
-        <div className="max-w-4xl mx-auto px-6">
-
-          {/* Profile card — overlaps banner */}
-          <div className="surface-paper rounded-2xl border hairline shadow-sm -mt-10 p-6 mb-6">
-            <div className="flex items-start justify-between">
-              <div className="flex items-end gap-5">
-
-                {/* Avatar with upload button */}
-                <div className="relative -mt-14">
-                  <div className="w-20 h-20 rounded-full bg-[var(--accent)] flex items-center justify-center text-[var(--bg)] text-2xl font-bold ring-4 ring-[var(--paper)] overflow-hidden shadow-md">
-                    {profileData.avatar_url
-                      ? <img src={profileData.avatar_url} alt="" className="w-full h-full object-cover" />
-                      : displayName.slice(0, 2).toUpperCase()
-                    }
-                  </div>
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    className="absolute bottom-0 right-0 w-6 h-6 surface-paper rounded-full border hairline shadow flex items-center justify-center hover:surface-bg-2 transition-colors"
-                    title="Change photo"
-                  >
-                    {avatarUploading
-                      ? <span className="w-3 h-3 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
-                      : <Camera className="w-3 h-3 text-muted" />
-                    }
-                  </button>
-                  <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+              {/* Avatar with upload button */}
+              <div className="relative flex-shrink-0">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-brand-sky flex items-center justify-center text-brand-navy font-outfit text-3xl font-extrabold ring-4 ring-brand-navy-2 overflow-hidden">
+                  {profileData.avatar_url
+                    ? <img src={profileData.avatar_url} alt="" className="w-full h-full object-cover" />
+                    : displayName.slice(0, 2).toUpperCase()
+                  }
                 </div>
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full shadow-[0_2px_8px_rgba(5,30,55,0.3)] flex items-center justify-center text-brand-navy hover:bg-brand-mist transition-colors"
+                  title="Change photo"
+                  aria-label="Change photo"
+                >
+                  {avatarUploading
+                    ? <span className="w-3.5 h-3.5 border-2 border-brand-sky border-t-transparent rounded-full animate-spin" />
+                    : <Camera className="w-4 h-4" />
+                  }
+                </button>
+                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+              </div>
 
-                {/* Identity */}
-                <div className="pb-1">
-                  <h1 className="text-xl font-bold font-display">{displayName}</h1>
-                  <p className="text-sm text-muted">{email}</p>
-                  <div className="flex items-center gap-3 mt-1.5 flex-wrap">
-                    <span className="inline-flex items-center gap-1 text-xs text-accent bg-[var(--accent)]/10 px-2 py-0.5 rounded-full font-medium">
-                      <Star className="w-3 h-3 fill-current" /> UNC Verified
+              {/* Identity */}
+              <div className="min-w-0 flex flex-col gap-1.5">
+                <h1 className="font-outfit text-3xl sm:text-[40px] leading-none font-extrabold tracking-[-0.03em] truncate">{displayName}</h1>
+                <p className="text-[15px] text-brand-subtle truncate">{email}</p>
+                <div className="flex items-center gap-x-4 gap-y-1.5 mt-1 flex-wrap text-[13px] text-brand-subtle">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-brand-sky text-brand-navy font-bold">
+                    <BadgeCheck className="w-3.5 h-3.5" /> UNC Verified
+                  </span>
+                  {memberSince && <span>Member since {memberSince}</span>}
+                  {profileData.phone && (
+                    <span className="flex items-center gap-1">
+                      <Phone className="w-3.5 h-3.5" /> {profileData.phone}
                     </span>
-                    {memberSince && (
-                      <span className="text-xs text-muted">Member since {memberSince}</span>
-                    )}
-                    {profileData.phone && (
-                      <span className="flex items-center gap-1 text-xs text-muted">
-                        <Phone className="w-3 h-3" /> {profileData.phone}
-                      </span>
-                    )}
-                  </div>
+                  )}
                 </div>
               </div>
-
-              <button
-                onClick={handleSignOut}
-                className="hidden sm:flex items-center gap-2 text-sm text-muted hover:text-red-500 transition-colors border hairline hover:border-red-200 rounded-lg px-4 py-2 mt-1 flex-shrink-0"
-              >
-                <LogOut className="w-4 h-4" />
-                Sign out
-              </button>
             </div>
 
-            {/* Stats row */}
-            <div className="mt-5 pt-5 border-t hairline flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-8">
-              <div className="flex items-center gap-8">
-                <div>
-                  <p className="text-xl font-bold font-display leading-none">{listings.length}</p>
-                  <p className="text-xs text-muted mt-0.5">Listings</p>
+            <button
+              onClick={handleSignOut}
+              className="hidden sm:flex items-center gap-2 text-[15px] font-semibold text-brand-subtle hover:text-white border border-white/20 hover:bg-white/10 rounded-[10px] px-4 py-2.5 transition-colors flex-shrink-0"
+            >
+              <LogOut className="w-4 h-4" />
+              Sign out
+            </button>
+          </div>
+
+          {/* Stats row */}
+          <div className="mt-8 pt-6 border-t border-brand-navy-2 flex flex-col gap-5 sm:flex-row sm:items-center">
+            <div className="flex items-center gap-10">
+              {[
+                { n: listings.length, l: 'Listings' },
+                { n: activeCount,     l: 'Active' },
+                { n: savedIds.length, l: 'Saved' },
+              ].map(s => (
+                <div key={s.l}>
+                  <p className="font-outfit text-[32px] font-extrabold leading-none">{s.n}</p>
+                  <p className="text-[12px] font-semibold tracking-[0.2em] uppercase text-brand-subtle mt-1.5">{s.l}</p>
                 </div>
-                <div>
-                  <p className="text-xl font-bold font-display leading-none">{activeCount}</p>
-                  <p className="text-xs text-muted mt-0.5">Active</p>
-                </div>
-                <div>
-                  <p className="text-xl font-bold font-display leading-none">{savedIds.length}</p>
-                  <p className="text-xs text-muted mt-0.5">Saved</p>
-                </div>
-              </div>
-              <div className="sm:ml-auto">
-                <Link
-                  to="/messages"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-accent border border-[var(--accent)]/30 hover:bg-[var(--accent)]/5 rounded-lg px-4 py-2 transition-colors"
-                >
-                  <MessageSquare className="w-4 h-4" />
-                  Messages
-                </Link>
-              </div>
+              ))}
             </div>
+            <Link to="/messages" className={button('primary', 'sm', 'sm:ml-auto self-start sm:self-center')}>
+              <MessageSquare className="w-4 h-4" />
+              Messages
+            </Link>
           </div>
+        </div>
+      </section>
 
-          {/* Tab bar */}
-          <div className="flex gap-1 surface-paper rounded-xl border hairline shadow-sm p-1 mb-6">
-            {([
-              { id: 'listings', label: 'My Listings', icon: Home },
-              { id: 'saved',    label: 'Saved',       icon: Heart },
-              { id: 'settings', label: 'Settings',    icon: Settings },
-            ] as const).map(({ id, label, icon: Icon }) => (
-              <button
-                key={id}
-                onClick={() => setTab(id)}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium rounded-lg transition-colors ${
-                  tab === id ? 'bg-[var(--ink)] text-[var(--bg)]' : 'text-muted hover:text-ink'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                {label}
-              </button>
-            ))}
-          </div>
+      <div className="mx-auto max-w-4xl px-5 sm:px-8 py-8 lg:py-10">
 
-          {/* ── My Listings tab ── */}
-          {tab === 'listings' && (
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold font-display">My listings</h2>
-                <Link
-                  to="/post"
-                  className="flex items-center gap-2 bg-[var(--ink)] text-[var(--bg)] text-sm font-medium px-4 py-2 rounded-full hover:opacity-90 transition-opacity"
-                >
-                  <Plus className="w-4 h-4" /> Post listing
-                </Link>
-              </div>
+        {/* Tab bar */}
+        <div role="tablist" className="flex gap-1 rounded-[14px] bg-brand-mist p-1 mb-8">
+          {tabs.map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              role="tab"
+              aria-selected={tab === id}
+              onClick={() => setTab(id)}
+              className={cn(
+                'flex-1 flex items-center justify-center gap-2 py-3 text-[15px] font-semibold rounded-[10px] transition-colors',
+                tab === id ? 'bg-brand-navy text-white shadow-sm' : 'text-brand-muted hover:text-brand-navy',
+              )}
+            >
+              <Icon className="w-4 h-4" />
+              {label}
+            </button>
+          ))}
+        </div>
 
-              {listingsLoading ? (
-                <div className="text-muted text-sm py-12 text-center">Loading…</div>
-              ) : listings.length === 0 ? (
-                <div className="surface-paper rounded-2xl border hairline shadow-sm p-12 text-center">
-                  <div className="w-12 h-12 bg-[var(--accent)]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <MapPin className="w-5 h-5 text-accent" />
-                  </div>
-                  <p className="font-semibold mb-1">No listings yet</p>
-                  <p className="text-sm text-muted mb-5">Post your first sublease and reach hundreds of UNC students.</p>
-                  <Link to="/post" className="inline-flex items-center gap-2 bg-[var(--ink)] text-[var(--bg)] text-sm font-medium px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity">
-                    <Plus className="w-4 h-4" /> Post a listing
-                  </Link>
-                </div>
-              ) : (
-                <div className="flex flex-col gap-4">
-                  {listings.map(listing => (
-                    <div key={listing.id} className="surface-paper rounded-2xl border hairline shadow-sm p-5 flex items-center gap-4">
-                      {/* Thumbnail */}
-                      <div className="w-16 h-16 rounded-xl overflow-hidden surface-bg-2 flex-shrink-0">
-                        {listing.photos?.[0]
-                          ? <img src={listing.photos[0]} alt="" className="w-full h-full object-cover" />
-                          : <div className="w-full h-full flex items-center justify-center"><MapPin className="w-5 h-5 text-muted" /></div>
-                        }
-                      </div>
+        {/* ── My Listings tab ── */}
+        {tab === 'listings' && (
+          <div>
+            <div className="flex items-center justify-between mb-5">
+              <h2 className={cardHeading}>My listings</h2>
+              <Link to="/post" className={button('dark', 'sm')}>
+                <Plus className="w-4 h-4" /> Post listing
+              </Link>
+            </div>
+
+            {listingsLoading ? (
+              <div className="flex justify-center py-16"><Loader className="w-5 h-5 text-brand-sky animate-spin" /></div>
+            ) : listings.length === 0 ? (
+              <EmptyState
+                icon={MapPin}
+                title="No listings yet"
+                body="Post your first sublease and reach hundreds of UNC students."
+                action={<Link to="/post" className={button('primary', 'sm')}><Plus className="w-4 h-4" /> Post a listing</Link>}
+              />
+            ) : (
+              <div className="flex flex-col gap-3">
+                {listings.map(listing => (
+                  <div key={listing.id} className="rounded-2xl border border-brand-line bg-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                      {thumb(listing)}
 
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <p className="font-semibold truncate">{listing.title}</p>
-                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 ${
-                            listing.is_active ? 'bg-[var(--accent)]/10 text-accent' : 'surface-bg-2 text-muted'
-                          }`}>
+                        <div className="flex items-center gap-2 mb-1">
+                          <Link to={`/listings/${listing.id}`} className="font-bold truncate hover:text-brand-sky-ink transition-colors">{listing.title}</Link>
+                          <span className={cn(
+                            'text-xs px-2.5 py-0.5 rounded-full font-semibold flex-shrink-0',
+                            listing.is_active ? 'bg-brand-sky/15 text-brand-sky-ink' : 'bg-brand-mist text-brand-muted',
+                          )}>
                             {listing.is_active ? 'Active' : 'Inactive'}
                           </span>
                         </div>
-                        <p className="text-accent font-semibold text-sm">${listing.rent}/mo</p>
-                        <div className="flex items-center gap-3 text-xs text-muted mt-0.5">
+                        <p className="font-outfit text-lg font-extrabold leading-tight">${listing.rent.toLocaleString()}<span className="font-figtree text-xs font-medium text-brand-muted">/mo</span></p>
+                        <div className="flex items-center gap-x-3 gap-y-1 flex-wrap text-[13px] text-brand-muted mt-1">
                           <span className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
+                            <Calendar className="w-3.5 h-3.5" />
                             {new Date(listing.available_from).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                             {' – '}
                             {new Date(listing.available_to).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                           </span>
                           <span className="flex items-center gap-1">
-                            <Eye className="w-3 h-3" />
+                            <Eye className="w-3.5 h-3.5" />
                             {listing.view_count ?? 0} {(listing.view_count ?? 0) === 1 ? 'view' : 'views'}
                           </span>
                           {(inquiryCounts[listing.id] ?? 0) > 0 && (
-                            <span className="flex items-center gap-1 text-accent font-medium">
-                              <MessageSquare className="w-3 h-3" />
+                            <span className="flex items-center gap-1 text-brand-sky-ink font-semibold">
+                              <MessageSquare className="w-3.5 h-3.5" />
                               {inquiryCounts[listing.id]} {inquiryCounts[listing.id] === 1 ? 'inquiry' : 'inquiries'}
                             </span>
                           )}
                         </div>
                       </div>
-
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <button
-                          onClick={() => handleToggleActive(listing)}
-                          className="text-xs border hairline rounded-lg px-3 py-1.5 text-muted hover:border-[var(--accent)] hover:text-accent transition-colors"
-                        >
-                          {listing.is_active ? 'Deactivate' : 'Activate'}
-                        </button>
-                        <Link
-                          to={`/listings/${listing.id}/edit`}
-                          className="p-2 rounded-lg border hairline text-muted hover:border-[var(--accent)] hover:text-accent transition-colors"
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </Link>
-                        <button
-                          onClick={() => handleDelete(listing.id)}
-                          disabled={deleting === listing.id}
-                          className="p-2 rounded-lg border hairline text-muted hover:border-red-300 hover:text-red-500 transition-colors disabled:opacity-40"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
 
-          {/* ── Saved tab ── */}
-          {tab === 'saved' && (
-            <div>
-              <h2 className="text-lg font-semibold font-display mb-4">Saved listings</h2>
-              {savedLoading ? (
-                <div className="text-muted text-sm py-12 text-center">Loading…</div>
-              ) : savedListings.length === 0 ? (
-                <div className="surface-paper rounded-2xl border hairline shadow-sm p-12 text-center">
-                  <div className="w-12 h-12 bg-[var(--accent)]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Heart className="w-5 h-5 text-accent" />
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <button
+                        onClick={() => handleToggleActive(listing)}
+                        className="text-sm font-semibold border border-brand-line rounded-[10px] px-3.5 py-2 text-brand-navy hover:border-brand-sky hover:text-brand-sky-ink transition-colors"
+                      >
+                        {listing.is_active ? 'Deactivate' : 'Activate'}
+                      </button>
+                      <Link to={`/listings/${listing.id}/edit`} className={iconButton} aria-label="Edit listing">
+                        <Pencil className="w-4 h-4" />
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(listing.id)}
+                        disabled={deleting === listing.id}
+                        aria-label="Delete listing"
+                        className="p-2.5 rounded-[10px] border border-brand-line text-brand-muted hover:border-red-300 hover:text-red-600 transition-colors disabled:opacity-40"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
-                  <p className="font-semibold mb-1">No saved listings</p>
-                  <p className="text-sm text-muted mb-5">Tap the heart on any listing to save it for later.</p>
-                  <Link to="/browse" className="inline-flex items-center gap-2 bg-[var(--ink)] text-[var(--bg)] text-sm font-medium px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity">
-                    Browse listings
-                  </Link>
-                </div>
-              ) : (
-                <div className="flex flex-col gap-4">
-                  {savedListings.map(listing => (
-                    <div key={listing.id} className="surface-paper rounded-2xl border hairline shadow-sm p-5 flex items-center gap-4">
-                      <div className="w-16 h-16 rounded-xl overflow-hidden surface-bg-2 flex-shrink-0">
-                        {listing.photos?.[0]
-                          ? <img src={listing.photos[0]} alt="" className="w-full h-full object-cover" />
-                          : <div className="w-full h-full flex items-center justify-center"><MapPin className="w-5 h-5 text-muted" /></div>
-                        }
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold truncate mb-0.5">{listing.title}</p>
-                        <p className="text-accent font-semibold text-sm">${listing.rent}/mo</p>
-                        <p className="flex items-center gap-1 text-xs text-muted mt-0.5">
-                          <MapPin className="w-3 h-3" /> {listing.address}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <Link
-                          to={`/listings/${listing.id}`}
-                          className="text-xs border hairline rounded-lg px-3 py-1.5 text-muted hover:border-[var(--accent)] hover:text-accent transition-colors"
-                        >
-                          View
-                        </Link>
-                        <button
-                          onClick={() => handleUnsave(listing.id)}
-                          className="p-2 rounded-lg border border-red-100 text-red-400 hover:bg-red-50 transition-colors"
-                          title="Unsave"
-                        >
-                          <Heart className="w-4 h-4 fill-current" />
-                        </button>
-                      </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── Saved tab ── */}
+        {tab === 'saved' && (
+          <div>
+            <h2 className={cn(cardHeading, 'mb-5')}>Saved listings</h2>
+            {savedLoading ? (
+              <div className="flex justify-center py-16"><Loader className="w-5 h-5 text-brand-sky animate-spin" /></div>
+            ) : savedListings.length === 0 ? (
+              <EmptyState
+                icon={Heart}
+                title="No saved listings"
+                body="Tap the heart on any listing to save it for later."
+                action={<Link to="/browse" className={button('primary', 'sm')}>Browse listings</Link>}
+              />
+            ) : (
+              <div className="flex flex-col gap-3">
+                {savedListings.map(listing => (
+                  <div key={listing.id} className="rounded-2xl border border-brand-line bg-white p-4 sm:p-5 flex items-center gap-4">
+                    {thumb(listing)}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold truncate mb-0.5">{listing.title}</p>
+                      <p className="font-outfit text-lg font-extrabold leading-tight">${listing.rent.toLocaleString()}<span className="font-figtree text-xs font-medium text-brand-muted">/mo</span></p>
+                      <p className="flex items-center gap-1 text-[13px] text-brand-muted mt-1 truncate">
+                        <MapPin className="w-3.5 h-3.5 flex-shrink-0" /> {listing.address}
+                      </p>
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ── Settings tab ── */}
-          {tab === 'settings' && (
-            <div className="surface-paper rounded-2xl border hairline shadow-sm p-6">
-              <h2 className="text-lg font-semibold font-display mb-6">Profile settings</h2>
-              <div className="space-y-5 max-w-md">
-                <div>
-                  <label className="block text-sm font-medium mb-1.5">Display name</label>
-                  <input
-                    type="text"
-                    value={settingsForm.display_name}
-                    onChange={e => setSettingsForm(p => ({ ...p, display_name: e.target.value }))}
-                    placeholder="Your name"
-                    className="w-full border hairline rounded-lg px-3 py-2 text-sm surface-paper focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1.5">Phone number</label>
-                  <input
-                    type="tel"
-                    value={settingsForm.phone}
-                    onChange={e => setSettingsForm(p => ({ ...p, phone: e.target.value }))}
-                    placeholder="(919) 555-0000"
-                    className="w-full border hairline rounded-lg px-3 py-2 text-sm surface-paper focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)]"
-                  />
-                  <p className="text-xs text-muted mt-1">Optional. Visible on your profile to interested renters.</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1.5">Notification email</label>
-                  <input
-                    type="email"
-                    value={settingsForm.notification_email}
-                    onChange={e => setSettingsForm(p => ({ ...p, notification_email: e.target.value }))}
-                    placeholder="yourname@gmail.com"
-                    className="w-full border hairline rounded-lg px-3 py-2 text-sm surface-paper focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)]"
-                  />
-                  <p className="text-xs text-muted mt-1">Personal email for message notifications — Gmail recommended. UNC email often misses them.</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1.5">UNC email</label>
-                  <input
-                    type="email"
-                    value={email}
-                    disabled
-                    className="w-full border hairline rounded-lg px-3 py-2 text-sm text-muted surface-bg cursor-not-allowed"
-                  />
-                  <p className="text-xs text-muted mt-1">Cannot be changed.</p>
-                </div>
-                <button
-                  onClick={handleSaveSettings}
-                  disabled={settingsSaving}
-                  className="bg-[var(--ink)] text-[var(--bg)] text-sm font-medium px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity disabled:opacity-60"
-                >
-                  {settingsSaving ? 'Saving…' : settingsSaved ? 'Saved!' : 'Save changes'}
-                </button>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <Link
+                        to={`/listings/${listing.id}`}
+                        className="text-sm font-semibold border border-brand-line rounded-[10px] px-3.5 py-2 text-brand-navy hover:border-brand-sky hover:text-brand-sky-ink transition-colors"
+                      >
+                        View
+                      </Link>
+                      <button
+                        onClick={() => handleUnsave(listing.id)}
+                        className="p-2.5 rounded-[10px] border border-brand-line text-brand-sky hover:bg-brand-mist transition-colors"
+                        title="Unsave"
+                        aria-label="Remove from saved"
+                      >
+                        <Heart className="w-4 h-4 fill-current" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
+            )}
+          </div>
+        )}
 
-              <div className="mt-8 pt-6 border-t hairline">
-                <p className="text-sm font-medium mb-1">Sign out</p>
-                <p className="text-sm text-muted mb-3">You'll be redirected to the home page.</p>
-                <button
-                  onClick={handleSignOut}
-                  className="flex items-center gap-2 text-sm text-red-500 border border-red-200 hover:bg-red-50 rounded-lg px-4 py-2 transition-colors"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Sign out
-                </button>
+        {/* ── Settings tab ── */}
+        {tab === 'settings' && (
+          <div className="rounded-2xl border border-brand-line bg-white p-6 sm:p-8">
+            <h2 className={cn(cardHeading, 'mb-6')}>Profile settings</h2>
+            <div className="space-y-5 max-w-md">
+              <div>
+                <label className={fieldLabel}>Display name</label>
+                <input
+                  type="text"
+                  value={settingsForm.display_name}
+                  onChange={e => setSettingsForm(p => ({ ...p, display_name: e.target.value }))}
+                  placeholder="Your name"
+                  className={field}
+                />
               </div>
+              <div>
+                <label className={fieldLabel}>Phone number</label>
+                <input
+                  type="tel"
+                  value={settingsForm.phone}
+                  onChange={e => setSettingsForm(p => ({ ...p, phone: e.target.value }))}
+                  placeholder="(919) 555-0000"
+                  className={field}
+                />
+                <p className={fieldHint}>Optional. Visible on your profile to interested renters.</p>
+              </div>
+              <div>
+                <label className={fieldLabel}>Notification email</label>
+                <input
+                  type="email"
+                  value={settingsForm.notification_email}
+                  onChange={e => setSettingsForm(p => ({ ...p, notification_email: e.target.value }))}
+                  placeholder="yourname@gmail.com"
+                  className={field}
+                />
+                <p className={fieldHint}>Personal email for message notifications — Gmail recommended. UNC email often misses them.</p>
+              </div>
+              <div>
+                <label className={fieldLabel}>UNC email</label>
+                <input
+                  type="email"
+                  value={email}
+                  disabled
+                  className={cn(field, 'bg-brand-mist text-brand-muted cursor-not-allowed')}
+                />
+                <p className={fieldHint}>Cannot be changed.</p>
+              </div>
+              <button
+                onClick={handleSaveSettings}
+                disabled={settingsSaving}
+                className={button('primary', 'sm')}
+              >
+                {settingsSaving ? 'Saving…' : settingsSaved ? 'Saved!' : 'Save changes'}
+              </button>
             </div>
-          )}
 
-          <div className="pb-10" />
-        </div>
+            <div className="mt-8 pt-6 border-t border-brand-line">
+              <p className="font-bold mb-1">Sign out</p>
+              <p className="text-sm text-brand-muted mb-3">You'll be redirected to the home page.</p>
+              <button
+                onClick={handleSignOut}
+                className="flex items-center gap-2 text-sm font-semibold text-red-600 border border-red-200 hover:bg-red-50 rounded-[10px] px-4 py-2.5 transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                Sign out
+              </button>
+            </div>
+          </div>
+        )}
       </div>
-    </>
+    </PageShell>
+  )
+}
+
+function EmptyState({ icon: Icon, title, body, action }: {
+  icon: typeof Heart
+  title: string
+  body: string
+  action: React.ReactNode
+}) {
+  return (
+    <div className="rounded-2xl bg-brand-mist p-10 sm:p-14 text-center flex flex-col items-center">
+      <span className="w-12 h-12 rounded-[12px] bg-brand-navy text-brand-sky flex items-center justify-center mb-4">
+        <Icon className="w-5 h-5" />
+      </span>
+      <p className="font-outfit text-xl font-bold mb-1">{title}</p>
+      <p className="text-[15px] text-brand-muted mb-6 max-w-[340px]">{body}</p>
+      {action}
+    </div>
   )
 }
