@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { PurchLogo } from './ui/PurchLogo'
+import { Eyebrow } from './ui/Eyebrow'
+import { button } from './ui/styles'
 
 interface Props {
   listingId?: string  // if set, back button navigates to that listing's edit page
@@ -15,58 +17,23 @@ export function PhotoRequiredGate({ listingId, onBack }: Props) {
   }
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 9999,
-        background: 'var(--bg)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '24px',
-      }}
-    >
-      <div style={{ width: '100%', maxWidth: '420px' }}>
+    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center p-6 bg-white text-brand-navy font-figtree">
+      <div className="w-full max-w-[420px]">
         {/* Logo */}
-        <div style={{ marginBottom: '48px' }}>
+        <div className="mb-12">
           <PurchLogo size={36} />
         </div>
 
-        {/* Heading */}
-        <h1
-          style={{
-            fontFamily: 'var(--font-display, Fraunces)',
-            fontSize: 'clamp(28px, 6vw, 40px)',
-            fontWeight: 700,
-            color: 'var(--ink)',
-            lineHeight: 1.15,
-            marginBottom: '12px',
-          }}
-        >
+        <Eyebrow>ONE QUICK FIX</Eyebrow>
+        <h1 className="font-outfit text-[clamp(32px,7vw,44px)] leading-[1.02] font-extrabold tracking-[-0.03em] mt-3 mb-3">
           Add a photo first.
         </h1>
 
-        <p style={{ color: 'var(--muted)', fontSize: '15px', lineHeight: 1.6, marginBottom: '32px' }}>
+        <p className="text-brand-muted text-base leading-relaxed mb-8">
           Listings with photos get significantly more interest. Add at least one shot of your space — it takes 30 seconds and makes a real difference.
         </p>
 
-        <button
-          type="button"
-          onClick={handleBack}
-          style={{
-            width: '100%',
-            padding: '14px 24px',
-            borderRadius: '999px',
-            background: 'var(--ink)',
-            color: 'var(--bg)',
-            fontSize: '15px',
-            fontWeight: 600,
-            border: 'none',
-            cursor: 'pointer',
-          }}
-        >
+        <button type="button" onClick={handleBack} className={button('primary', 'lg', 'w-full')}>
           {listingId ? 'Go to my listing →' : '← Go back and add photos'}
         </button>
       </div>

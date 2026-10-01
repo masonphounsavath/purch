@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { X, ArrowRight, Mail } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { supabase } from '../../lib/supabase'
+import { button, ease, field, fieldLabel, fieldError } from '../ui/styles'
 
 type Step = 'email' | 'code'
 
@@ -59,10 +60,10 @@ export function SignInModal({ onClose, initialEmail = '', initialStep = 'email' 
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 font-figtree text-brand-navy">
       {/* Backdrop */}
       <motion.div
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        className="absolute inset-0 bg-brand-navy/60 backdrop-blur-sm"
         onClick={onClose}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -72,15 +73,16 @@ export function SignInModal({ onClose, initialEmail = '', initialStep = 'email' 
 
       {/* Modal */}
       <motion.div
-        className="relative surface-paper rounded-2xl shadow-2xl w-full max-w-md p-8"
+        className="relative bg-white rounded-[20px] shadow-[0_24px_64px_rgba(5,30,55,0.28)] w-full max-w-md p-8"
         initial={{ opacity: 0, scale: 0.95, y: 12 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 12 }}
-        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+        transition={{ duration: 0.22, ease }}
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-muted hover:text-ink transition-colors"
+          aria-label="Close"
+          className="absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center text-brand-muted hover:bg-brand-mist hover:text-brand-navy transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
@@ -88,15 +90,15 @@ export function SignInModal({ onClose, initialEmail = '', initialStep = 'email' 
         {step === 'email' ? (
           <>
             <div className="mb-6">
-              <h2 className="text-2xl font-bold font-display mb-2">Sign in to Purch</h2>
-              <p className="text-muted text-sm">
+              <h2 className="font-outfit text-[28px] leading-tight font-extrabold tracking-[-0.03em] mb-2">Sign in to Purch</h2>
+              <p className="text-brand-muted text-[15px] leading-relaxed">
                 Enter your UNC email and we'll send you an 8-digit code — no password needed.
               </p>
             </div>
 
             <form onSubmit={handleEmailSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1.5">
+                <label className={fieldLabel}>
                   UNC email address
                 </label>
                 <input
@@ -106,45 +108,45 @@ export function SignInModal({ onClose, initialEmail = '', initialStep = 'email' 
                   placeholder="onyen@unc.edu"
                   required
                   autoFocus
-                  className="w-full px-4 py-3 rounded-xl border hairline text-sm surface-paper focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all"
+                  className={field}
                 />
                 {error && (
-                  <p className="text-red-500 text-xs mt-1.5">{error}</p>
+                  <p className={fieldError}>{error}</p>
                 )}
               </div>
 
               <button
                 type="submit"
                 disabled={loading || !email}
-                className="w-full inline-flex items-center justify-center gap-2 bg-[var(--ink)] text-[var(--bg)] font-semibold py-3 rounded-full hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                className={button('primary', 'lg', 'w-full')}
               >
                 {loading ? (
-                  <div className="w-4 h-4 border-2 border-[var(--bg)] border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-brand-navy border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <>Send code <ArrowRight className="w-4 h-4" /></>
                 )}
               </button>
             </form>
 
-            <p className="text-xs text-muted text-center mt-5">
+            <p className="text-xs text-brand-muted text-center mt-5">
               Only @unc.edu / @ad.unc.edu emails are accepted.
             </p>
           </>
         ) : (
           <>
             <div className="mb-6">
-              <div className="w-14 h-14 bg-[var(--accent)]/10 rounded-full flex items-center justify-center mb-4">
-                <Mail className="w-7 h-7 text-accent" />
+              <div className="w-14 h-14 bg-brand-mist rounded-full flex items-center justify-center mb-4">
+                <Mail className="w-7 h-7 text-brand-sky-ink" />
               </div>
-              <h2 className="text-2xl font-bold font-display mb-2">Check your inbox</h2>
-              <p className="text-muted text-sm">
-                We sent an 8-digit code to <span className="font-semibold text-ink">{email}</span>
+              <h2 className="font-outfit text-[28px] leading-tight font-extrabold tracking-[-0.03em] mb-2">Check your inbox</h2>
+              <p className="text-brand-muted text-[15px] leading-relaxed">
+                We sent an 8-digit code to <span className="font-semibold text-brand-navy">{email}</span>
               </p>
             </div>
 
             <form onSubmit={handleCodeSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1.5">
+                <label className={fieldLabel}>
                   Verification code
                 </label>
                 <input
@@ -155,20 +157,20 @@ export function SignInModal({ onClose, initialEmail = '', initialStep = 'email' 
                   required
                   autoFocus
                   inputMode="numeric"
-                  className="w-full px-4 py-3 rounded-xl border hairline text-sm surface-paper focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all tracking-widest"
+                  className={`${field} tracking-widest`}
                 />
                 {error && (
-                  <p className="text-red-500 text-xs mt-1.5">{error}</p>
+                  <p className={fieldError}>{error}</p>
                 )}
               </div>
 
               <button
                 type="submit"
                 disabled={loading || code.length !== 8}
-                className="w-full inline-flex items-center justify-center gap-2 bg-[var(--ink)] text-[var(--bg)] font-semibold py-3 rounded-full hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                className={button('primary', 'lg', 'w-full')}
               >
                 {loading ? (
-                  <div className="w-4 h-4 border-2 border-[var(--bg)] border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-brand-navy border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <>Verify <ArrowRight className="w-4 h-4" /></>
                 )}
@@ -177,7 +179,7 @@ export function SignInModal({ onClose, initialEmail = '', initialStep = 'email' 
 
             <button
               onClick={() => { setStep('email'); setCode(''); setError('') }}
-              className="w-full text-xs text-muted hover:text-ink mt-4 transition-colors"
+              className="w-full text-sm font-medium text-brand-muted hover:text-brand-navy mt-4 transition-colors"
             >
               Use a different email
             </button>

@@ -10,21 +10,21 @@ export function PushOptIn({ userId }: { userId: string }) {
   }
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-sm bg-[var(--ink)] text-[var(--bg)] rounded-2xl shadow-xl px-5 py-4 flex flex-col gap-3">
+    <div className="fixed bottom-20 md:bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-sm bg-brand-navy text-white font-figtree rounded-2xl shadow-[0_16px_40px_rgba(5,30,55,0.35)] px-5 py-4 flex flex-col gap-3">
       <div>
-        <p className="font-semibold text-sm">Get notified instantly</p>
-        <p className="text-xs opacity-70 mt-0.5">Know the moment someone messages you about a sublease.</p>
+        <p className="font-outfit font-bold text-base">Get notified instantly</p>
+        <p className="text-[13px] text-brand-subtle mt-0.5">Know the moment someone messages you about a sublease.</p>
       </div>
       <div className="flex gap-2">
         <button
           onClick={() => requestPermission()}
-          className="flex-1 bg-[var(--bg)] text-[var(--ink)] text-sm font-semibold rounded-xl py-2 hover:opacity-90 transition-opacity"
+          className="flex-1 bg-brand-sky text-brand-navy text-sm font-bold rounded-[10px] py-2.5 hover:brightness-105 transition"
         >
           Turn on notifications
         </button>
         <button
           onClick={() => setDismissed(true)}
-          className="text-xs opacity-50 hover:opacity-80 px-2 transition-opacity"
+          className="text-[13px] font-medium text-brand-subtle hover:text-white px-2 transition-colors"
         >
           Not now
         </button>

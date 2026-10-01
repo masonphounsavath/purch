@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useUnreadCount } from '../../hooks/useUnreadCount'
+import { cn } from '../../lib/utils'
 
 const tabs = [
   {
@@ -53,15 +54,8 @@ export function MobileTabBar() {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around"
-      style={{
-        height: 64,
-        background: 'color-mix(in oklab, var(--bg) 92%, transparent)',
-        borderTop: '1px solid var(--line)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-      }}
+      className="md:hidden fixed bottom-0 left-0 right-0 z-40 h-16 flex items-center justify-around bg-brand-navy border-t border-[#16324F] font-figtree"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
       {tabs.map(({ to, label, icon, isAction }) => {
         const active = location.pathname === to || (to === '/browse' && location.pathname === '/')
@@ -77,21 +71,14 @@ export function MobileTabBar() {
               <motion.div
                 whileTap={{ scale: 0.88 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                className="flex items-center justify-center rounded-2xl"
-                style={{
-                  width: 44,
-                  height: 44,
-                  background: active ? 'var(--ink)' : 'var(--accent)',
-                  color: 'white',
-                  boxShadow: '0 4px 16px color-mix(in oklab, var(--accent) 40%, transparent)',
-                }}
+                className={cn(
+                  'w-11 h-11 flex items-center justify-center rounded-[12px] transition-colors',
+                  active ? 'bg-white text-brand-navy' : 'bg-brand-sky text-brand-navy',
+                )}
               >
                 {icon}
               </motion.div>
-              <span
-                className="font-label uppercase tracking-[0.08em]"
-                style={{ fontSize: 9, color: active ? 'var(--ink)' : 'var(--muted)', fontWeight: active ? 600 : 400 }}
-              >
+              <span className={cn('text-[10px] font-semibold', active ? 'text-white' : 'text-brand-subtle')}>
                 {label}
               </span>
             </Link>
@@ -103,40 +90,27 @@ export function MobileTabBar() {
           <Link
             key={to}
             to={to}
+            aria-current={active ? 'page' : undefined}
             className="relative flex flex-col items-center gap-[3px] px-4 py-1"
           >
             {active && (
               <motion.div
                 layoutId="tab-pill"
-                className="absolute inset-0 rounded-2xl"
-                style={{ background: 'var(--bg-2)', border: '1px solid var(--line)' }}
+                className="absolute inset-0 rounded-[12px] bg-white/10"
                 transition={{ type: 'spring', stiffness: 380, damping: 32 }}
               />
             )}
-            <div className="relative z-10 relative">
-              <div style={{ color: active ? 'var(--ink)' : 'var(--muted)' }}>
+            <div className="relative z-10">
+              <div className={active ? 'text-brand-sky' : 'text-brand-subtle'}>
                 {icon}
               </div>
               {label === 'Messages' && unreadCount > 0 && (
-                <span
-                  className="absolute -top-1 -right-1.5 flex items-center justify-center rounded-full text-white"
-                  style={{
-                    background: 'var(--accent)',
-                    fontSize: 9,
-                    fontWeight: 700,
-                    minWidth: 14,
-                    height: 14,
-                    padding: '0 3px',
-                  }}
-                >
+                <span className="absolute -top-1 -right-1.5 min-w-[14px] h-[14px] px-[3px] flex items-center justify-center rounded-full bg-brand-sky text-brand-navy text-[9px] font-bold">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}
             </div>
-            <span
-              className="relative z-10 font-label uppercase tracking-[0.08em]"
-              style={{ fontSize: 9, color: active ? 'var(--ink)' : 'var(--muted)', fontWeight: active ? 600 : 400 }}
-            >
+            <span className={cn('relative z-10 text-[10px] font-semibold', active ? 'text-white' : 'text-brand-subtle')}>
               {label}
             </span>
           </Link>
