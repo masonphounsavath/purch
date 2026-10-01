@@ -1,4 +1,5 @@
 import Map, { Marker, NavigationControl } from 'react-map-gl/mapbox'
+import { Footprints } from 'lucide-react'
 
 const TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
 
@@ -45,7 +46,7 @@ export function DetailMap({ lat, lng }: Props) {
 
   return (
     <div>
-      <div className="w-full rounded-2xl overflow-hidden" style={{ height: 220, border: '1px solid var(--line)' }}>
+      <div className="w-full h-[260px] rounded-[18px] overflow-hidden border border-brand-line">
         <Map
           mapboxAccessToken={TOKEN}
           initialViewState={{ longitude: lng, latitude: lat, zoom: 15 }}
@@ -57,8 +58,8 @@ export function DetailMap({ lat, lng }: Props) {
 
           {/* Listing marker */}
           <Marker longitude={lng} latitude={lat} anchor="bottom">
-            <div className="w-8 h-8 rounded-full bg-unc-navy border-2 border-white shadow-lg flex items-center justify-center">
-              <div className="w-2.5 h-2.5 rounded-full bg-white" />
+            <div className="w-8 h-8 rounded-full bg-brand-navy border-[3px] border-white shadow-lg flex items-center justify-center">
+              <div className="w-2.5 h-2.5 rounded-full bg-brand-sky" />
             </div>
           </Marker>
 
@@ -67,8 +68,7 @@ export function DetailMap({ lat, lng }: Props) {
             <Marker key={lm.name} longitude={lm.lng} latitude={lm.lat} anchor="bottom">
               <div
                 title={lm.name}
-                className="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold shadow-sm whitespace-nowrap"
-                style={{ background: 'var(--paper)', border: '1px solid var(--line)', color: 'var(--ink-2)' }}
+                className="px-2 py-1 rounded-md bg-white text-[11px] font-figtree font-bold text-brand-navy shadow-[0_2px_8px_rgba(5,30,55,0.18)] whitespace-nowrap"
               >
                 {lm.name}
               </div>
@@ -82,10 +82,10 @@ export function DetailMap({ lat, lng }: Props) {
         {nearby.map(lm => (
           <span
             key={lm.name}
-            className="inline-flex items-center gap-1.5 text-[12px] font-mono px-3 py-1.5 rounded-full"
-            style={{ background: 'var(--paper)', border: '1px solid var(--line)', color: 'var(--ink-2)' }}
+            className="inline-flex items-center gap-1.5 text-[13px] font-semibold px-3 py-1.5 rounded-full bg-brand-mist text-brand-navy"
           >
-            🚶 {walkMinutes(lm.meters)} min · {lm.name}
+            <Footprints className="w-3.5 h-3.5 text-brand-sky-ink" />
+            <span className="font-outfit font-extrabold">{walkMinutes(lm.meters)} min</span> · {lm.name}
           </span>
         ))}
       </div>

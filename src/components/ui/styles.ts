@@ -21,6 +21,7 @@ export const textLink = 'text-base font-medium underline underline-offset-4 hove
 export const fieldLabel = 'block text-sm font-semibold text-brand-navy mb-1.5'
 export const field = 'w-full px-4 py-3 rounded-[10px] border border-brand-line bg-white text-[15px] text-brand-navy placeholder:text-brand-muted/70 outline-none focus:border-brand-sky focus:ring-2 focus:ring-brand-sky/25 transition'
 export const fieldError = 'text-sm text-red-600 mt-1.5'
+export const fieldHint = 'text-[13px] text-brand-muted mt-1.5'
 
 // ── Buttons ───────────────────────────────────────────────────
 type ButtonVariant = 'primary' | 'dark' | 'outline' | 'ghost'

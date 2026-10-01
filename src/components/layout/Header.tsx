@@ -14,7 +14,7 @@ const navLinks = [
 ]
 
 const navItem = 'px-3.5 py-2.5 rounded-full hover:bg-white/10 transition-colors'
-const pillCta = 'px-[18px] py-[11px] rounded-full bg-brand-sky text-brand-navy hover:brightness-105 transition'
+const pillCta = 'px-[18px] py-[11px] rounded-full bg-brand-sky text-brand-navy whitespace-nowrap hover:brightness-105 transition'
 
 export function Header() {
   const { isAuthed } = useAuth()
@@ -61,7 +61,7 @@ export function Header() {
                 <Link
                   to="/profile"
                   aria-current={pathname === '/profile' ? 'page' : undefined}
-                  className={cn('px-3.5 py-2.5 hover:text-brand-sky transition-colors', pathname === '/profile' && 'text-brand-sky')}
+                  className={cn('hidden sm:block px-3.5 py-2.5 hover:text-brand-sky transition-colors', pathname === '/profile' && 'text-brand-sky')}
                 >
                   Profile
                 </Link>
