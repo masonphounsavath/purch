@@ -71,25 +71,25 @@ export function AddressAutocomplete({ value, onChange, onCoordsChange, error, pl
   return (
     <div ref={containerRef} className="relative">
       <div className="relative">
-        <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 pointer-events-none" />
+        <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-muted pointer-events-none" />
         <input
           type="text"
           value={query}
           onChange={handleInput}
           onFocus={() => suggestions.length > 0 && setOpen(true)}
           placeholder={placeholder ?? '123 Franklin St, Chapel Hill, NC 27514'}
-          className={`w-full pl-10 pr-4 py-3 rounded-xl border text-sm text-unc-navy placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-unc-blue/30 focus:border-unc-blue transition-all ${
-            error ? 'border-red-300' : 'border-gray-200'
+          className={`w-full pl-10 pr-4 py-3 rounded-[10px] border bg-white text-[15px] text-brand-navy placeholder:text-brand-muted/70 outline-none focus:ring-2 focus:ring-brand-sky/25 focus:border-brand-sky transition ${
+            error ? 'border-red-300' : 'border-brand-line'
           }`}
         />
       </div>
       {open && suggestions.length > 0 && (
-        <ul className="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
+        <ul className="absolute z-50 mt-1.5 w-full bg-white border border-brand-line rounded-[12px] shadow-[0_12px_32px_rgba(5,30,55,0.14)] overflow-hidden">
           {suggestions.map((s, i) => (
             <li
               key={i}
               onMouseDown={() => select(s)}
-              className="px-4 py-3 text-sm text-unc-navy hover:bg-slate-50 cursor-pointer border-b border-gray-100 last:border-0"
+              className="px-4 py-3 text-sm text-brand-navy hover:bg-brand-mist cursor-pointer border-b border-brand-line last:border-0"
             >
               {s.place_name}
             </li>
