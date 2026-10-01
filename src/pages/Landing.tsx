@@ -392,7 +392,7 @@ function DistanceFirst({ listings }: { listings: LandingListing[] }) {
 
   return (
     <section className={cn(container, 'pb-20 lg:pb-28')}>
-      <Reveal className="p-6 sm:p-10 lg:p-[72px] rounded-[20px] bg-brand-mist grid lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] gap-10 lg:gap-[72px] items-center">
+      <Reveal className="p-6 sm:p-10 lg:p-[72px] rounded-[20px] bg-brand-mist grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] gap-10 lg:gap-[72px] items-center">
         <div className="flex flex-col gap-5">
           <Eyebrow>DISTANCE FIRST</Eyebrow>
           <h2 className={sectionHeading}>
