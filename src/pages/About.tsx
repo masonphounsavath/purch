@@ -1,144 +1,171 @@
-import { useNavigate } from 'react-router-dom'
-import { Navbar } from '../components/layout/Navbar'
-import { Footer } from '../components/layout/Footer'
+import { Link } from 'react-router-dom'
+import { KeyRound, MapPin, MessageCircle, ShieldCheck, Code2 } from 'lucide-react'
+import { PageShell } from '../components/layout/PageShell'
+import { Reveal } from '../components/ui/Reveal'
+import { Eyebrow } from '../components/ui/Eyebrow'
+import { button, container, heroHeading, lede, sectionHeading, subHeading } from '../components/ui/styles'
+import { cn } from '../lib/utils'
 
 const stats = [
-  { n: '2026', l: 'founded' },
-  { n: '@unc.edu', l: 'access only' },
-  { n: '100%', l: 'free to use' },
-  { n: '27514', l: 'zip code' },
+  { n: '2026', l: 'Founded' },
+  { n: '@unc.edu', l: 'Access only' },
+  { n: '100%', l: 'Free to use' },
+  { n: '27514', l: 'Zip code' },
+]
+
+const steps = [
+  {
+    icon: KeyRound,
+    title: 'Sign in with your @unc.edu',
+    body: 'We email you a one-time code. No password, and no way in without a UNC address.',
+  },
+  {
+    icon: MapPin,
+    title: 'Find a place, or post yours',
+    body: 'Browse every sublease on one map, sorted by the walk to where you need to be. Posting your place is free.',
+  },
+  {
+    icon: MessageCircle,
+    title: 'Talk it through in one thread',
+    body: 'Message the host right on Purch. Every conversation about a place stays in one thread.',
+  },
 ]
 
 const values = [
   {
+    icon: ShieldCheck,
     title: 'Verified community',
     body: 'Every person on Purch signed in with a @unc.edu address. No randos, no bots, no off-campus listings buried in the feed. Just Tar Heels helping Tar Heels.',
   },
   {
+    icon: MapPin,
     title: 'Real locations',
     body: "Every listing is pinned to a real address on the map. No more 'DM for location' — you can see exactly where a place is before you message anyone.",
   },
   {
+    icon: Code2,
     title: 'Built in the open',
     body: "Purch is a student project, not a startup. There's no growth team or ad revenue. If something's broken or confusing, email us and a real person will fix it.",
   },
 ]
 
 export default function About() {
-  const navigate = useNavigate()
-
   return (
-    <div style={{ background: 'var(--bg)', color: 'var(--ink)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Navbar />
-
-      <main className="flex-1">
-        {/* Hero */}
-        <section className="px-6 py-20 md:py-28">
-          <div className="max-w-[800px] mx-auto text-center">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] mb-5" style={{ color: 'var(--muted)' }}>
-              About Purch
-            </p>
-            <h1
-              className="font-display tracking-[-0.025em] leading-[1.02]"
-              style={{ fontSize: 'clamp(42px, 6vw, 72px)', fontWeight: 400, color: 'var(--ink)' }}
-            >
-              The sublease board Chapel Hill{' '}
-              <em style={{ fontStyle: 'italic', color: 'var(--accent)' }}>actually needed.</em>
+    <PageShell>
+      {/* Hero */}
+      <section className="bg-brand-navy text-white">
+        <div className={cn(container, 'pt-12 lg:pt-[72px] pb-16 lg:pb-[104px] grid lg:grid-cols-2 gap-12 lg:gap-16 items-center')}>
+          <div className="flex flex-col gap-[26px]">
+            <Eyebrow onDark>ABOUT PURCH</Eyebrow>
+            <h1 className={heroHeading}>
+              The sublease board Chapel Hill <span className="text-brand-sky">actually needed.</span>
             </h1>
-            <p className="mt-7 text-[16px] leading-[1.65] max-w-[580px] mx-auto" style={{ color: 'var(--ink-2)' }}>
+            <p className="text-lg lg:text-[19px] leading-normal text-brand-subtle max-w-[520px]">
               Purch started because finding a summer sublease at UNC was embarrassing — a Snap story, a couple of Facebook groups, and a lot of unanswered DMs. We built the thing that should have existed.
             </p>
+            <div className="flex flex-wrap items-center gap-x-[22px] gap-y-3">
+              <Link to="/browse" className={button('primary', 'lg')}>Browse listings</Link>
+              <a href="#how-it-works" className="text-base font-medium underline underline-offset-4 text-white hover:text-brand-sky transition-colors">
+                How it works
+              </a>
+            </div>
           </div>
-        </section>
+          <div className="h-[320px] sm:h-[440px] lg:h-[540px] rounded-[18px] overflow-hidden">
+            <img src="/landing/walk-to-class.jpg" alt="Bright apartment living room" className="w-full h-full object-cover" />
+          </div>
+        </div>
+      </section>
 
-        {/* Stats bar */}
-        <section style={{ background: 'var(--bg-2)', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}>
-          <div className="max-w-[1280px] mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map(s => (
-              <div key={s.l} className="text-center">
-                <div
-                  className="font-display tabnum"
-                  style={{ fontSize: 'clamp(22px, 3vw, 32px)', fontWeight: 400, letterSpacing: '-0.02em', color: 'var(--ink)' }}
-                >
-                  {s.n}
+      {/* Stats */}
+      <section className="border-b border-brand-line">
+        <div className={cn(container, 'py-10 lg:py-12 grid grid-cols-2 md:grid-cols-4 gap-8')}>
+          {stats.map(s => (
+            <div key={s.l} className="flex flex-col gap-1">
+              <span className="font-outfit text-[28px] lg:text-4xl font-extrabold tracking-[-0.03em]">{s.n}</span>
+              <span className="text-[13px] font-semibold tracking-[0.2em] uppercase text-brand-muted">{s.l}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section id="how-it-works" className={cn(container, 'scroll-mt-8 pt-20 lg:pt-[104px] pb-20 lg:pb-28')}>
+        <Reveal className="flex flex-col gap-10">
+          <div className="flex flex-col gap-2.5">
+            <Eyebrow>HOW IT WORKS</Eyebrow>
+            <h2 className={subHeading}>Three steps from search to keys.</h2>
+          </div>
+          <ol className="grid md:grid-cols-3 gap-4">
+            {steps.map(({ icon: Icon, title, body }, i) => (
+              <li key={title} className="flex flex-col gap-5 p-7 rounded-2xl bg-brand-mist">
+                <div className="flex items-center justify-between">
+                  <span className="w-12 h-12 rounded-[12px] bg-brand-navy text-brand-sky flex items-center justify-center">
+                    <Icon className="w-5 h-5" />
+                  </span>
+                  <span className="font-outfit text-4xl font-extrabold text-brand-line">{String(i + 1).padStart(2, '0')}</span>
                 </div>
-                <div className="font-mono text-[10px] uppercase tracking-[0.14em] mt-1" style={{ color: 'var(--muted)' }}>
-                  {s.l}
+                <div className="flex flex-col gap-2">
+                  <h3 className="font-outfit text-[21px] font-bold tracking-[-0.01em]">{title}</h3>
+                  <p className="text-[15px] leading-relaxed text-brand-muted">{body}</p>
                 </div>
+              </li>
+            ))}
+          </ol>
+        </Reveal>
+      </section>
+
+      {/* Verification */}
+      <section id="verification" className={cn(container, 'scroll-mt-8 pb-20 lg:pb-28')}>
+        <Reveal className="grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
+          <div className="h-[320px] sm:h-[440px] lg:h-[540px] rounded-[18px] overflow-hidden">
+            <img src="/landing/furnished.jpg" alt="Furnished apartment living room" className="w-full h-full object-cover" />
+          </div>
+          <div className="flex flex-col gap-5">
+            <Eyebrow>VERIFIED</Eyebrow>
+            <h2 className={sectionHeading}>Only Tar Heels get in.</h2>
+            <p className={cn(lede, 'max-w-[500px]')}>
+              Everyone on Purch signs in with a code sent to their @unc.edu. Every pin is a real address, and every conversation stays in one thread.
+            </p>
+          </div>
+        </Reveal>
+      </section>
+
+      {/* Values */}
+      <section className={cn(container, 'pb-20 lg:pb-28')}>
+        <Reveal className="p-6 sm:p-10 lg:p-[72px] rounded-[20px] bg-brand-mist flex flex-col gap-10">
+          <div className="flex flex-col gap-2.5">
+            <Eyebrow>WHAT WE STAND FOR</Eyebrow>
+            <h2 className={subHeading}>Built by students, for students.</h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-4">
+            {values.map(({ icon: Icon, title, body }) => (
+              <div key={title} className="flex flex-col gap-4 p-7 rounded-2xl bg-white shadow-[0_10px_30px_rgba(5,30,55,0.06)]">
+                <Icon className="w-6 h-6 text-brand-sky-ink" />
+                <h3 className="font-outfit text-[21px] font-bold tracking-[-0.01em]">{title}</h3>
+                <p className="text-[15px] leading-relaxed text-brand-muted">{body}</p>
               </div>
             ))}
           </div>
-        </section>
+        </Reveal>
+      </section>
 
-        {/* Values */}
-        <section className="px-6 py-20">
-          <div className="max-w-[1280px] mx-auto">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] mb-12" style={{ color: 'var(--muted)' }}>
-              What we stand for
+      {/* CTA */}
+      <section className={cn(container, 'pb-20 lg:pb-24')}>
+        <Reveal className="p-8 sm:p-12 lg:p-16 rounded-[20px] bg-brand-navy text-white flex flex-col lg:flex-row lg:items-center justify-between gap-8 lg:gap-12">
+          <div className="flex flex-col gap-3 max-w-[560px]">
+            <h2 className="font-outfit text-3xl sm:text-4xl lg:text-[44px] leading-[1.02] font-extrabold tracking-[-0.03em]">
+              Skip the search. <span className="text-brand-sky">Purch it.</span>
+            </h2>
+            <p className="text-base lg:text-[17px] text-brand-subtle">
+              Got feedback, a bug report, or just want to say hey? We'd love to hear from you.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {values.map((v, i) => (
-                <div
-                  key={v.title}
-                  className="rounded-2xl p-7"
-                  style={{ background: 'var(--paper)', border: '1px solid var(--line)' }}
-                >
-                  <span className="font-mono text-[11px] tracking-[0.14em]" style={{ color: 'var(--muted)' }}>
-                    0{i + 1}
-                  </span>
-                  <h3
-                    className="font-display mt-4 mb-3"
-                    style={{ fontSize: 22, fontWeight: 400, letterSpacing: '-0.01em', color: 'var(--ink)' }}
-                  >
-                    {v.title}
-                  </h3>
-                  <p className="text-[14px] leading-[1.65]" style={{ color: 'var(--ink-2)' }}>
-                    {v.body}
-                  </p>
-                </div>
-              ))}
-            </div>
           </div>
-        </section>
-
-        {/* CTA */}
-        <section className="px-6 pb-24">
-          <div className="max-w-[680px] mx-auto text-center">
-            <div
-              className="rounded-2xl p-10"
-              style={{ background: 'var(--ink)', color: 'var(--bg)' }}
-            >
-              <h2
-                className="font-display tracking-[-0.02em] leading-[1.05]"
-                style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 400 }}
-              >
-                Skip the search.<br />Purch it.
-              </h2>
-              <p className="mt-4 text-[14px] leading-[1.6]" style={{ color: 'color-mix(in oklab, var(--bg) 65%, transparent)' }}>
-                Got feedback, a bug report, or just want to say hey? We'd love to hear from you.
-              </p>
-              <div className="mt-8 flex items-center justify-center gap-3 flex-wrap">
-                <button
-                  onClick={() => navigate('/browse')}
-                  className="rounded-full px-5 py-2.5 text-[13.5px] font-medium eased"
-                  style={{ background: 'var(--bg)', color: 'var(--ink)' }}
-                >
-                  Browse listings
-                </button>
-                <button
-                  onClick={() => navigate('/contact')}
-                  className="rounded-full px-5 py-2.5 text-[13.5px] font-medium eased"
-                  style={{ background: 'transparent', color: 'var(--bg)', border: '1px solid color-mix(in oklab, var(--bg) 30%, transparent)' }}
-                >
-                  Get in touch
-                </button>
-              </div>
-            </div>
+          <div className="flex flex-wrap gap-3">
+            <Link to="/browse" className={button('primary', 'lg')}>Browse listings</Link>
+            <Link to="/contact" className={button('ghost', 'lg', 'text-white border border-white/25 hover:bg-white/10')}>Get in touch</Link>
           </div>
-        </section>
-      </main>
-
-      <Footer />
-    </div>
+        </Reveal>
+      </section>
+    </PageShell>
   )
 }

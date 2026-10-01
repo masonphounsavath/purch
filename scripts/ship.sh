@@ -2,16 +2,21 @@
 set -e
 
 # Usage: npm run ship -- "my change description"
+# On main: creates a new mason/<slug> branch. On a feature branch: ships that branch.
 # With no description, the branch/commit/PR are named after the changed files.
 DESCRIPTION="$1"
+CURRENT=$(git branch --show-current)
 
 slugify() {
   echo "$1" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//;s/-$//'
 }
 
-echo "🔄 Syncing main..."
-git checkout main
-git pull origin main
+if [ "$CURRENT" = "main" ]; then
+  echo "🔄 Syncing main..."
+  git pull origin main
+else
+  echo "🌿 Shipping current branch: $CURRENT"
+fi
 
 echo "📦 Staging all changes..."
 git add .
@@ -36,23 +41,27 @@ if [ -z "$DESCRIPTION" ]; then
   [ "$COUNT" -gt 3 ] && DESCRIPTION="$DESCRIPTION (+$((COUNT - 3)) more)"
 fi
 
-# PascalCase -> kebab so "PageShell" becomes "page-shell"
-SLUG=$(slugify "$(echo "${BRANCH_SOURCE:-$DESCRIPTION}" | sed 's/\([a-z0-9]\)\([A-Z]\)/\1-\2/g')")
-# Cap the length without cutting a word in half
-if [ ${#SLUG} -gt 60 ]; then
-  SLUG=$(echo "$SLUG" | cut -c1-61 | sed 's/-[^-]*$//')
+if [ "$CURRENT" != "main" ]; then
+  BRANCH="$CURRENT"
+else
+  # PascalCase -> kebab so "PageShell" becomes "page-shell"
+  SLUG=$(slugify "$(echo "${BRANCH_SOURCE:-$DESCRIPTION}" | sed 's/\([a-z0-9]\)\([A-Z]\)/\1-\2/g')")
+  # Cap the length without cutting a word in half
+  if [ ${#SLUG} -gt 60 ]; then
+    SLUG=$(echo "$SLUG" | cut -c1-61 | sed 's/-[^-]*$//')
+  fi
+  BRANCH="mason/$SLUG"
+
+  # Never collide with an existing local or remote branch
+  N=2
+  while git show-ref --quiet "refs/heads/$BRANCH" || git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; do
+    BRANCH="mason/$SLUG-$N"
+    N=$((N + 1))
+  done
+
+  echo "🌿 Creating branch: $BRANCH"
+  git checkout -b "$BRANCH"
 fi
-BRANCH="mason/$SLUG"
-
-# Never collide with an existing local or remote branch
-N=2
-while git show-ref --quiet "refs/heads/$BRANCH" || git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; do
-  BRANCH="mason/$SLUG-$N"
-  N=$((N + 1))
-done
-
-echo "🌿 Creating branch: $BRANCH"
-git checkout -b "$BRANCH"
 
 echo "💾 Committing: $DESCRIPTION"
 git commit -m "$DESCRIPTION"
@@ -60,7 +69,11 @@ git commit -m "$DESCRIPTION"
 echo "🚀 Pushing branch..."
 git push origin "$BRANCH"
 
-echo "🔗 Opening pull request..."
-gh pr create --title "$DESCRIPTION" --body "" --base main --head "$BRANCH"
+if gh pr view "$BRANCH" --json state -q .state 2>/dev/null | grep -q OPEN; then
+  echo "🔗 PR already open — pushed new commit to it."
+else
+  echo "🔗 Opening pull request..."
+  gh pr create --title "$DESCRIPTION" --body "" --base main --head "$BRANCH"
+fi
 
 echo "✅ Done! PR is open and ready for review."
