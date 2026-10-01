@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import Map, { Marker, Popup, NavigationControl } from 'react-map-gl/mapbox'
 import { Link } from 'react-router-dom'
-import { MapPin } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { Listing } from '../../types'
 
@@ -106,10 +105,10 @@ export function BrowseMap({ listings, hoveredId }: Props) {
                           e.stopPropagation()
                           setSelectedId(prev => prev === l.id ? null : l.id)
                         }}
-                        className={`px-2.5 py-1 rounded-full text-xs font-bold shadow-md cursor-pointer select-none border whitespace-nowrap transition-transform ${
+                        className={`px-2.5 py-1.5 rounded-md text-[13px] font-figtree font-bold shadow-[0_2px_8px_rgba(5,30,55,0.18)] cursor-pointer select-none border whitespace-nowrap transition-transform ${
                           isSelected || l.id === hoveredId
-                            ? 'bg-unc-navy text-white border-unc-navy scale-110'
-                            : 'bg-white text-unc-navy border-transparent hover:scale-110 hover:border-unc-navy'
+                            ? 'bg-brand-navy text-white border-brand-navy scale-110'
+                            : 'bg-white text-brand-navy border-transparent hover:scale-110 hover:border-brand-sky'
                         }`}
                       >
                         ${l.rent.toLocaleString()}
@@ -126,10 +125,10 @@ export function BrowseMap({ listings, hoveredId }: Props) {
                     e.stopPropagation()
                     setSelectedId(prev => prev === cluster.items[0].id ? null : cluster.items[0].id)
                   }}
-                  className={`px-2.5 py-1 rounded-full text-xs font-bold shadow-md cursor-pointer select-none border transition-all ${
+                  className={`px-2.5 py-1.5 rounded-md text-[13px] font-figtree font-bold shadow-[0_2px_8px_rgba(5,30,55,0.18)] cursor-pointer select-none border transition-all ${
                     cluster.items[0].id === selectedId || cluster.items[0].id === hoveredId
-                      ? 'bg-unc-navy text-white border-unc-navy scale-110'
-                      : 'bg-white text-unc-navy border-transparent hover:scale-110 hover:border-unc-navy'
+                      ? 'bg-brand-navy text-white border-brand-navy scale-110'
+                      : 'bg-white text-brand-navy border-transparent hover:scale-110 hover:border-brand-sky'
                   }`}
                 >
                   ${cluster.items[0].rent.toLocaleString()}
@@ -149,10 +148,10 @@ export function BrowseMap({ listings, hoveredId }: Props) {
                   className="cursor-pointer select-none relative z-10"
                 >
                   <div
-                    className={`px-3 py-1.5 rounded-full text-xs font-bold shadow-lg border transition-colors ${
+                    className={`px-3 py-1.5 rounded-full text-xs font-figtree font-bold shadow-lg border transition-colors ${
                       isExpanded
-                        ? 'bg-unc-navy text-white border-unc-navy'
-                        : 'bg-white text-unc-navy border-unc-navy/20 hover:border-unc-navy'
+                        ? 'bg-brand-navy text-white border-brand-navy'
+                        : 'bg-brand-sky text-brand-navy border-brand-sky hover:brightness-105'
                     }`}
                     style={{ fontSize: 11 }}
                   >
@@ -161,8 +160,8 @@ export function BrowseMap({ listings, hoveredId }: Props) {
                   {/* Stacked shadow layers to hint multiple items */}
                   {!isExpanded && (
                     <>
-                      <div className="absolute inset-0 rounded-full bg-white border border-unc-navy/10 shadow-sm -z-10 translate-x-0.5 translate-y-0.5" />
-                      <div className="absolute inset-0 rounded-full bg-white border border-unc-navy/5 shadow-sm -z-20 translate-x-1 translate-y-1" />
+                      <div className="absolute inset-0 rounded-full bg-brand-sky/60 border border-brand-navy/10 shadow-sm -z-10 translate-x-0.5 translate-y-0.5" />
+                      <div className="absolute inset-0 rounded-full bg-brand-sky/30 border border-brand-navy/5 shadow-sm -z-20 translate-x-1 translate-y-1" />
                     </>
                   )}
                 </motion.div>
@@ -187,8 +186,8 @@ export function BrowseMap({ listings, hoveredId }: Props) {
             className="block no-underline"
             style={{ textDecoration: 'none' }}
           >
-            <div className="w-56 rounded-xl overflow-hidden bg-white shadow-sm">
-              <div className="aspect-[4/3] bg-gray-100 overflow-hidden">
+            <div className="w-56 rounded-xl overflow-hidden bg-white font-figtree">
+              <div className="aspect-[4/3] bg-brand-navy overflow-hidden">
                 {selected.photos?.[0] ? (
                   <img
                     src={selected.photos[0]}
@@ -197,18 +196,18 @@ export function BrowseMap({ listings, hoveredId }: Props) {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <MapPin className="w-6 h-6 text-slate-300" />
+                    <img src="/brand/purch_exact_mark.svg" alt="" className="h-10 w-auto" />
                   </div>
                 )}
               </div>
               <div className="p-3">
-                <p className="text-xs font-bold text-unc-navy truncate leading-snug">
+                <p className="text-sm font-bold text-brand-navy truncate leading-snug">
                   {selected.title}
                 </p>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-brand-muted mt-0.5">
                   {selected.bedrooms === 0 ? 'Studio' : `${selected.bedrooms} bed`}
                   {' · '}
-                  <span className="font-semibold text-unc-blue">
+                  <span className="font-outfit font-extrabold text-brand-navy">
                     ${selected.rent.toLocaleString()}/mo
                   </span>
                 </p>

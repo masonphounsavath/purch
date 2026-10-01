@@ -1,13 +1,35 @@
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { SlidersHorizontal, X, Plus, Map as MapIcon, List } from 'lucide-react'
-import { Navbar } from '../components/layout/Navbar'
+import { SlidersHorizontal, X, Plus, Map as MapIcon, List, SearchX } from 'lucide-react'
+import { PageShell } from '../components/layout/PageShell'
 import { ListingCard } from '../components/listings/ListingCard'
 import { BrowseMap } from '../components/map/BrowseMap'
+import { Eyebrow } from '../components/ui/Eyebrow'
+import { button } from '../components/ui/styles'
 import { useListings, type Filters, type SortOption } from '../hooks/useListings'
 import { useAuth } from '../hooks/useAuth'
 import { useSavedListings } from '../hooks/useSavedListings'
+import { cn } from '../lib/utils'
+
+const filterLabel = 'text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-muted whitespace-nowrap'
+const filterInput = 'h-9 px-3 rounded-[10px] border border-brand-line bg-white text-sm text-brand-navy outline-none focus:border-brand-sky focus:ring-2 focus:ring-brand-sky/25 transition'
+
+function Pill({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      aria-pressed={active}
+      onClick={onClick}
+      className={cn(
+        'h-9 px-3.5 rounded-full text-sm font-semibold transition-colors',
+        active ? 'bg-brand-navy text-white' : 'bg-white text-brand-navy border border-brand-line hover:bg-brand-mist',
+      )}
+    >
+      {children}
+    </button>
+  )
+}
 
 function FilterSidebar({
   filters,
@@ -21,18 +43,17 @@ function FilterSidebar({
   const hasFilters = Object.values(filters).some(v => v !== undefined && v !== -1)
 
   return (
-    <div className="mb-6">
-      <div className="flex items-center justify-between mb-5">
-        <h2 className="font-medium flex items-center gap-2 text-sm" style={{ color: 'var(--ink)' }}>
-          <SlidersHorizontal className="w-4 h-4" /> Filters
+    <div className="mb-6 rounded-2xl bg-brand-mist p-4">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="font-outfit text-base font-bold flex items-center gap-2">
+          <SlidersHorizontal className="w-4 h-4 text-brand-sky-ink" /> Filters
         </h2>
         {hasFilters && (
           <button
             onClick={onReset}
-            className="text-xs flex items-center gap-1 eased"
-            style={{ color: 'var(--muted)' }}
+            className="text-[13px] font-semibold flex items-center gap-1 text-brand-muted hover:text-brand-navy transition-colors"
           >
-            <X className="w-3 h-3" /> Clear
+            <X className="w-3.5 h-3.5" /> Clear
           </button>
         )}
       </div>
@@ -40,7 +61,7 @@ function FilterSidebar({
       <div className="flex flex-wrap gap-x-6 gap-y-4">
         {/* Price */}
         <div className="flex items-center gap-2 min-w-0">
-          <span className="text-xs font-bold text-slate-400 tracking-widest uppercase whitespace-nowrap">
+          <span className={filterLabel}>
             Price
           </span>
           <input
@@ -50,10 +71,9 @@ function FilterSidebar({
             onChange={e =>
               onChange({ ...filters, minRent: e.target.value ? +e.target.value : undefined })
             }
-            className="w-20 px-2 py-1.5 rounded-lg text-xs focus:outline-none eased"
-            style={{ background: 'var(--paper)', border: '1px solid var(--line)', color: 'var(--ink)' }}
+            className={cn(filterInput, 'w-24')}
           />
-          <span className="text-slate-300 text-xs">–</span>
+          <span className="text-brand-subtle text-sm">–</span>
           <input
             type="number"
             placeholder="Max"
@@ -61,17 +81,16 @@ function FilterSidebar({
             onChange={e =>
               onChange({ ...filters, maxRent: e.target.value ? +e.target.value : undefined })
             }
-            className="w-20 px-2 py-1.5 rounded-lg text-xs focus:outline-none eased"
-            style={{ background: 'var(--paper)', border: '1px solid var(--line)', color: 'var(--ink)' }}
+            className={cn(filterInput, 'w-24')}
           />
         </div>
 
         {/* Bedrooms */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-slate-400 tracking-widest uppercase whitespace-nowrap">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className={filterLabel}>
             Beds
           </span>
-          <div className="flex gap-1">
+          <div className="flex gap-1.5 flex-wrap">
             {[
               { label: 'Any', value: -1 },
               { label: 'Studio', value: 0 },
@@ -79,18 +98,13 @@ function FilterSidebar({
               { label: '2', value: 2 },
               { label: '3+', value: 3 },
             ].map(opt => (
-              <button
+              <Pill
                 key={opt.value}
+                active={(filters.bedrooms ?? -1) === opt.value}
                 onClick={() => onChange({ ...filters, bedrooms: opt.value })}
-                className="px-2.5 py-1.5 rounded-lg text-xs font-medium eased"
-                style={{
-                  background: (filters.bedrooms ?? -1) === opt.value ? 'var(--ink)' : 'var(--paper)',
-                  color: (filters.bedrooms ?? -1) === opt.value ? 'var(--bg)' : 'var(--ink-2)',
-                  border: `1px solid ${(filters.bedrooms ?? -1) === opt.value ? 'var(--ink)' : 'var(--line)'}`,
-                }}
               >
                 {opt.label}
-              </button>
+              </Pill>
             ))}
           </div>
         </div>
@@ -102,9 +116,9 @@ function FilterSidebar({
               type="checkbox"
               checked={filters.furnished ?? false}
               onChange={e => onChange({ ...filters, furnished: e.target.checked || undefined })}
-              className="w-3.5 h-3.5 accent-unc-blue"
+              className="w-4 h-4 accent-brand-sky"
             />
-            <span className="text-xs font-bold text-slate-400 tracking-widest uppercase">
+            <span className={filterLabel}>
               Furnished
             </span>
           </label>
@@ -112,7 +126,7 @@ function FilterSidebar({
 
         {/* Available by */}
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-slate-400 tracking-widest uppercase whitespace-nowrap">
+          <span className={filterLabel}>
             Available by
           </span>
           <input
@@ -121,48 +135,41 @@ function FilterSidebar({
             onChange={e =>
               onChange({ ...filters, availableFrom: e.target.value || undefined })
             }
-            className="px-2 py-1.5 rounded-lg text-xs focus:outline-none eased"
-            style={{ background: 'var(--paper)', border: '1px solid var(--line)', color: 'var(--ink)' }}
+            className={filterInput}
           />
         </div>
 
         {/* Gender preference */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-slate-400 tracking-widest uppercase whitespace-nowrap">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className={filterLabel}>
             Looking for
           </span>
-          <div className="flex gap-1">
+          <div className="flex gap-1.5">
             {([
               { label: 'Any', value: undefined },
               { label: 'Female', value: 'female' as const },
               { label: 'Male', value: 'male' as const },
             ] as const).map(opt => (
-              <button
+              <Pill
                 key={opt.label}
+                active={(filters.preferredGender ?? undefined) === opt.value}
                 onClick={() => onChange({ ...filters, preferredGender: opt.value })}
-                className="px-2.5 py-1.5 rounded-lg text-xs font-medium eased"
-                style={{
-                  background: (filters.preferredGender ?? undefined) === opt.value ? 'var(--ink)' : 'var(--paper)',
-                  color: (filters.preferredGender ?? undefined) === opt.value ? 'var(--bg)' : 'var(--ink-2)',
-                  border: `1px solid ${(filters.preferredGender ?? undefined) === opt.value ? 'var(--ink)' : 'var(--line)'}`,
-                }}
               >
                 {opt.label}
-              </button>
+              </Pill>
             ))}
           </div>
         </div>
 
         {/* Sort */}
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-slate-400 tracking-widest uppercase whitespace-nowrap">
+          <span className={filterLabel}>
             Sort
           </span>
           <select
             value={filters.sort ?? 'newest'}
             onChange={e => onChange({ ...filters, sort: e.target.value as SortOption })}
-            className="px-2 py-1.5 rounded-lg text-xs focus:outline-none eased"
-            style={{ background: 'var(--paper)', border: '1px solid var(--line)', color: 'var(--ink)' }}
+            className={cn(filterInput, 'cursor-pointer')}
           >
             <option value="newest">Newest</option>
             <option value="price_asc">Price: Low → High</option>
@@ -205,38 +212,33 @@ export default function Browse() {
   const [mobileView, setMobileView] = useState<'list' | 'map'>('list')
 
   return (
-    <div className="h-screen flex flex-col" style={{ background: 'var(--bg)' }}>
-      <Navbar />
-
-      {/* Split layout below navbar */}
-      <div className="flex flex-1 overflow-hidden">
+    <PageShell footer={false}>
+      {/* Split layout fills the viewport under the 72px header (and above the 64px mobile tab bar) */}
+      <div className="flex h-[calc(100dvh-136px)] md:h-[calc(100dvh-72px)] overflow-hidden">
 
         {/* ── Left panel (list) ── */}
         <div
-          className={`w-full lg:w-[520px] lg:flex-shrink-0 flex flex-col overflow-y-auto ${
+          className={`w-full lg:w-[560px] xl:w-[640px] lg:flex-shrink-0 flex flex-col overflow-y-auto ${
             mobileView === 'map' ? 'hidden lg:flex' : 'flex'
           }`}
         >
-          <div className="px-6 pt-6 pb-2">
+          <div className="px-5 sm:px-8 pt-8 pb-2">
             {/* Header */}
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h1 className="font-display text-2xl" style={{ fontWeight: 400, letterSpacing: '-0.02em', color: 'var(--ink)' }}>
-                  Subleases in Chapel Hill
+            <div className="flex items-end justify-between gap-4 mb-6">
+              <div className="flex flex-col gap-2">
+                <Eyebrow>CHAPEL HILL · UNC</Eyebrow>
+                <h1 className="font-outfit text-[32px] sm:text-4xl leading-none font-extrabold tracking-[-0.03em]">
+                  Subleases near campus
                 </h1>
-                <p className="mt-0.5 text-sm" style={{ color: 'var(--muted)' }}>
+                <p className="text-[15px] text-brand-muted">
                   {loading
                     ? 'Loading...'
                     : `${listings.length} listing${listings.length !== 1 ? 's' : ''} available`}
                 </p>
               </div>
               {isAuthed && (
-                <Link
-                  to="/post"
-                  className="inline-flex items-center gap-1.5 text-xs font-medium px-3.5 py-2 rounded-full eased whitespace-nowrap"
-                  style={{ background: 'var(--ink)', color: 'var(--bg)' }}
-                >
-                  <Plus className="w-3.5 h-3.5" /> Post a listing
+                <Link to="/post" className={button('dark', 'sm', 'whitespace-nowrap flex-shrink-0')}>
+                  <Plus className="w-4 h-4" /> Post a listing
                 </Link>
               )}
             </div>
@@ -250,51 +252,50 @@ export default function Browse() {
           </div>
 
           {/* Cards */}
-          <div className="px-6 pb-8 flex-1">
+          <div className="px-5 sm:px-8 pb-24 lg:pb-10 flex-1">
             {loading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[...Array(6)].map((_, i) => (
                   <div
                     key={i}
-                    className="rounded-2xl border border-gray-100 overflow-hidden animate-pulse"
+                    className="rounded-2xl border border-brand-line overflow-hidden animate-pulse"
                   >
-                    <div className="aspect-[4/3] bg-gray-100" />
+                    <div className="aspect-[4/3] bg-brand-mist" />
                     <div className="p-4 space-y-2">
-                      <div className="h-4 bg-gray-100 rounded w-3/4" />
-                      <div className="h-3 bg-gray-100 rounded w-1/2" />
+                      <div className="h-4 bg-brand-mist rounded w-3/4" />
+                      <div className="h-3 bg-brand-mist rounded w-1/2" />
                     </div>
                   </div>
                 ))}
               </div>
             ) : listings.length === 0 ? (
-              <div className="text-center py-24 px-4">
+              <div className="text-center py-16 px-6 rounded-2xl bg-brand-mist flex flex-col items-center">
                 {hasActiveFilters(filters) ? (
                   <>
-                    <p className="text-lg font-medium mb-2" style={{ color: 'var(--ink)' }}>No listings match your filters</p>
-                    <p className="text-sm mb-4" style={{ color: 'var(--muted)' }}>Try adjusting or clearing your filters</p>
+                    <span className="w-12 h-12 rounded-[12px] bg-brand-navy text-brand-sky flex items-center justify-center mb-4">
+                      <SearchX className="w-5 h-5" />
+                    </span>
+                    <p className="font-outfit text-xl font-bold mb-1">No listings match your filters</p>
+                    <p className="text-[15px] text-brand-muted mb-5">Try adjusting or clearing your filters</p>
                     <button
                       onClick={() => setFilters(EMPTY_FILTERS)}
-                      className="text-sm font-medium eased"
-                      style={{ color: 'var(--accent)' }}
+                      className={button('primary', 'sm')}
                     >
                       Clear filters
                     </button>
                   </>
                 ) : (
                   <>
-                    <p className="font-display text-2xl mb-2" style={{ fontWeight: 400, color: 'var(--ink)' }}>No listings yet</p>
-                    <p className="text-sm mb-6" style={{ color: 'var(--muted)' }}>Be the first UNC student to post a sublease on Purch.</p>
+                    <img src="/brand/purch_exact_mark.svg" alt="" className="h-14 w-auto mb-4" />
+                    <p className="font-outfit text-2xl font-extrabold tracking-[-0.02em] mb-1">No listings yet</p>
+                    <p className="text-[15px] text-brand-muted mb-6">Be the first UNC student to post a sublease on Purch.</p>
                     {isAuthed ? (
-                      <Link
-                        to="/post"
-                        className="inline-flex items-center gap-2 text-sm font-medium px-5 py-3 rounded-full eased"
-                        style={{ background: 'var(--ink)', color: 'var(--bg)' }}
-                      >
+                      <Link to="/post" className={button('primary', 'sm')}>
                         <Plus className="w-4 h-4" /> Post a listing
                       </Link>
                     ) : (
-                      <p className="text-sm" style={{ color: 'var(--muted)' }}>
-                        <Link to="/" className="font-medium" style={{ color: 'var(--accent)' }}>Sign in</Link> to post the first listing.
+                      <p className="text-[15px] text-brand-muted">
+                        <Link to="/" className="font-semibold text-brand-navy underline underline-offset-4">Sign in</Link> to post the first listing.
                       </p>
                     )}
                   </>
@@ -338,7 +339,7 @@ export default function Browse() {
 
         {/* ── Right panel (map) ── */}
         <div
-          className={`flex-1 ${
+          className={`flex-1 bg-brand-map ${
             mobileView === 'map' ? 'block' : 'hidden lg:block'
           }`}
         >
@@ -346,12 +347,11 @@ export default function Browse() {
         </div>
       </div>
 
-      {/* ── Mobile toggle ── */}
-      <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+      {/* ── Mobile toggle (sits above the mobile tab bar) ── */}
+      <div className="lg:hidden fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50">
         <button
           onClick={() => setMobileView(v => (v === 'list' ? 'map' : 'list'))}
-          className="inline-flex items-center gap-2 text-sm font-medium px-5 py-3 rounded-full shadow-xl eased"
-          style={{ background: 'var(--ink)', color: 'var(--bg)' }}
+          className="inline-flex items-center gap-2 text-[15px] font-bold px-5 py-3 rounded-full bg-brand-sky text-brand-navy shadow-[0_10px_30px_rgba(5,30,55,0.35)] hover:brightness-105 transition"
         >
           {mobileView === 'list' ? (
             <><MapIcon className="w-4 h-4" /> Show map</>
@@ -360,6 +360,6 @@ export default function Browse() {
           )}
         </button>
       </div>
-    </div>
+    </PageShell>
   )
 }
