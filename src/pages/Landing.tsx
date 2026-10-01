@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 import { SignInModal } from '../components/auth/SignInModal'
+import { PageShell } from '../components/layout/PageShell'
+import { Reveal } from '../components/ui/Reveal'
+import { Eyebrow } from '../components/ui/Eyebrow'
+import { button, container, heroHeading, lede, sectionHeading, subHeading, textLink } from '../components/ui/styles'
 import { useAuth } from '../hooks/useAuth'
 import { supabase } from '../lib/supabase'
 import type { Listing } from '../types'
 import { cn } from '../lib/utils'
-
-const ease = [0.16, 1, 0.3, 1] as [number, number, number, number]
 
 // ── Walk-time helpers ─────────────────────────────────────────
 // Places students commute to. Walk times are straight-line distance
@@ -83,29 +85,7 @@ function useLandingListings() {
   return listings
 }
 
-// ── Shared primitives ─────────────────────────────────────────
-function Reveal({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y: 18 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.7, ease }}
-    >
-      {children}
-    </motion.div>
-  )
-}
-
-function Eyebrow({ children, onDark = false }: { children: React.ReactNode; onDark?: boolean }) {
-  return (
-    <span className={`text-[13px] font-semibold tracking-[0.3em] ${onDark ? 'text-brand-sky' : 'text-brand-sky-ink'}`}>
-      {children}
-    </span>
-  )
-}
-
+// ── Icons ─────────────────────────────────────────────────────
 function WalkIcon({ className = '' }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -117,43 +97,6 @@ function WalkIcon({ className = '' }: { className?: string }) {
 
 const inputShell = 'h-14 flex items-center gap-4 px-[18px] rounded-[10px] bg-white'
 const inputBase = 'flex-1 min-w-0 bg-transparent border-0 outline-none text-[17px] font-medium text-brand-navy placeholder:text-brand-muted'
-
-// ── Header ────────────────────────────────────────────────────
-function LandingHeader({ isAuthed, onSignIn }: { isAuthed: boolean; onSignIn: () => void }) {
-  return (
-    <header className="bg-brand-navy text-white border-b border-[#16324F]">
-      <div className="mx-auto max-w-[1440px] h-[72px] px-5 sm:px-8 lg:px-16 flex items-center justify-between">
-        <div className="flex items-center gap-10">
-          <Link to="/" aria-label="Purch home" className="flex items-center">
-            <img src="/brand/purch_exact_reference.svg" alt="purch" className="h-10 sm:h-11 w-auto block" />
-          </Link>
-          <nav className="hidden md:flex gap-1.5 text-[15px] font-semibold">
-            <Link to="/browse" className="px-3.5 py-2.5 rounded-full hover:bg-white/10 transition-colors">Browse</Link>
-            <Link to="/post" className="px-3.5 py-2.5 rounded-full hover:bg-white/10 transition-colors">Post</Link>
-            <Link to="/messages" className="px-3.5 py-2.5 rounded-full hover:bg-white/10 transition-colors">Messages</Link>
-          </nav>
-        </div>
-        <div className="flex items-center gap-2 text-[15px] font-semibold">
-          {isAuthed ? (
-            <>
-              <Link to="/profile" className="px-3.5 py-2.5 hover:text-brand-sky transition-colors">Profile</Link>
-              <Link to="/post" className="px-[18px] py-[11px] rounded-full bg-brand-sky text-brand-navy hover:brightness-105 transition">
-                Post your place
-              </Link>
-            </>
-          ) : (
-            <>
-              <button type="button" onClick={onSignIn} className="px-3.5 py-2.5 hover:text-brand-sky transition-colors">Log in</button>
-              <button type="button" onClick={onSignIn} className="px-[18px] py-[11px] rounded-full bg-brand-sky text-brand-navy hover:brightness-105 transition">
-                Sign up
-              </button>
-            </>
-          )}
-        </div>
-      </div>
-    </header>
-  )
-}
 
 // ── Hero ──────────────────────────────────────────────────────
 function DateField({ label, value, onChange, marker }: {
@@ -246,7 +189,7 @@ function SearchForm() {
         </label>
       </div>
       <div className="mt-2.5 flex flex-wrap items-center gap-x-[22px] gap-y-3">
-        <button type="submit" className="h-14 px-[30px] rounded-[10px] bg-brand-sky text-brand-navy text-[17px] font-bold hover:brightness-105 transition">
+        <button type="submit" className={button('primary', 'lg')}>
           See listings
         </button>
         <Link to="/browse" className="text-base font-medium underline underline-offset-4 text-white hover:text-brand-sky transition-colors">
@@ -349,7 +292,7 @@ function Hero({ listings, onPost }: { listings: LandingListing[]; onPost: () => 
 
   return (
     <section className="bg-brand-navy text-white">
-      <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-16 pt-12 lg:pt-[72px] pb-16 lg:pb-[104px] grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div className={cn(container, 'pt-12 lg:pt-[72px] pb-16 lg:pb-[104px] grid lg:grid-cols-2 gap-12 lg:gap-16 items-center')}>
         <div className="flex flex-col gap-[26px]">
           <Eyebrow onDark>STUDENT SUBLEASES · UNC</Eyebrow>
           <div role="tablist" aria-label="What are you here to do?" className="flex gap-7 border-b border-brand-navy-2">
@@ -371,7 +314,7 @@ function Hero({ listings, onPost }: { listings: LandingListing[]; onPost: () => 
 
           {tab === 'find' ? (
             <>
-              <h1 className="font-outfit text-[44px] sm:text-6xl lg:text-[80px] leading-[0.96] font-extrabold tracking-[-0.035em]">
+              <h1 className={heroHeading}>
                 Find a place <span className="text-brand-sky">near campus.</span>
               </h1>
               <p className="text-lg lg:text-[19px] leading-normal text-brand-subtle max-w-[520px]">
@@ -381,14 +324,14 @@ function Hero({ listings, onPost }: { listings: LandingListing[]; onPost: () => 
             </>
           ) : (
             <>
-              <h1 className="font-outfit text-[44px] sm:text-6xl lg:text-[80px] leading-[0.96] font-extrabold tracking-[-0.035em]">
+              <h1 className={heroHeading}>
                 Hand off your lease <span className="text-brand-sky">in minutes.</span>
               </h1>
               <p className="text-lg lg:text-[19px] leading-normal text-brand-subtle max-w-[520px]">
                 Post your place for free. Only verified @unc.edu students can see your address and message you.
               </p>
               <div>
-                <button type="button" onClick={onPost} className="h-14 px-[30px] rounded-[10px] bg-brand-sky text-brand-navy text-[17px] font-bold hover:brightness-105 transition">
+                <button type="button" onClick={onPost} className={button('primary', 'lg')}>
                   Post your place
                 </button>
               </div>
@@ -412,11 +355,11 @@ function Suggestions() {
   ]
 
   return (
-    <section className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-16 pt-20 lg:pt-[104px] pb-20 lg:pb-28">
+    <section className={cn(container, 'pt-20 lg:pt-[104px] pb-20 lg:pb-28')}>
       <Reveal className="flex flex-col gap-7">
         <div className="flex flex-col gap-2.5">
           <Eyebrow>SUGGESTIONS</Eyebrow>
-          <h2 className="font-outfit text-4xl lg:text-[44px] font-extrabold tracking-[-0.03em]">Start with how you live.</h2>
+          <h2 className={subHeading}>Start with how you live.</h2>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {tiles.map(t => (
@@ -448,17 +391,17 @@ function DistanceFirst({ listings }: { listings: LandingListing[] }) {
   const rows = useMemo(() => byWalk(listings, dest).slice(0, 3), [listings, dest])
 
   return (
-    <section className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-16 pb-20 lg:pb-28">
+    <section className={cn(container, 'pb-20 lg:pb-28')}>
       <Reveal className="p-6 sm:p-10 lg:p-[72px] rounded-[20px] bg-brand-mist grid lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] gap-10 lg:gap-[72px] items-center">
         <div className="flex flex-col gap-5">
           <Eyebrow>DISTANCE FIRST</Eyebrow>
-          <h2 className="font-outfit text-4xl sm:text-5xl lg:text-[56px] leading-none font-extrabold tracking-[-0.035em]">
+          <h2 className={sectionHeading}>
             Pick where you need to be. We sort by the walk.
           </h2>
-          <p className="text-lg lg:text-[19px] leading-normal text-brand-muted max-w-[460px]">
+          <p className={cn(lede, 'max-w-[460px]')}>
             Choose a spot on campus and see which places are the shortest walk from it.
           </p>
-          <Link to="/browse" className="self-start px-[26px] py-4 rounded-[10px] bg-brand-navy text-white text-[17px] font-semibold hover:bg-[#0C3A66] transition-colors">
+          <Link to="/browse" className={button('dark', 'md', 'self-start')}>
             Open the map
           </Link>
         </div>
@@ -516,7 +459,7 @@ function SplitSection({ img, alt, imageFirst, children }: {
   children: React.ReactNode
 }) {
   return (
-    <section className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-16 pb-20 lg:pb-28">
+    <section className={cn(container, 'pb-20 lg:pb-28')}>
       <Reveal className="grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
         <div className={`h-[320px] sm:h-[440px] lg:h-[540px] rounded-[18px] overflow-hidden ${imageFirst ? '' : 'lg:order-2'}`}>
           <img src={img} alt={alt} className="w-full h-full object-cover" />
@@ -527,8 +470,7 @@ function SplitSection({ img, alt, imageFirst, children }: {
   )
 }
 
-const splitHeading = 'font-outfit text-4xl sm:text-5xl lg:text-[56px] leading-none font-extrabold tracking-[-0.035em]'
-const splitBody = 'text-lg lg:text-[19px] leading-normal text-brand-muted max-w-[500px]'
+const splitBody = cn(lede, 'max-w-[500px]')
 
 // ── Sign-in band ──────────────────────────────────────────────
 function SignInBand({ onCodeSent }: { onCodeSent: (email: string) => void }) {
@@ -552,7 +494,7 @@ function SignInBand({ onCodeSent }: { onCodeSent: (email: string) => void }) {
   }
 
   return (
-    <section className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-16 pb-20 lg:pb-24">
+    <section className={cn(container, 'pb-20 lg:pb-24')}>
       <Reveal className="p-8 sm:p-12 lg:p-16 rounded-[20px] bg-brand-navy text-white flex flex-col lg:flex-row lg:items-center justify-between gap-8 lg:gap-12">
         <div className="flex items-center gap-6 lg:gap-7">
           <img src="/brand/purch_exact_mark.svg" alt="" className="h-16 lg:h-[84px] w-auto block shrink-0" />
@@ -573,11 +515,7 @@ function SignInBand({ onCodeSent }: { onCodeSent: (email: string) => void }) {
                 className="flex-1 min-w-0 bg-transparent border-0 outline-none text-[17px] text-brand-navy placeholder:text-brand-muted"
               />
             </label>
-            <button
-              type="submit"
-              disabled={sending}
-              className="h-14 px-6 rounded-[10px] bg-brand-sky text-brand-navy text-[17px] font-bold hover:brightness-105 transition disabled:opacity-60"
-            >
+            <button type="submit" disabled={sending} className={button('primary', 'lg', 'px-6')}>
               {sending ? 'Sending…' : 'Send code'}
             </button>
           </div>
@@ -585,36 +523,6 @@ function SignInBand({ onCodeSent }: { onCodeSent: (email: string) => void }) {
         </form>
       </Reveal>
     </section>
-  )
-}
-
-// ── Footer ────────────────────────────────────────────────────
-function LandingFooter() {
-  const cols = [
-    { title: 'Product', links: [['Browse', '/browse'], ['Post a sublease', '/post'], ['Messages', '/messages']] },
-    { title: 'Company', links: [['About', '/about'], ['Contact', '/contact']] },
-    { title: 'Legal',   links: [['Terms', '/terms'], ['Privacy', '/privacy']] },
-  ]
-  return (
-    <footer className="bg-brand-navy text-white">
-      <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-16 py-14 flex flex-col gap-10">
-        <div className="flex flex-col gap-3.5">
-          <img src="/brand/purch_exact_reference.svg" alt="purch" className="h-12 w-auto self-start block" />
-          <span className="text-xs font-medium tracking-[0.34em] text-[#C9D5E3]">STUDENT SUBLEASES</span>
-        </div>
-        <div className="flex flex-wrap gap-x-[120px] gap-y-8 text-[15px]">
-          {cols.map(col => (
-            <div key={col.title} className="flex flex-col gap-3">
-              <span className="font-bold">{col.title}</span>
-              {col.links.map(([label, to]) => (
-                <Link key={to} to={to} className="text-[#C9D5E3] hover:text-white transition-colors">{label}</Link>
-              ))}
-            </div>
-          ))}
-        </div>
-        <span className="text-[13px] text-brand-subtle">© Purch · Chapel Hill, NC</span>
-      </div>
-    </footer>
   )
 }
 
@@ -632,18 +540,14 @@ export default function Landing() {
     supabase.from('page_views').insert({}).then(() => {})
   }, [])
 
-  function openSignIn() {
-    setSignIn({})
-  }
-
+  // The header owns its own sign-in modal; this one serves the page's own CTAs
   function goToPost() {
     if (isAuthed) navigate('/post')
-    else openSignIn()
+    else setSignIn({})
   }
 
   return (
-    <div className="min-h-screen bg-white text-brand-navy font-figtree pb-16 md:pb-0">
-      <LandingHeader isAuthed={isAuthed} onSignIn={openSignIn} />
+    <PageShell>
       <AnimatePresence>
         {signIn && (
           <SignInModal
@@ -660,15 +564,15 @@ export default function Landing() {
 
       <SplitSection img="/landing/kitchen.jpg" alt="Clean apartment kitchen" imageFirst>
         <Eyebrow>FOR HOSTS</Eyebrow>
-        <h2 className={splitHeading}>Don’t pay rent on an empty room.</h2>
+        <h2 className={sectionHeading}>Don’t pay rent on an empty room.</h2>
         <p className={splitBody}>
           Studying abroad, interning, graduating early? Post your place for free and let a verified Tar Heel take over the lease.
         </p>
         <div className="flex flex-wrap items-center gap-5">
-          <button type="button" onClick={goToPost} className="px-[26px] py-4 rounded-[10px] bg-brand-navy text-white text-[17px] font-semibold hover:bg-[#0C3A66] transition-colors">
+          <button type="button" onClick={goToPost} className={button('dark', 'md')}>
             Post your place
           </button>
-          <Link to="/about" className="text-base font-medium underline underline-offset-4 hover:text-brand-sky-ink transition-colors">
+          <Link to="/about" className={textLink}>
             How subleasing works
           </Link>
         </div>
@@ -676,17 +580,16 @@ export default function Landing() {
 
       <SplitSection img="/landing/plants.jpg" alt="Living room full of plants" imageFirst={false}>
         <Eyebrow>VERIFIED</Eyebrow>
-        <h2 className={splitHeading}>Every host is a verified Tar Heel.</h2>
+        <h2 className={sectionHeading}>Every host is a verified Tar Heel.</h2>
         <p className={splitBody}>
           Everyone on Purch signs in with a code sent to their @unc.edu. Every pin is a real address, and every conversation stays in one thread.
         </p>
-        <Link to="/about" className="self-start text-base font-medium underline underline-offset-4 hover:text-brand-sky-ink transition-colors">
+        <Link to="/about" className={cn(textLink, 'self-start')}>
           How verification works
         </Link>
       </SplitSection>
 
       {!isAuthed && <SignInBand onCodeSent={email => setSignIn({ email, step: 'code' })} />}
-      <LandingFooter />
-    </div>
+    </PageShell>
   )
 }

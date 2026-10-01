@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { PurchLogo } from './ui/PurchLogo'
+import { Eyebrow } from './ui/Eyebrow'
+import { button, field } from './ui/styles'
 
 interface Props {
   userId: string
@@ -41,90 +43,40 @@ export function NotificationEmailGate({ userId, onComplete }: Props) {
   }
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 9999,
-        background: 'var(--bg)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '24px',
-      }}
-    >
-      <div style={{ width: '100%', maxWidth: '420px' }}>
+    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center p-6 bg-white text-brand-navy font-figtree">
+      <div className="w-full max-w-[420px]">
         {/* Logo */}
-        <div style={{ marginBottom: '48px' }}>
+        <div className="mb-12">
           <PurchLogo size={36} />
         </div>
 
-        {/* Heading */}
-        <h1
-          style={{
-            fontFamily: 'var(--font-display, Fraunces)',
-            fontSize: 'clamp(28px, 6vw, 40px)',
-            fontWeight: 700,
-            color: 'var(--ink)',
-            lineHeight: 1.15,
-            marginBottom: '12px',
-          }}
-        >
+        <Eyebrow>ALMOST DONE</Eyebrow>
+        <h1 className="font-outfit text-[clamp(32px,7vw,44px)] leading-[1.02] font-extrabold tracking-[-0.03em] mt-3 mb-3">
           One more thing.
         </h1>
 
-        <p style={{ color: 'var(--muted)', fontSize: '15px', lineHeight: 1.6, marginBottom: '32px' }}>
+        <p className="text-brand-muted text-base leading-relaxed mb-8">
           UNC email filters block most notifications. Add a personal email — Gmail, iCloud, anything but .edu — so you never miss a message about your sublease.
         </p>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <input
             type="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
             placeholder="yourname@gmail.com"
             autoFocus
-            style={{
-              width: '100%',
-              padding: '14px 16px',
-              borderRadius: '12px',
-              border: '1.5px solid var(--line)',
-              background: 'var(--paper)',
-              color: 'var(--ink)',
-              fontSize: '15px',
-              outline: 'none',
-              boxSizing: 'border-box',
-            }}
-            onFocus={e => (e.target.style.borderColor = 'var(--ink)')}
-            onBlur={e => (e.target.style.borderColor = 'var(--line)')}
+            className={field}
           />
 
-          {error && (
-            <p style={{ color: '#c0392b', fontSize: '13px', margin: 0 }}>{error}</p>
-          )}
+          {error && <p className="text-sm text-red-600">{error}</p>}
 
-          <button
-            type="submit"
-            disabled={saving || !email.trim()}
-            style={{
-              padding: '14px 24px',
-              borderRadius: '999px',
-              background: 'var(--ink)',
-              color: 'var(--bg)',
-              fontSize: '15px',
-              fontWeight: 600,
-              border: 'none',
-              cursor: saving || !email.trim() ? 'not-allowed' : 'pointer',
-              opacity: saving || !email.trim() ? 0.5 : 1,
-              transition: 'opacity 0.15s',
-            }}
-          >
+          <button type="submit" disabled={saving || !email.trim()} className={button('primary', 'lg', 'w-full')}>
             {saving ? 'Saving…' : 'Save and continue →'}
           </button>
         </form>
 
-        <p style={{ marginTop: '20px', color: 'var(--muted)', fontSize: '12px' }}>
+        <p className="mt-5 text-brand-muted text-xs">
           Only used for Purch message notifications. Never shared.
         </p>
       </div>
