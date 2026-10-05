@@ -32,6 +32,22 @@ function groupByCoordinate(listings: Listing[]): Cluster[] {
   })
 }
 
+// Clusters bigger than this get a scrollable list instead of a radial fan —
+// a fixed-radius circle can't fit 5+ variable-width price pills without overlap
+const MAX_FAN_ITEMS = 4
+// Header + max-h-56 list + gap — used to decide whether the list fits above the pin
+const LIST_HEIGHT = 280
+
+// Keep wheel/drag inside the list from zooming or panning the map. Mapbox listens
+// natively on the canvas container, so React's synthetic stopPropagation is too late.
+function isolateFromMap(el: HTMLDivElement | null) {
+  if (!el) return
+  const stop = (e: Event) => e.stopPropagation()
+  for (const type of ['wheel', 'mousedown', 'touchstart', 'pointerdown', 'dblclick']) {
+    el.addEventListener(type, stop)
+  }
+}
+
 // Fan items in a circle around the cluster pin
 function fanAngles(count: number): number[] {
   if (count === 1) return [0]
@@ -41,10 +57,15 @@ function fanAngles(count: number): number[] {
 export function BrowseMap({ listings, hoveredId }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [expandedCluster, setExpandedCluster] = useState<string | null>(null)
+  const [listBelow, setListBelow] = useState(false)
+  const [roomOnRight, setRoomOnRight] = useState(true)
 
   const mappable = listings.filter(l => l.lat != null && l.lng != null)
   const clusters = groupByCoordinate(mappable)
   const selected = mappable.find(l => l.id === selectedId) ?? null
+  // A list below its pin means there's no room up top either — put the listing popup beside it
+  const selectedInListBelow = listBelow && clusters.some(c =>
+    c.key === expandedCluster && c.items.length > MAX_FAN_ITEMS && c.items.some(l => l.id === selectedId))
 
   function handleMapClick() {
     setSelectedId(null)
@@ -68,6 +89,7 @@ export function BrowseMap({ listings, hoveredId }: Props) {
       {clusters.map(cluster => {
         const isCluster = cluster.items.length > 1
         const isExpanded = expandedCluster === cluster.key
+        const useList = cluster.items.length > MAX_FAN_ITEMS
         const angles = fanAngles(cluster.items.length)
         const RADIUS = 68
 
@@ -77,13 +99,15 @@ export function BrowseMap({ listings, hoveredId }: Props) {
             longitude={cluster.lng}
             latitude={cluster.lat}
             anchor="center"
+            // Lift the open cluster above neighbouring markers so its fan/list isn't covered
+            style={isExpanded ? { zIndex: 10 } : undefined}
             onClick={e => e.originalEvent.stopPropagation()}
           >
             <div className="relative flex items-center justify-center">
 
               {/* Fan items — shown when cluster is expanded */}
               <AnimatePresence>
-                {isCluster && isExpanded && cluster.items.map((l, i) => {
+                {isCluster && isExpanded && !useList && cluster.items.map((l, i) => {
                   const angle = angles[i]
                   const rad = (angle * Math.PI) / 180
                   const x = Math.cos(rad) * RADIUS
@@ -118,6 +142,50 @@ export function BrowseMap({ listings, hoveredId }: Props) {
                 })}
               </AnimatePresence>
 
+              {/* List popup — for clusters too big to fan. Opens above the pin (clear of the
+                  selected-listing Popup, which hangs below) unless there's no room up top. */}
+              <AnimatePresence>
+                {isCluster && isExpanded && useList && (
+                  <motion.div
+                    key="list"
+                    ref={isolateFromMap}
+                    onClick={e => e.stopPropagation()}
+                    initial={{ opacity: 0, y: listBelow ? -6 : 6, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: listBelow ? -6 : 6, scale: 0.96 }}
+                    transition={{ type: 'spring', stiffness: 320, damping: 26 }}
+                    className={`absolute ${listBelow ? 'top-full mt-2.5 origin-top' : 'bottom-full mb-2.5 origin-bottom'} left-1/2 -ml-[88px] w-44 z-20 rounded-xl bg-white shadow-[0_8px_24px_rgba(5,30,55,0.22)] font-figtree overflow-hidden`}
+                  >
+                    <p className="px-3 pt-2.5 pb-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-brand-muted">
+                      {cluster.items.length} at this address
+                    </p>
+                    <ul className="max-h-56 overflow-y-auto overscroll-contain px-1.5 pb-1.5 space-y-0.5">
+                      {cluster.items.map(l => {
+                        const isSelected = l.id === selectedId
+                        return (
+                          <li key={l.id}>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedId(prev => prev === l.id ? null : l.id)}
+                              className={`w-full flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-md text-left border transition-colors ${
+                                isSelected || l.id === hoveredId
+                                  ? 'bg-brand-navy text-white border-brand-navy'
+                                  : 'bg-white text-brand-navy border-transparent hover:border-brand-sky'
+                              }`}
+                            >
+                              <span className="text-[13px] font-bold">${l.rent.toLocaleString()}</span>
+                              <span className={`text-[11px] font-semibold ${isSelected || l.id === hoveredId ? 'text-white/70' : 'text-brand-muted'}`}>
+                                {l.bedrooms === 0 ? 'Studio' : `${l.bedrooms} bed`}
+                              </span>
+                            </button>
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               {/* Single pin */}
               {!isCluster && (
                 <div
@@ -140,6 +208,10 @@ export function BrowseMap({ listings, hoveredId }: Props) {
                 <motion.div
                   onClick={e => {
                     e.stopPropagation()
+                    const pin = e.currentTarget.getBoundingClientRect()
+                    const mapRect = e.currentTarget.closest('.mapboxgl-map')?.getBoundingClientRect()
+                    setListBelow(pin.top - (mapRect?.top ?? 0) < LIST_HEIGHT)
+                    setRoomOnRight(!mapRect || pin.left + pin.width / 2 < mapRect.left + mapRect.width / 2)
                     setExpandedCluster(prev => prev === cluster.key ? null : cluster.key)
                     setSelectedId(null)
                   }}
@@ -175,10 +247,11 @@ export function BrowseMap({ listings, hoveredId }: Props) {
         <Popup
           longitude={selected.lng!}
           latitude={selected.lat!}
-          anchor="top"
+          anchor={selectedInListBelow ? (roomOnRight ? 'left' : 'right') : 'top'}
           onClose={() => setSelectedId(null)}
           closeButton={false}
-          offset={16}
+          // Beside a list, clear its half-width (w-44 / 2) plus a gap
+          offset={selectedInListBelow ? 100 : 16}
           maxWidth="224px"
         >
           <Link
