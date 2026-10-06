@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   LogOut, Plus, MapPin, Calendar, Pencil, Trash2,
-  Camera, MessageSquare, Heart, Settings, Home, Phone, Eye, BadgeCheck, Loader,
+  Camera, MessageSquare, Heart, Settings, Home, Phone, Eye, BadgeCheck, Loader, PartyPopper,
 } from 'lucide-react'
 import { PageShell } from '../components/layout/PageShell'
 import { button, cardHeading, field, fieldHint, fieldLabel } from '../components/ui/styles'
@@ -120,12 +120,26 @@ export default function Profile() {
     setDeleting(null)
   }
 
-  async function handleToggleActive(listing: Listing) {
+  async function updateListing(id: string, patch: Partial<Listing>) {
     const { data } = await supabase
-      .from('listings').update({ is_active: !listing.is_active })
-      .eq('id', listing.id).select().single()
-    if (data) setListings(prev => prev.map(l => l.id === listing.id ? data : l))
+      .from('listings').update(patch)
+      .eq('id', id).select().single()
+    if (data) setListings(prev => prev.map(l => l.id === id ? data : l))
   }
+
+  // Archive: off the market for a mundane reason (today's old "Deactivate")
+  const handleArchive = (listing: Listing) =>
+    updateListing(listing.id, { is_active: false, purched_at: null })
+
+  // Purch'd!: off the market because it was taken via Purch — counts toward the public stat
+  function handlePurched(listing: Listing) {
+    if (!confirm("Mark this listing as Purch'd? It'll come down from Browse and count as a sublease filled through Purch.")) return
+    updateListing(listing.id, { is_active: false, purched_at: new Date().toISOString() })
+  }
+
+  // A live listing can't also be a past success, so reactivating clears the flag
+  const handleReactivate = (listing: Listing) =>
+    updateListing(listing.id, { is_active: true, purched_at: null })
 
   async function handleUnsave(listingId: string) {
     await supabase.from('saved_listings').delete()
@@ -190,7 +204,8 @@ export default function Profile() {
     </div>
   )
 
-  const iconButton = 'p-2.5 rounded-[10px] border border-brand-line text-brand-muted hover:border-brand-sky hover:text-brand-sky-ink transition-colors'
+  const secondaryAction = 'text-sm font-semibold border border-brand-line rounded-[10px] px-3.5 py-2 text-brand-navy hover:border-brand-sky hover:text-brand-sky-ink transition-colors'
+  const iconButton ='p-2.5 rounded-[10px] border border-brand-line text-brand-muted hover:border-brand-sky hover:text-brand-sky-ink transition-colors'
 
   return (
     <PageShell>
@@ -327,6 +342,11 @@ export default function Profile() {
                           )}>
                             {listing.is_active ? 'Active' : 'Inactive'}
                           </span>
+                          {!listing.is_active && listing.purched_at && (
+                            <span className="inline-flex items-center gap-1 text-xs px-2.5 py-0.5 rounded-full font-bold flex-shrink-0 bg-brand-sky text-brand-navy">
+                              <PartyPopper className="w-3 h-3" /> Purch'd!
+                            </span>
+                          )}
                         </div>
                         <p className="font-outfit text-lg font-extrabold leading-tight">${listing.rent.toLocaleString()}<span className="font-figtree text-xs font-medium text-brand-muted">/mo</span></p>
                         <div className="flex items-center gap-x-3 gap-y-1 flex-wrap text-[13px] text-brand-muted mt-1">
@@ -350,13 +370,30 @@ export default function Profile() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      <button
-                        onClick={() => handleToggleActive(listing)}
-                        className="text-sm font-semibold border border-brand-line rounded-[10px] px-3.5 py-2 text-brand-navy hover:border-brand-sky hover:text-brand-sky-ink transition-colors"
-                      >
-                        {listing.is_active ? 'Deactivate' : 'Activate'}
-                      </button>
+                    <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
+                      {listing.is_active ? (
+                        <>
+                          <button
+                            onClick={() => handlePurched(listing)}
+                            className="inline-flex items-center gap-1.5 text-sm font-bold rounded-[10px] px-3.5 py-2 bg-brand-sky text-brand-navy hover:bg-brand-navy hover:text-brand-sky transition-colors"
+                          >
+                            <PartyPopper className="w-4 h-4" /> Purch'd!
+                          </button>
+                          <button
+                            onClick={() => handleArchive(listing)}
+                            className={secondaryAction}
+                          >
+                            Archive
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={() => handleReactivate(listing)}
+                          className={secondaryAction}
+                        >
+                          Reactivate
+                        </button>
+                      )}
                       <Link to={`/listings/${listing.id}/edit`} className={iconButton} aria-label="Edit listing">
                         <Pencil className="w-4 h-4" />
                       </Link>
