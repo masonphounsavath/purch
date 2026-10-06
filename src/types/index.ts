@@ -32,6 +32,7 @@ export interface Listing {
   photos: string[]
   amenities: string[]
   is_active: boolean
+  purched_at: string | null
   view_count: number
   created_at: string
   preferred_gender: 'female' | 'male' | null
