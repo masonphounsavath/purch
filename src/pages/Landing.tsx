@@ -7,6 +7,8 @@ import { Reveal } from '../components/ui/Reveal'
 import { Eyebrow } from '../components/ui/Eyebrow'
 import { button, container, heroHeading, lede, sectionHeading, subHeading, textLink } from '../components/ui/styles'
 import { useAuth } from '../hooks/useAuth'
+import { usePurchedCount } from '../hooks/usePurched'
+import { PurchedStat } from '../components/listings/RecentlyPurched'
 import { supabase } from '../lib/supabase'
 import type { Listing } from '../types'
 import { cn } from '../lib/utils'
@@ -531,6 +533,7 @@ export default function Landing() {
   const { isAuthed } = useAuth()
   const navigate = useNavigate()
   const listings = useLandingListings()
+  const purchedCount = usePurchedCount()
   const [signIn, setSignIn] = useState<{ email?: string; step?: 'email' | 'code' } | null>(null)
   const tracked = useRef(false)
 
@@ -568,6 +571,7 @@ export default function Landing() {
         <p className={splitBody}>
           Studying abroad, interning, graduating early? Post your place for free and let a verified Tar Heel take over the lease.
         </p>
+        <PurchedStat count={purchedCount} />
         <div className="flex flex-wrap items-center gap-5">
           <button type="button" onClick={goToPost} className={button('dark', 'md')}>
             Post your place

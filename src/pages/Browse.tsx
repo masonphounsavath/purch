@@ -4,12 +4,14 @@ import { motion } from 'framer-motion'
 import { SlidersHorizontal, X, Plus, Map as MapIcon, List, SearchX } from 'lucide-react'
 import { PageShell } from '../components/layout/PageShell'
 import { ListingCard } from '../components/listings/ListingCard'
+import { PurchedStat, RecentlyPurchedStrip } from '../components/listings/RecentlyPurched'
 import { BrowseMap } from '../components/map/BrowseMap'
 import { Eyebrow } from '../components/ui/Eyebrow'
 import { button } from '../components/ui/styles'
 import { useListings, type Filters, type SortOption } from '../hooks/useListings'
 import { useAuth } from '../hooks/useAuth'
 import { useSavedListings } from '../hooks/useSavedListings'
+import { usePurchedCount, useRecentlyPurched } from '../hooks/usePurched'
 import { cn } from '../lib/utils'
 
 const filterLabel = 'text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-muted whitespace-nowrap'
@@ -206,7 +208,10 @@ export default function Browse() {
   const { isAuthed } = useAuth()
   const [searchParams] = useSearchParams()
   const [filters, setFilters] = useState<Filters>(() => filtersFromParams(searchParams))
+  // Map + grid only ever get `listings` (is_active = true). Purch'd data stays in its own strip.
   const { listings, loading } = useListings(filters)
+  const purchedCount = usePurchedCount()
+  const recentlyPurched = useRecentlyPurched()
   const { savedIds, toggleSave } = useSavedListings()
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [mobileView, setMobileView] = useState<'list' | 'map'>('list')
@@ -235,6 +240,7 @@ export default function Browse() {
                     ? 'Loading...'
                     : `${listings.length} listing${listings.length !== 1 ? 's' : ''} available`}
                 </p>
+                <PurchedStat count={purchedCount} className="mt-1" />
               </div>
               {isAuthed && (
                 <Link to="/post" className={button('dark', 'sm', 'whitespace-nowrap flex-shrink-0')}>
@@ -334,6 +340,8 @@ export default function Browse() {
                 ))}
               </motion.div>
             )}
+
+            {!loading && <RecentlyPurchedStrip items={recentlyPurched} count={purchedCount} />}
           </div>
         </div>
 
