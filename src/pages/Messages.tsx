@@ -11,7 +11,10 @@ import type { Message, Listing, Profile } from '../types'
 
 // A "conversation" groups all messages between two users about one listing
 interface Conversation {
-  listing: Pick<Listing, 'id' | 'title' | 'rent'>
+  // null when the listing is archived/Purch'd/deleted — RLS hides inactive
+  // listings from everyone but their owner, so the join comes back empty
+  listing: Pick<Listing, 'id' | 'title' | 'rent'> | null
+  listingId: string
   other: Pick<Profile, 'id' | 'display_name'>
   lastMessage: Message
   unread: number
@@ -73,8 +76,9 @@ export default function Messages() {
         const key = `${msg.listing_id}:${otherId}`
         if (!map.has(key)) {
           map.set(key, {
-            listing:     msg.listing,
-            other:       { id: otherId, display_name: otherName ?? 'UNC Student' },
+            listing:     msg.listing ?? null,
+            listingId:   msg.listing_id,
+            other:      { id: otherId, display_name: otherName ?? 'UNC Student' },
             lastMessage: msg,
             unread:      (!msg.read_at && msg.recipient_id === uid) ? 1 : 0,
           })
@@ -171,7 +175,7 @@ export default function Messages() {
   }
 
   const activeConv = conversations.find(
-    c => c.listing.id === activeListing && c.other.id === activeOther
+    c => c.listingId === activeListing && c.other.id === activeOther
   )
 
   const conversationList = (
@@ -191,7 +195,7 @@ export default function Messages() {
         </div>
       ) : (
         conversations.map(conv => {
-          const key = `${conv.listing.id}:${conv.other.id}`
+          const key = `${conv.listingId}:${conv.other.id}`
           const isActive = key === activeKey
           return (
             <button
@@ -220,7 +224,9 @@ export default function Messages() {
                   <span className="text-[11px] text-brand-muted">{timeAgo(conv.lastMessage.created_at)}</span>
                 </div>
               </div>
-              <p className="text-[13px] font-semibold text-brand-sky-ink truncate pl-[42px]">{conv.listing.title}</p>
+              <p className={cn('text-[13px] font-semibold truncate pl-[42px]', conv.listing ? 'text-brand-sky-ink' : 'text-brand-muted')}>
+                {conv.listing?.title ?? 'Listing no longer available'}
+              </p>
               <p className="text-[13px] text-brand-muted truncate pl-[42px] mt-0.5">{conv.lastMessage.body}</p>
             </button>
           )
@@ -247,10 +253,12 @@ export default function Messages() {
           <p className="font-bold text-[15px]">
             {activeConv?.other.display_name ?? 'UNC Student'}
           </p>
-          {activeConv && (
+          {activeConv?.listing ? (
             <Link to={`/listings/${activeConv.listing.id}`} className="block text-[13px] font-medium text-brand-sky-ink truncate hover:underline underline-offset-4">
               {activeConv.listing.title}
             </Link>
+          ) : activeConv && (
+            <p className="text-[13px] font-medium text-brand-muted truncate">Listing no longer available</p>
           )}
         </div>
       </div>
